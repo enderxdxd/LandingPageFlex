@@ -1,0 +1,157 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-red: #DC2626;
+    --color-blue: #2563EB;
+    --color-white: #FFFFFF;
+    --color-dark: #0F172A;
+    --color-gray: #64748B;
+    --navbar-height: 90px; /* Define navbar height */
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+    height: 100%;
+  }
+
+  body {
+    font-family: var(--font-inter);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--color-white);
+    color: var(--color-dark);
+    overflow-x: hidden;
+    height: 100%;
+    margin-top: var(--navbar-height); /* Add margin-top to account for fixed navbar */
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-bebas);
+    letter-spacing: 0.05em;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-white);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-red);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-blue);
+  }
+}
+
+@layer components {
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-flex-red to-flex-blue bg-clip-text text-transparent;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-r from-flex-red to-flex-blue;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+
+  /* Panel system for scroll animations */
+  .panel {
+    position: absolute;
+    width: 100%;
+    height: calc(100vh - var(--navbar-height)); /* Adjusted height to account for navbar */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    will-change: transform, opacity;
+  }
+
+  .panel:first-child {
+    position: relative;
+  }
+
+  .panel-content {
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 2rem;
+    will-change: transform, opacity;
+  }
+
+  /* Mobile styles */
+  @media (max-width: 767px) {
+    .panel {
+      position: relative;
+      height: auto; /* Revert to auto for mobile as pin is not active */
+      min-height: calc(100vh - var(--navbar-height)); /* Ensure min-height on mobile */
+      padding: 4rem 0;
+    }
+  }
+
+  /* Performance optimizations */
+  .animate-element {
+    will-change: transform, opacity;
+  }
+
+  .hero-gradient {
+    background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+  }
+
+  /* Clip path animations */
+  .clip-animation {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  }
+
+  .clip-animation-hide {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+}
