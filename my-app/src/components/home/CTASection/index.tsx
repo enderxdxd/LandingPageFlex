@@ -8,17 +8,17 @@ export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
 
   return (
-    <section className="panel bg-gradient-to-br from-flex-dark to-flex-blue text-white">
-      <div className="panel-content text-center">
-        <h2 className="panel-heading font-display text-5xl md:text-7xl mb-6 animate-element">
+    <section className="scroll-section min-h-screen bg-gradient-to-br from-flex-dark to-flex-blue text-white py-20">
+      <div className="max-w-6xl mx-auto px-4 text-center">
+        <h2 className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll">
           COMECE SUA <span className="text-flex-red">TRANSFORMAÇÃO</span>
         </h2>
         
-        <p className="panel-text text-xl text-white/80 mb-12 max-w-3xl mx-auto animate-element">
+        <p className="text-xl text-white/80 mb-12 max-w-3xl mx-auto animate-on-scroll">
           Agende uma visita e descubra como podemos ajudar você a alcançar seus objetivos
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-element">
+        <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-on-scroll">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -44,21 +44,30 @@ export default function CTASection() {
           <ContactForm onClose={() => setShowForm(false)} />
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-element">
-          <div className="text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 animate-on-scroll">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center"
+          >
             <div className="text-4xl font-display text-flex-red mb-2">5.000+</div>
             <p className="text-white/70">Alunos Ativos</p>
-          </div>
+          </motion.div>
           
-          <div className="text-center">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center"
+          >
             <div className="text-4xl font-display text-white mb-2">98%</div>
             <p className="text-white/70">Satisfação</p>
-          </div>
+          </motion.div>
           
-          <div className="text-center">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center"
+          >
             <div className="text-4xl font-display text-flex-red mb-2">10+</div>
             <p className="text-white/70">Anos de Excelência</p>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

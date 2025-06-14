@@ -15,10 +15,14 @@ const config: Config = {
         'flex-dark': '#0F172A',
         'flex-gray': '#64748B',
         'flex-light-gray': '#F1F5F9',
+        'flex-secondary': '#1E293B',
+        'flex-primary': '#DC2626',
+        'flex-accent': '#FBBF24',
+        'flex-light': '#F8FAFC',
       },
       fontFamily: {
-        'display': ['Bebas Neue', 'sans-serif'],
-        'body': ['Inter', 'sans-serif'],
+        'display': ['var(--font-bebas)', 'Bebas Neue', 'sans-serif'],
+        'body': ['var(--font-inter)', 'Inter', 'sans-serif'],
       },
       animation: {
         'float': 'float 3s ease-in-out infinite',
@@ -44,6 +48,13 @@ const config: Config = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+      },
+      screens: {
+        'xs': '475px',
       },
     },
   },

@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
 import FeatureCard from './FeatureCard'
 import { 
   HiOutlineSparkles, 
@@ -52,36 +51,27 @@ const features = [
 ]
 
 export default function FeaturesSection() {
-  const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.1 })
-
   return (
-    <section className="scroll-section bg-flex-white">
-      <div className="content-wrapper w-full">
-        <motion.div
-          ref={ref as any}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: isIntersecting ? 1 : 0, y: isIntersecting ? 0 : 50 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h2 className="font-display text-5xl md:text-7xl mb-4">
+    <section className="scroll-section min-h-screen bg-white py-20">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll">
             POR QUE ESCOLHER A <span className="gradient-text">FLEX</span>
           </h2>
-          <p className="text-xl text-flex-gray max-w-3xl mx-auto">
+          <p className="text-xl text-flex-gray max-w-3xl mx-auto animate-on-scroll">
             Oferecemos uma experiência completa que vai além do treino tradicional
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: isIntersecting ? 1 : 0, y: isIntersecting ? 0 : 50 }}
-              transition={{ delay: index * 0.1 }}
+              className="animate-on-scroll"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <FeatureCard {...feature} />
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
