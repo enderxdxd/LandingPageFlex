@@ -1,10 +1,11 @@
+// src/app/unidades/[slug]/page.tsx
 import { notFound } from 'next/navigation'
-import { unitsData } from '@/lib/constants/units-data'
-import UnitHero from '@/components/units/UnitHero'
-import UnitFeatures from '@/components/units/UnitFeatures'
-import UnitGallery from '@/components/units/UnitGallery'
-import UnitSchedule from '@/components/units/UnitSchedule'
-import UnitContact from '@/components/units/UnitContact'
+import { getUnitBySlug } from '@/lib/constants/units-data'
+import dynamic from 'next/dynamic'
+
+const UnitPageClient = dynamic(() => import('./UnitPageClient'), {
+  ssr: false
+})
 
 interface UnitPageProps {
   params: {
@@ -12,41 +13,38 @@ interface UnitPageProps {
   }
 }
 
-export async function generateStaticParams() {
-  return unitsData.map((unit) => ({
-    slug: unit.slug,
-  }))
-}
-
-export async function generateMetadata({ params }: UnitPageProps) {
-  const unit = unitsData.find((u) => u.slug === params.slug)
-  
-  if (!unit) {
-    return {
-      title: 'Unidade não encontrada - Flex Fitness Center'
-    }
-  }
-
-  return {
-    title: `${unit.name} - Flex Fitness Center`,
-    description: unit.description,
-  }
-}
-
 export default function UnitPage({ params }: UnitPageProps) {
-  const unit = unitsData.find((u) => u.slug === params.slug)
+  const unit = getUnitBySlug(params.slug)
 
   if (!unit) {
     notFound()
   }
 
-  return (
-    <main className="pt-20">
-      <UnitHero unit={unit} />
-      <UnitFeatures unit={unit} />
-      <UnitGallery unit={unit} />
-      <UnitSchedule unit={unit} />
-      <UnitContact unit={unit} />
-    </main>
-  )
+  return <UnitPageClient unit={unit} />
+}
+
+// Generate static params for all units
+export async function generateStaticParams() {
+  const { unitsData } = await import('@/lib/constants/units-data')
+  
+  return unitsData.map((unit) => ({
+    slug: unit.slug,
+  }))
+}
+
+// Generate metadata for each unit
+export async function generateMetadata({ params }: UnitPageProps) {
+  const unit = getUnitBySlug(params.slug)
+
+  if (!unit) {
+    return {
+      title: 'Unidade não encontrada - Flex Fitness',
+    }
+  }
+
+  return {
+    title: `Flex Fitness ${unit.name} - Academia Premium`,
+    description: unit.description,
+    keywords: `flex fitness ${unit.name.toLowerCase()}, academia ${unit.name.toLowerCase()}, musculação, crossfit, personal trainer`,
+  }
 }

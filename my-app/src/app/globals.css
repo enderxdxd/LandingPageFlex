@@ -1,14 +1,18 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --color-red: #DC2626;
-    --color-blue: #2563EB;
-    --color-white: #FFFFFF;
-    --color-dark: #0F172A;
-    --color-gray: #64748B;
+    --color-primary: #1E40AF;     /* Azul principal */
+    --color-secondary: #3B82F6;   /* Azul médio */
+    --color-accent: #60A5FA;      /* Azul claro */
+    --color-white: #FFFFFF;       /* Branco */
+    --color-dark: #0F172A;        /* Azul muito escuro */
+    --color-navy: #1E293B;        /* Azul navy */
+    --color-slate: #475569;       /* Azul acinzentado */
+    --color-light: #F8FAFC;       /* Branco off */
     --navbar-height: 90px;
   }
 
@@ -47,12 +51,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--color-red);
+    background: var(--color-primary);
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-blue);
+    background: var(--color-secondary);
   }
 }
 
@@ -62,11 +66,11 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-flex-red to-flex-blue bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-flex-primary to-flex-secondary bg-clip-text text-transparent;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-r from-flex-red to-flex-blue;
+    @apply bg-gradient-to-r from-flex-primary to-flex-secondary;
   }
 
   .glass-effect {
@@ -90,22 +94,22 @@
     transform: translateY(0) scale(1);
   }
 
-  /* Cores do sistema */
+  /* Cores do sistema atualizadas */
   .flex-primary {
-    color: var(--color-red);
+    color: var(--color-primary);
   }
 
   .flex-secondary {
-    background-color: #1E293B;
+    background-color: var(--color-navy);
   }
 
   .flex-accent {
-    background-color: #FBBF24;
+    background-color: var(--color-accent);
     color: var(--color-dark);
   }
 
   .flex-light {
-    color: #F8FAFC;
+    color: var(--color-light);
   }
 
   .flex-light-gray {
@@ -135,7 +139,7 @@
   }
 
   .units-swiper .swiper-pagination-bullet {
-    background: var(--color-red) !important;
+    background: var(--color-primary) !important;
     opacity: 0.3 !important;
   }
 

@@ -104,7 +104,7 @@ export default function HomePage() {
       <ScrollProgress />
       <main ref={mainRef} className="relative">
         <HeroSection />
-        <ConceptSection />
+        <ConceptSection/>
         <UnitsShowcase />
         <FeaturesSection />
         <CTASection />

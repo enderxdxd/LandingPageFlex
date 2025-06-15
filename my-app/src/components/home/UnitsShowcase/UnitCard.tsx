@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Unit } from '@/types/unit.types'
 import { HiLocationMarker, HiArrowRight } from 'react-icons/hi'
 
@@ -16,9 +17,16 @@ export default function UnitCard({ unit }: UnitCardProps) {
       className="relative group cursor-pointer"
     >
       <Link href={`/unidades/${unit.slug}`}>
-        <div className="relative h-[400px] rounded-2xl overflow-hidden bg-gradient-to-br from-flex-red to-flex-blue">
-          {/* Placeholder image com gradiente */}
-          <div className="absolute inset-0 bg-gradient-to-br from-flex-red/80 to-flex-blue/80" />
+        <div className="relative h-[400px] rounded-2xl overflow-hidden">
+          {/* Unit Image */}
+          <Image
+            src={unit.heroImage}
+            alt={unit.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            priority={false}
+          />
           
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-flex-dark via-flex-dark/50 to-transparent" />
