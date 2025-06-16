@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { Unit } from '@/lib/constants/units-data'
@@ -45,18 +45,17 @@ export default function UnitGallery({ unit }: UnitGalleryProps) {
     }
   }
 
-  const handleKeyPress = (e: KeyboardEvent) => {
+  useEffect(() => {
     if (selectedImage === null) return
-    
-    if (e.key === 'ArrowLeft') handlePrevious()
-    if (e.key === 'ArrowRight') handleNext()
-    if (e.key === 'Escape') setSelectedImage(null)
-  }
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handlePrevious()
+      if (e.key === 'ArrowRight') handleNext()
+      if (e.key === 'Escape') setSelectedImage(null)
+    }
 
-  useState(() => {
-    document.addEventListener('keydown', handleKeyPress as any)
-    return () => document.removeEventListener('keydown', handleKeyPress as any)
-  })
+    document.addEventListener('keydown', handleKeyPress)
+    return () => document.removeEventListener('keydown', handleKeyPress)
+  }, [selectedImage])
 
   const availableCategories = galleryCategories.filter(category => {
     if (category.id === 'all') return true
