@@ -4,6 +4,8 @@ import './globals.css'
 import Navigation from '@/components/layout/Navigation'
 import SmoothScrollProvider from '@/components/providers/SmoothScrollProvider'
 import AnimationProvider from '@/components/providers/AnimationProvider'
+import ErrorBoundary from '@/components/ErrorBoundary'
+
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -30,10 +32,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} ${bebasNeue.variable}`}>
       <body className="bg-flex-white text-flex-dark overflow-x-hidden">
-        <AnimationProvider>
-          <Navigation />
-          <main>{children}</main>
-        </AnimationProvider>
+        <ErrorBoundary>
+          <AnimationProvider>
+            <Navigation />
+            <main>{children}</main>
+          </AnimationProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

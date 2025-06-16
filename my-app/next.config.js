@@ -1,9 +1,15 @@
 const nextConfig = {
-    images: {
-      domains: ['localhost'],
-      formats: ['image/avif', 'image/webp'],
-    },
-    experimental: {
-      optimizeCss: true,
-    },
-  }
+  experimental: {
+    appDir: true,
+  },
+  images: {
+    domains: ['localhost'],
+    formats: ['image/webp', 'image/avif'],
+  },
+  // Adicione estas configurações para mobile
+  swcMinify: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+}
+
+module.exports = nextConfig
