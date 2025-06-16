@@ -1,3 +1,4 @@
+// 1. Fixed ConceptSection/index.tsx
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
@@ -123,33 +124,37 @@ export default function ConceptSection() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
+              className="animate-on-scroll relative mb-6"
             >
-              <p className="text-lg text-flex-gray mb-6 animate-on-scroll relative">
+              {/* FIXED: Changed from <p> to <div> to allow nested motion.div */}
+              <div className="text-lg text-flex-gray relative">
                 Na Flex Fitness Center, acreditamos que o verdadeiro luxo está na 
                 excelência. Nossos espaços foram projetados para proporcionar uma 
                 experiência única de treino, onde tecnologia, conforto e resultados 
                 se encontram.
                 
                 {/* Text highlight effect */}
-                <motion.span
+                <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-flex-red/10 to-flex-blue/10 -z-10"
                   initial={{ scaleX: 0 }}
                   whileInView={{ scaleX: 1 }}
                   transition={{ delay: 1, duration: 1.5 }}
                 />
-              </p>
+              </div>
             </motion.div>
             
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
+              className="animate-on-scroll mb-8"
             >
-              <p className="text-lg text-flex-gray mb-8 animate-on-scroll">
+              {/* FIXED: Changed from <p> to <div> for consistency */}
+              <div className="text-lg text-flex-gray">
                 Com equipamentos de última geração, profissionais altamente 
                 qualificados e ambientes exclusivos, transformamos cada visita 
                 em uma jornada de superação pessoal.
-              </p>
+              </div>
             </motion.div>
 
             <motion.div 
@@ -176,7 +181,7 @@ export default function ConceptSection() {
                 >
                   4
                 </motion.div>
-                <p className="text-flex-gray relative z-10">Unidades Premium</p>
+                <div className="text-flex-gray relative z-10">Unidades Premium</div>
                 
                 {/* Floating particles */}
                 <motion.div
@@ -204,7 +209,7 @@ export default function ConceptSection() {
                 >
                   50+
                 </motion.div>
-                <p className="text-flex-gray relative z-10">Modalidades</p>
+                <div className="text-flex-gray relative z-10">Modalidades</div>
                 
                 {/* Floating particles */}
                 <motion.div

@@ -1,13 +1,15 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ContactForm from './ContactForm'
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
   const sectionRef = useRef(null)
+
   
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
@@ -171,22 +173,25 @@ export default function CTASection() {
           </motion.span>
         </motion.h2>
         
-        <motion.p 
+        <motion.div 
           className="text-xl text-white/80 mb-12 max-w-3xl mx-auto animate-on-scroll relative"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
-          Agende uma visita e descubra como podemos ajudar você a alcançar seus objetivos
-          
-          {/* Text glow effect */}
-          <motion.span
-            className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent -z-10 blur-sm"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 1 }}
-          />
-        </motion.p>
+          {/* FIXED: Changed from <p> to <div> to allow nested motion.div */}
+          <div className="relative">
+            Agende uma visita e descubra como podemos ajudar você a alcançar seus objetivos
+            
+            {/* Text glow effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent -z-10 blur-sm"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 1, duration: 1 }}
+            />
+          </div>
+        </motion.div>
 
         {/* Enhanced action buttons */}
         <motion.div 
@@ -199,47 +204,6 @@ export default function CTASection() {
             whileHover={{ 
               scale: 1.05,
               boxShadow: "0 20px 40px rgba(30, 64, 175, 0.4)",
-              y: -5
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowForm(true)}
-            className="group relative bg-flex-primary text-white px-10 py-5 rounded-full font-medium text-lg transition-all duration-300 shadow-lg overflow-hidden"
-          >
-            {/* Button animation background */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
-              transition={{ duration: 0.6 }}
-            />
-            
-            {/* Pulsing ring */}
-            <motion.div
-              className="absolute inset-0 border-2 border-white/30 rounded-full"
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.5, 0.8, 0.5]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            
-            <span className="relative z-10 flex items-center gap-2">
-              Agendar Visita Gratuita
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                →
-              </motion.div>
-            </span>
-          </motion.button>
-          
-          <motion.a
-            href="https://wa.me/5562999990001"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ 
-              scale: 1.05,
-              backgroundColor: "#25D366",
-              boxShadow: "0 20px 40px rgba(37, 211, 102, 0.3)",
               y: -5
             }}
             whileTap={{ scale: 0.95 }}
@@ -263,7 +227,7 @@ export default function CTASection() {
               </motion.div>
               Falar no WhatsApp
             </span>
-          </motion.a>
+          </motion.button>
         </motion.div>
 
         {showForm && (
@@ -349,7 +313,7 @@ export default function CTASection() {
                 </motion.div>
               </motion.div>
               
-              <p className="text-white/70 relative z-10">{stat.label}</p>
+              <div className="text-white/70 relative z-10">{stat.label}</div>
               
               {/* Corner decorations */}
               <motion.div
@@ -393,9 +357,9 @@ export default function CTASection() {
             >
               💪 SUA JORNADA COMEÇA AGORA
             </motion.h3>
-            <p className="text-white/80 text-lg">
+            <div className="text-white/80 text-lg">
               Junte-se à nossa família Flex e descubra o seu potencial máximo
-            </p>
+            </div>
           </motion.div>
         </motion.div>
       </div>

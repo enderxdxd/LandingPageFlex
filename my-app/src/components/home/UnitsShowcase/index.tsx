@@ -207,26 +207,29 @@ export default function UnitsShowcase() {
             </motion.span>
           </motion.h2>
           
-          <motion.p 
+          <motion.div 
             className="text-xl text-flex-gray animate-on-scroll relative"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            Escolha a unidade mais próxima e comece sua transformação
-            
-            {/* Text highlight effect - Só no desktop */}
-            {isClient && !isMobile && (
-              <motion.span
-                className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5 -z-10 blur-sm"
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 1, duration: 1 }}
-              />
-            )}
-          </motion.p>
+            {/* FIXED: Changed from <p> to <div> to allow nested motion.div */}
+            <div className="relative">
+              Escolha a unidade mais próxima e comece sua transformação
+              
+              {/* Text highlight effect - Só no desktop */}
+              {isClient && !isMobile && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5 -z-10 blur-sm"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1, duration: 1 }}
+                />
+              )}
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* Desktop View - Enhanced Grid */}
@@ -341,9 +344,9 @@ export default function UnitsShowcase() {
             >
               🏢 MAIS UNIDADES EM BREVE
             </motion.h3>
-            <p className="text-flex-gray mb-6">
+            <div className="text-flex-gray mb-6">
               Estamos expandindo para atender você ainda melhor
-            </p>
+            </div>
             
             <motion.button
               whileHover={isClient ? { 

@@ -36,7 +36,7 @@ export default function MobileSwiper({ units }: MobileSwiperProps) {
             clickable: true,
             dynamicBullets: true,
             bulletClass: 'swiper-pagination-bullet units-bullet',
-            bulletActiveClass: 'swiper-pagination-bullet-active units-bullet-active'
+            bulletActiveClass: 'units-bullet-active'
           }}
           className="units-swiper pb-16"
           breakpoints={{

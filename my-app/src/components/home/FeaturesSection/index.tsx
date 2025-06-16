@@ -198,22 +198,25 @@ export default function FeaturesSection() {
             </motion.span>
           </motion.h2>
           
-          <motion.p 
+          <motion.div 
             className="text-xl text-flex-gray max-w-3xl mx-auto animate-on-scroll relative"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            Oferecemos uma experiência completa que vai além do treino tradicional
-            
-            {/* Text glow effect */}
-            <motion.span
-              className="absolute inset-0 bg-gradient-to-r from-flex-red/5 to-flex-blue/5 -z-10 blur-sm"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
-            />
-          </motion.p>
+            {/* FIXED: Changed from <p> to <div> to allow nested motion.div */}
+            <div className="relative">
+              Oferecemos uma experiência completa que vai além do treino tradicional
+              
+              {/* Text glow effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-flex-red/5 to-flex-blue/5 -z-10 blur-sm"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 1 }}
+              />
+            </div>
+          </motion.div>
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -316,9 +319,9 @@ export default function FeaturesSection() {
             >
               PRONTO PARA COMEÇAR?
             </motion.h3>
-            <p className="text-flex-gray mb-6">
+            <div className="text-flex-gray mb-6">
               Descubra como podemos transformar sua rotina de exercícios
-            </p>
+            </div>
             <motion.button
               whileHover={{ 
                 scale: 1.05,
