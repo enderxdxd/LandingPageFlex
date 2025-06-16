@@ -1,33 +1,44 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence, HTMLMotionProps, Variants } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { HiMenuAlt4 } from 'react-icons/hi'
 import MobileMenu from './MobileMenu'
-import { usePathname } from 'next/navigation'
 
-export default function Navigation() {
+// Componente separado que usa usePathname de forma segura
+function NavigationContent() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const pathname = usePathname()
+  const [pathname, setPathname] = useState('/')
+
+  // Inicialização segura do pathname
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setPathname(window.location.pathname)
+    }
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      if (typeof window !== 'undefined') {
+        setIsScrolled(window.scrollY > 50)
+      }
     }
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
-    window.addEventListener('scroll', handleScroll)
-    window.addEventListener('mousemove', handleMouseMove)
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('mousemove', handleMouseMove)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', handleScroll)
+      window.addEventListener('mousemove', handleMouseMove)
+      
+      return () => {
+        window.removeEventListener('scroll', handleScroll)
+        window.removeEventListener('mousemove', handleMouseMove)
+      }
     }
   }, [])
 
@@ -50,19 +61,19 @@ export default function Navigation() {
             : 'bg-transparent py-6'
         }`}
       >
-        {/* Animated background elements */}
+        {/* Animated background elements - Simplificado para mobile */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {isScrolled && (
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-flex-red/5 to-flex-blue/5"
+              className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             />
           )}
           
-          {/* Floating particles */}
-          {Array.from({ length: 3 }).map((_, i) => (
+          {/* Floating particles - Reduzido para performance mobile */}
+          {typeof window !== 'undefined' && window.innerWidth > 768 && Array.from({ length: 3 }).map((_, i) => (
             <motion.div
               key={i}
               className={`absolute w-1 h-1 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
@@ -101,7 +112,7 @@ export default function Navigation() {
             >
               FLEX FITNESS
               
-              {/* Logo animation effects */}
+              {/* Logo animation effects - Simplificado */}
               <motion.div
                 className="absolute -inset-2 bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm"
                 transition={{ duration: 0.3 }}
@@ -109,22 +120,10 @@ export default function Navigation() {
               
               {/* Underline animation */}
               <motion.div
-                className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary`}
+                className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
                 initial={{ width: 0 }}
                 whileHover={{ width: "100%" }}
                 transition={{ duration: 0.3 }}
-              />
-              
-              {/* Sparkle effects */}
-              <motion.div
-                className={`absolute -top-1 -right-1 w-2 h-2 rounded-full ${
-                  isScrolled ? 'bg-flex-primary' : 'bg-white'
-                }`}
-                animate={{
-                  scale: [0, 1, 0],
-                  opacity: [0, 1, 0]
-                }}
-                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
               />
             </motion.div>
           </Link>
@@ -189,7 +188,7 @@ export default function Navigation() {
                 transition={{ duration: 0.6 }}
               />
               
-              {/* Pulsing ring */}
+              {/* Pulsing ring - Simplificado */}
               <motion.div
                 className="absolute inset-0 border-2 border-white/30 rounded-full"
                 animate={{
@@ -219,9 +218,9 @@ export default function Navigation() {
               isScrolled ? 'text-flex-dark bg-white/80' : 'text-white bg-white/10'
             }`}
           >
-            {/* Background pulse */}
+            {/* Background pulse - Simplificado */}
             <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-flex-red/20 to-flex-blue/20"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20"
               animate={{
                 scale: [1, 1.2, 1],
                 opacity: [0.5, 0.8, 0.5]
@@ -251,8 +250,8 @@ export default function Navigation() {
         )}
       </AnimatePresence>
 
-      {/* Side Navigation Dots */}
-      {pathname === '/' && (
+      {/* Side Navigation Dots - Só mostra na home e desktop */}
+      {pathname === '/' && typeof window !== 'undefined' && window.innerWidth > 1024 && (
         <motion.div 
           className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
           initial={{ opacity: 0, x: 50 }}
@@ -313,5 +312,31 @@ export default function Navigation() {
         </motion.div>
       )}
     </>
+  )
+}
+
+// Componente principal com fallback
+export default function Navigation() {
+  return (
+    <Suspense 
+      fallback={
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg shadow-lg py-4 border-b border-gray-200/50">
+          <div className="section-padding flex items-center justify-between">
+            <div className="font-display text-3xl gradient-text">FLEX FITNESS</div>
+            <div className="lg:hidden">
+              <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+            </div>
+            <div className="hidden lg:flex items-center space-x-8">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="w-16 h-4 bg-gray-200 rounded animate-pulse" />
+              ))}
+              <div className="w-24 h-8 bg-gray-200 rounded-full animate-pulse" />
+            </div>
+          </div>
+        </nav>
+      }
+    >
+      <NavigationContent />
+    </Suspense>
   )
 }
