@@ -24,6 +24,7 @@ export default function UnitsShowcase() {
 
   return (
     <section 
+      id="units"
       ref={sectionRef}
       className="scroll-section min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 relative overflow-hidden"
     >
@@ -377,7 +378,13 @@ export default function UnitsShowcase() {
             }}
             transition={{ duration: 30, repeat: Infinity }}
           >
-            <div className="text-8xl text-flex-primary font-display">FLEX</div>
+            <div className="text-8xl text-flex-primary font-display">
+            <img 
+              src="/images/units/alphaville/flex-logo-navbar.png"
+              alt="FLEX FITNESS"
+              className="h-20 w-auto object-contain"
+            />
+            </div>
           </motion.div>
           
           <motion.div
@@ -388,7 +395,13 @@ export default function UnitsShowcase() {
             }}
             transition={{ duration: 25, repeat: Infinity }}
           >
-            <div className="text-6xl text-flex-secondary font-display">FITNESS</div>
+            <div className="text-6xl text-flex-secondary font-display">
+            <img 
+              src="/images/units/alphaville/flex-logo-navbar.png"
+              alt="FLEX FITNESS"
+              className="h-8 w-auto object-contain"
+            />
+            </div>
           </motion.div>
 
           {/* Floating location pins */}

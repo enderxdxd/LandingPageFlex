@@ -73,7 +73,7 @@ export const unitsData: Unit[] = [
       '/images/units/alphaville/recepcao.jpeg'
     ],
     heroImage: '/images/units/alphaville/hero.jpeg',
-    heroVideo: '/videos/alphaville-intro.mp4',
+    
     hasPool: false,
     hasCrossfit: true,
     area: '1.200m²',
@@ -90,13 +90,13 @@ export const unitsData: Unit[] = [
     slug: 'buena-vista',
     name: 'Buena Vista',
     description: 'Localizada em uma das regiões mais nobres de Goiânia, nossa unidade Bueno Vista oferece um ambiente sofisticado e acolhedor para seus treinos, com vista panorâmica da cidade.',
-    address: 'Rua T-25, 123 - Setor Bueno, Goiânia - GO',
-    phone: '(62) 3225-4400',
-    whatsapp: '(62) 99999-0002',
+    address: 'R. T-61, 191 - St. Bueno, Goiânia - GO, 74223-170, Brasil',
+    phone: '(62) 3515-0588',
+    whatsapp: '(62) 9244-1708',
     hours: {
-      weekdays: '05:30 - 22:30',
-      saturday: '07:00 - 20:00',
-      sunday: '08:00 - 19:00'
+      weekdays: '04:30 - 00:00',
+      saturday: '06:00 - 16:00',
+      sunday: '07:00 - 19:00'
     },
     features: [
       'Musculação Completa',
@@ -129,7 +129,7 @@ export const unitsData: Unit[] = [
     area: '950m²',
     parking: '60 vagas',
     accessibility: true,
-    landmark: 'Próximo ao Flamboyant Shopping',
+    landmark: 'Dentro do Shopping Buena-Vista',
     coordinates: {
       lat: -16.6869,
       lng: -49.2648
@@ -140,13 +140,13 @@ export const unitsData: Unit[] = [
     slug: 'marista',
     name: 'Marista',
     description: 'Nossa unidade familiar no coração do Setor Marista, projetada para oferecer conforto e praticidade para toda a família, com ambiente acolhedor e equipamentos modernos.',
-    address: 'Rua 90, 456 - Setor Marista, Goiânia - GO',
+    address: 'Av. Portugal 744 Setor Marista CEP 74150-030, Goiânia GO',
     phone: '(62) 3241-7700',
-    whatsapp: '(62) 99999-0003',
+    whatsapp: '(62) 9383-0661',
     hours: {
-      weekdays: '06:00 - 22:00',
-      saturday: '07:30 - 19:30',
-      sunday: '08:30 - 18:30'
+      weekdays: '05:00 - 00:00',
+      saturday: '06:00 - 16:00',
+      sunday: '07:00 - 14:00'
     },
     features: [
       'Musculação Completa',
@@ -177,9 +177,9 @@ export const unitsData: Unit[] = [
     ],
     heroImage: '/images/units/marista/hero.jpeg',
     area: '800m²',
-    parking: '45 vagas',
+    parking: '200+',
     accessibility: true,
-    landmark: 'Próximo à Praça do Cruzeiro',
+    landmark: 'Dentro do ASSAÍ ATACADISTA',
     coordinates: {
       lat: -16.7025,
       lng: -49.2536
@@ -190,13 +190,13 @@ export const unitsData: Unit[] = [
     slug: 'palmas',
     name: 'Palmas',
     description: 'Nossa aguardada unidade em Palmas promete revolucionar o fitness na capital do Tocantins. Com projeto arquitetônico inovador e tecnologia de última geração.',
-    address: 'Quadra 104 Norte, Av. LO 11 - Plano Diretor Norte, Palmas - TO',
-    phone: '(63) 3025-8800',
-    whatsapp: '(63) 99999-0004',
+    address: 'Q. 206 Sul Avenida Ns 4, 469 - Arse, Palmas - TO',
+    phone: '----',
+    whatsapp: '----',
     hours: {
-      weekdays: '05:00 - 23:00',
-      saturday: '07:00 - 21:00',
-      sunday: '08:00 - 20:00'
+      weekdays: '05:00 - 00:00',
+      saturday: '06:00 - 16:00',
+      sunday: '07:00 - 14:00'
     },
     features: [
       'Musculação Completa',
@@ -232,7 +232,7 @@ export const unitsData: Unit[] = [
     area: '1.500m²',
     parking: '100 vagas',
     accessibility: true,
-    landmark: 'Próximo ao Capim Dourado Shopping',
+    landmark: '',
     coordinates: {
       lat: -10.1847,
       lng: -48.3337
