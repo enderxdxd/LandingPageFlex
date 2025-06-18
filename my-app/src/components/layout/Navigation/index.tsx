@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
-import { HiMenuAlt4, HiChevronDown } from 'react-icons/hi'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
+import { HiMenuAlt4, HiChevronDown, HiClock } from 'react-icons/hi'
 import { HiMapPin } from 'react-icons/hi2'
 import MobileMenu from './MobileMenu'
-import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { useIsMobile } from '@/components/ClientOnly'
 
 // Dados das unidades
 const unidadesData = [
@@ -22,7 +22,7 @@ const unidadesData = [
     href: '/unidades/buena-vista',
     image: '/images/units/buenavista/hero.jpeg',
     address: 'Shopping Buena Vista - Av. T-4, 466 - St. Bueno, Goiânia - GO, 74230-030, Brazil',
-    description: 'Academia completa situada no shopping'
+    description: 'Unidade com vista panorâmica da cidade'
   },
   {
     name: 'Marista',
@@ -36,11 +36,43 @@ const unidadesData = [
     href: '/unidades/palmas',
     image: '/images/units/palmas/hero-projeto.jpg',
     address: 'Q. 206 Sul Avenida Ns 4, 469 - Arse, Palmas - TO',
-    description: 'Unidade com piscina semi-olimpica'
+    description: 'Em breve - Primeira Flex em Palmas'
   }
 ]
 
-// Componente do Dropdown
+// Dados dos horários (mesmas unidades, mas com links diferentes)
+const horariosData = [
+  {
+    name: 'Alphaville',
+    href: '/horarios/alphaville',
+    unitId: 'alphaville',
+    image: '/images/units/alphaville/alphaville1.jpeg',
+    description: 'Horários de funcionamento e aulas'
+  },
+  {
+    name: 'Buena Vista',
+    href: '/horarios/buena-vista',
+    unitId: 'buena-vista',
+    image: '/images/units/buenavista/hero.jpeg',
+    description: 'Horários de funcionamento e aulas'
+  },
+  {
+    name: 'Marista',
+    href: '/horarios/marista',
+    unitId: 'marista',
+    image: '/images/units/marista/hero.jpeg',
+    description: 'Horários de funcionamento e aulas'
+  },
+  {
+    name: 'Palmas',
+    href: '/horarios/palmas',
+    unitId: 'palmas',
+    image: '/images/units/palmas/hero-projeto.jpg',
+    description: 'Horários de funcionamento e aulas'
+  }
+]
+
+// Componente do Dropdown Unidades
 function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, hasMounted: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -73,13 +105,10 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
         
         {hasMounted && (
           <>
-            {/* Hover background */}
             <motion.div
               className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
               transition={{ duration: 0.2 }}
             />
-            
-            {/* Underline animation */}
             <motion.div
               className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
               initial={{ width: 0 }}
@@ -90,7 +119,6 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
         )}
       </motion.div>
 
-      {/* Dropdown Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -100,13 +128,11 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white/95 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50"
           >
-            {/* Header do dropdown */}
             <div className="p-4 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 border-b border-gray-100">
               <h3 className="font-semibold text-flex-dark text-sm">Nossas Unidades</h3>
               <p className="text-flex-gray text-xs">Escolha a mais próxima de você</p>
             </div>
 
-            {/* Lista de unidades */}
             <div className="p-2">
               {unidadesData.map((unidade, index) => (
                 <motion.div
@@ -119,7 +145,6 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
                     href={unidade.href}
                     className="group/item flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-flex-primary/5 hover:to-flex-secondary/5 transition-all duration-200"
                   >
-                    {/* Imagem da unidade */}
                     <motion.div 
                       className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0"
                       whileHover={{ scale: 1.05 }}
@@ -132,7 +157,6 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
                       <div className="absolute inset-0 bg-gradient-to-br from-flex-primary/20 to-flex-secondary/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
                     </motion.div>
 
-                    {/* Info da unidade */}
                     <div className="flex-1 min-w-0">
                       <motion.h4 
                         className="font-semibold text-flex-dark text-sm group-hover/item:text-flex-primary transition-colors duration-200"
@@ -147,7 +171,6 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
                       <p className="text-flex-gray text-xs truncate">{unidade.description}</p>
                     </div>
 
-                    {/* Arrow indicator */}
                     <motion.div
                       className="text-flex-gray group-hover/item:text-flex-primary transition-colors duration-200"
                       whileHover={{ x: 2 }}
@@ -161,7 +184,6 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
               ))}
             </div>
 
-            {/* Footer do dropdown */}
             <motion.div 
               className="p-3 bg-gray-50/50 border-t border-gray-100"
               initial={{ opacity: 0 }}
@@ -191,21 +213,171 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
   )
 }
 
+// Componente do Dropdown Horários
+function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, hasMounted: boolean }) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div 
+      className="relative group"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <motion.div
+        className={`relative flex items-center gap-1 cursor-pointer ${
+          hasMounted && isScrolled
+            ? 'text-flex-dark hover:text-flex-primary' 
+            : 'text-white hover:text-flex-primary'
+        } transition-colors duration-300 font-medium`}
+      >
+        <motion.span
+          whileHover={{ y: -2 }}
+          className="relative z-10"
+        >
+          Horários
+        </motion.span>
+        
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <HiChevronDown className="text-sm" />
+        </motion.div>
+        
+        {hasMounted && (
+          <>
+            <motion.div
+              className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
+              transition={{ duration: 0.2 }}
+            />
+            <motion.div
+              className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+              initial={{ width: 0 }}
+              animate={{ width: isOpen ? "100%" : "0%" }}
+              transition={{ duration: 0.3 }}
+            />
+          </>
+        )}
+      </motion.div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white/95 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+          >
+            <div className="p-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <HiClock className="text-orange-500 text-lg" />
+                <div>
+                  <h3 className="font-semibold text-flex-dark text-sm">Horários de Funcionamento</h3>
+                  <p className="text-flex-gray text-xs">Consulte os horários por unidade</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-2">
+              {horariosData.map((horario, index) => (
+                <motion.div
+                  key={horario.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.2 }}
+                >
+                  <Link
+                    href={horario.href}
+                    className="group/item flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-orange-500/5 hover:to-amber-500/5 transition-all duration-200"
+                  >
+                    <motion.div 
+                      className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <img
+                        src={horario.image}
+                        alt={horario.name}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
+                      
+                      {/* Ícone de relógio sobreposto */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <HiClock className="text-white text-lg drop-shadow-lg opacity-80" />
+                      </div>
+                    </motion.div>
+
+                    <div className="flex-1 min-w-0">
+                      <motion.h4 
+                        className="font-semibold text-flex-dark text-sm group-hover/item:text-orange-600 transition-colors duration-200"
+                        whileHover={{ x: 2 }}
+                      >
+                        {horario.name}
+                      </motion.h4>
+                      <p className="text-flex-gray text-xs truncate">{horario.description}</p>
+                      <div className="flex items-center gap-1 text-orange-600 text-xs mt-1">
+                        <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+                        <span>Horários atualizados</span>
+                      </div>
+                    </div>
+
+                    <motion.div
+                      className="text-flex-gray group-hover/item:text-orange-600 transition-colors duration-200"
+                      whileHover={{ x: 2 }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div 
+              className="p-3 bg-gray-50/50 border-t border-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Link
+                href="/admin"
+                className="group/footer flex items-center justify-center gap-2 text-orange-600 hover:text-amber-600 font-medium text-sm transition-colors duration-200"
+              >
+                <span>Administrar horários</span>
+                <motion.svg 
+                  className="w-4 h-4"
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  whileHover={{ x: 2 }}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </motion.svg>
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 // Componente separado que usa usePathname de forma segura
 function NavigationContent() {
-  const { isMobile, isTablet } = useMobileOptimization();
+  const isMobile = useIsMobile();
+  const isTablet = typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false;
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [pathname, setPathname] = useState('/')
   const [hasMounted, setHasMounted] = useState(false);
 
-  // Set hasMounted to true after first render on client
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  // Inicialização segura do pathname
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setPathname(window.location.pathname)
@@ -236,7 +408,6 @@ function NavigationContent() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '#modalidades', label: 'Modalidades' },
     { href: '#contato', label: 'Contato' }
   ]
 
@@ -252,7 +423,6 @@ function NavigationContent() {
             : 'bg-transparent py-6'
         }`}
       >
-        {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {hasMounted && isScrolled && (
             <motion.div
@@ -263,7 +433,6 @@ function NavigationContent() {
             />
           )}
           
-          {/* Floating particles */}
           {hasMounted && !isTablet && !isMobile && Array.from({ length: 3 }).map((_, i) => (
             <motion.div
               key={i}
@@ -307,13 +476,10 @@ function NavigationContent() {
               
               {hasMounted && (
                 <>
-                  {/* Logo animation effects */}
                   <motion.div
                     className="absolute -inset-2 bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm"
                     transition={{ duration: 0.3 }}
                   />
-                  
-                  {/* Underline animation */}
                   <motion.div
                     className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
                     initial={{ width: 0 }}
@@ -364,7 +530,6 @@ function NavigationContent() {
                 )}
               </Link>
             </motion.div>
-
             {/* Dropdown Unidades */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -374,46 +539,54 @@ function NavigationContent() {
               <UnidadesDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
             </motion.div>
 
-            {/* Outros links */}
-            {navLinks.slice(1).map((link, index) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, y: -20 }}
-                animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-                transition={{ delay: (index + 2) * 0.1, duration: 0.5 }}
+            {/* Dropdown Horários */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <HorariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
+            </motion.div>
+
+            {/* Contato */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
+              <Link
+                href="#contato"
+                className={`relative group ${
+                  hasMounted && isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-medium`}
               >
-                <Link
-                  href={link.href}
-                  className={`relative group ${
-                    hasMounted && isScrolled
-                      ? 'text-flex-dark hover:text-flex-primary' 
-                      : 'text-white hover:text-flex-primary'
-                  } transition-colors duration-300 font-medium`}
+                <motion.span
+                  whileHover={{ y: -2 }}
+                  className="relative z-10"
                 >
-                  <motion.span
-                    whileHover={{ y: -2 }}
-                    className="relative z-10"
-                  >
-                    {link.label}
-                  </motion.span>
-                  
-                  {hasMounted && (
-                    <>
-                      <motion.div
-                        className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-                        transition={{ duration: 0.2 }}
-                      />
-                      <motion.div
-                        className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                        initial={{ width: 0 }}
-                        whileHover={{ width: "100%" }}
-                        transition={{ duration: 0.3 }}
-                      />
-                    </>
-                  )}
-                </Link>
-              </motion.div>
-            ))}
+                  Contato
+                </motion.span>
+                
+                {hasMounted && (
+                  <>
+                    <motion.div
+                      className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
+                      transition={{ duration: 0.2 }}
+                    />
+                    <motion.div
+                      className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+                      initial={{ width: 0 }}
+                      whileHover={{ width: "100%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </>
+                )}
+              </Link>
+            </motion.div>
+            
+           
             
             {/* CTA Button */}
             <motion.button

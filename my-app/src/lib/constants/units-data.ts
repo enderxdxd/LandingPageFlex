@@ -39,7 +39,7 @@ export const unitsData: Unit[] = [
     description: 'Nossa unidade mais completa, localizada no coração de Alphaville. Equipada com tecnologia de ponta e oferecendo uma experiência premium de fitness, incluindo nossa exclusiva área de CrossFit.',
     address: 'Av. Alphaville Flamboyant - S/N - Quadra 05 - Lote 05 e 06 - Res. Alphaville Flamboyant, Goiânia - GO, 74884-527, Brazil',
     phone: '+55 62 3414-7330',
-    whatsapp: '(62) 99999-0001',
+    whatsapp: '(62) 9537-8033',
     hours: {
       weekdays: '05:00 - 23:00',
       saturday: '07:00 - 16:00',
