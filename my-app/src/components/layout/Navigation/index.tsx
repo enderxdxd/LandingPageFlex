@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
-import { HiMenuAlt4, HiChevronDown, HiClock } from 'react-icons/hi'
+import { HiMenuAlt4, HiChevronDown, HiClock, HiDocumentText } from 'react-icons/hi'
 import { HiMapPin } from 'react-icons/hi2'
 import MobileMenu from './MobileMenu'
 import { useIsMobile } from '@/components/ClientOnly'
@@ -69,6 +69,28 @@ const horariosData = [
     unitId: 'palmas',
     image: '/images/units/palmas/hero-projeto.jpg',
     description: 'Horários de funcionamento e aulas'
+  }
+]
+
+// Dados dos formulários
+const formulariosData = [
+  {
+    name: 'Procedimentos',
+    href: '/procedimentos',
+    icon: '📋',
+    description: 'Consulte nossos procedimentos e normas'
+  },
+  {
+    name: 'Sugestões',
+    href: '/sugestoes',
+    icon: '💡',
+    description: 'Envie suas sugestões e feedback'
+  },
+  {
+    name: 'Trabalhe Aqui',
+    href: '/trabalhe-aqui',
+    icon: '👥',
+    description: 'Faça parte da nossa equipe'
   }
 ]
 
@@ -335,28 +357,7 @@ function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
               ))}
             </div>
 
-            <motion.div 
-              className="p-3 bg-gray-50/50 border-t border-gray-100"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Link
-                href="/admin"
-                className="group/footer flex items-center justify-center gap-2 text-orange-600 hover:text-amber-600 font-medium text-sm transition-colors duration-200"
-              >
-                <span>Administrar horários</span>
-                <motion.svg 
-                  className="w-4 h-4"
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  whileHover={{ x: 2 }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </motion.svg>
-              </Link>
-            </motion.div>
+            
           </motion.div>
         )}
       </AnimatePresence>
@@ -364,6 +365,135 @@ function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
   )
 }
 
+// Componente do Dropdown Formulários
+function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, hasMounted: boolean }) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <div 
+      className="relative group"
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <motion.div
+        className={`relative flex items-center gap-1 cursor-pointer ${
+          hasMounted && isScrolled
+            ? 'text-flex-dark hover:text-flex-primary' 
+            : 'text-white hover:text-flex-primary'
+        } transition-colors duration-300 font-medium`}
+      >
+        <motion.span
+          whileHover={{ y: -2 }}
+          className="relative z-10"
+        >
+          Formulários
+        </motion.span>
+        
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <HiChevronDown className="text-sm" />
+        </motion.div>
+        
+        {hasMounted && (
+          <>
+            <motion.div
+              className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
+              transition={{ duration: 0.2 }}
+            />
+            <motion.div
+              className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+              initial={{ width: 0 }}
+              animate={{ width: isOpen ? "100%" : "0%" }}
+              transition={{ duration: 0.3 }}
+            />
+          </>
+        )}
+      </motion.div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white/95 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+          >
+            <div className="p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <HiDocumentText className="text-green-500 text-lg" />
+                <div>
+                  <h3 className="font-semibold text-flex-dark text-sm">Formulários</h3>
+                  <p className="text-flex-gray text-xs">Acesse nossos formulários online</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-2">
+              {formulariosData.map((formulario, index) => (
+                <motion.div
+                  key={formulario.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.2 }}
+                >
+                  <Link
+                    href={formulario.href}
+                    className="group/item flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-green-500/5 hover:to-emerald-500/5 transition-all duration-200"
+                  >
+                    <motion.div 
+                      className="relative w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <span className="text-2xl">{formulario.icon}</span>
+                      <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 rounded-lg" />
+                    </motion.div>
+
+                    <div className="flex-1 min-w-0">
+                      <motion.h4 
+                        className="font-semibold text-flex-dark text-sm group-hover/item:text-green-600 transition-colors duration-200"
+                        whileHover={{ x: 2 }}
+                      >
+                        {formulario.name}
+                      </motion.h4>
+                      <p className="text-flex-gray text-xs truncate">{formulario.description}</p>
+                      <div className="flex items-center gap-1 text-green-600 text-xs mt-1">
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span>Online</span>
+                      </div>
+                    </div>
+
+                    <motion.div
+                      className="text-flex-gray group-hover/item:text-green-600 transition-colors duration-200"
+                      whileHover={{ x: 2 }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </motion.div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div 
+              className="p-3 bg-gray-50/50 border-t border-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="text-center text-xs text-gray-500">
+                Preencha nossos formulários online de forma rápida e segura
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 // Componente separado que usa usePathname de forma segura
 function NavigationContent() {
   const isMobile = useIsMobile();
@@ -546,6 +676,14 @@ function NavigationContent() {
               transition={{ delay: 0.2, duration: 0.5 }}
             >
               <HorariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
+            </motion.div>
+            {/* Dropdown formularios */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
             </motion.div>
 
             {/* Contato */}

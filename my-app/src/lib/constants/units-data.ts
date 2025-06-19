@@ -70,7 +70,22 @@ export const unitsData: Unit[] = [
       '/images/units/alphaville/cardio.jpeg',
       '/images/units/alphaville/vestiarios.jpeg',
       '/images/units/alphaville/aulas-coletivas.jpeg',
-      '/images/units/alphaville/recepcao.jpeg'
+      '/images/units/alphaville/recepcao.jpeg',
+      '/images/units/alphaville/alphaville1.jpeg',
+      '/images/units/alphaville/hero.jpeg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_001.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_003.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_023.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_027.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_030.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_035.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_047.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_055.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_064.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_065.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_084.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_093.jpg',
+      '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_158.jpg'
     ],
     heroImage: '/images/units/alphaville/hero.jpeg',
     
