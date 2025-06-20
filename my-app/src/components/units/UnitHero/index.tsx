@@ -152,16 +152,7 @@ export default function UnitHero({ unit }: UnitHeroProps) {
               </div>
             </motion.a>
             
-            <motion.div
-              whileHover={{ scale: 1.02, y: -5 }}
-              className="glass-effect p-4 rounded-xl flex items-center gap-3 backdrop-blur-md"
-            >
-              <HiOfficeBuilding className="text-2xl text-flex-primary flex-shrink-0" />
-              <div>
-                <p className="text-sm text-flex-light/60">Área Total</p>
-                <p className="text-flex-light">{unit.area}</p>
-              </div>
-            </motion.div>
+            
           </div>
 
           {/* Additional info */}

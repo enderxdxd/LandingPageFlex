@@ -12,12 +12,7 @@ interface UnitGalleryProps {
 
 const galleryCategories = [
   { id: 'all', label: 'Todas', icon: '🏢' },
-  { id: 'musculacao', label: 'Musculação', icon: '💪' },
-  { id: 'cardio', label: 'Cardio', icon: '🏃' },
-  { id: 'vestiarios', label: 'Vestiários', icon: '🚿' },
-  { id: 'recepcao', label: 'Recepção', icon: '🏬' },
-  { id: 'crossfit', label: 'CrossFit', icon: '🏋️' },
-  { id: 'piscina', label: 'Piscina', icon: '🏊' }
+
 ]
 
 export default function UnitGallery({ unit }: UnitGalleryProps) {

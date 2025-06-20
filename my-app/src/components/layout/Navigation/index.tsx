@@ -7,6 +7,7 @@ import { HiMenuAlt4, HiChevronDown, HiClock, HiDocumentText } from 'react-icons/
 import { HiMapPin } from 'react-icons/hi2'
 import MobileMenu from './MobileMenu'
 import { useIsMobile } from '@/components/ClientOnly'
+import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
 
 // Dados das unidades
 const unidadesData = [
@@ -503,6 +504,7 @@ function NavigationContent() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [pathname, setPathname] = useState('/')
   const [hasMounted, setHasMounted] = useState(false);
+  const [isWhatsAppSelectorOpen, setIsWhatsAppSelectorOpen] = useState(false)
 
   useEffect(() => {
     setHasMounted(true);
@@ -538,7 +540,6 @@ function NavigationContent() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '#contato', label: 'Contato' }
   ]
 
   return (
@@ -685,44 +686,6 @@ function NavigationContent() {
             >
               <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
             </motion.div>
-
-            {/* Contato */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              <Link
-                href="#contato"
-                className={`relative group ${
-                  hasMounted && isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
-              >
-                <motion.span
-                  whileHover={{ y: -2 }}
-                  className="relative z-10"
-                >
-                  Contato
-                </motion.span>
-                
-                {hasMounted && (
-                  <>
-                    <motion.div
-                      className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-                      transition={{ duration: 0.2 }}
-                    />
-                    <motion.div
-                      className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                      initial={{ width: 0 }}
-                      whileHover={{ width: "100%" }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </>
-                )}
-              </Link>
-            </motion.div>
             
            
             
@@ -738,6 +701,8 @@ function NavigationContent() {
               }}
               whileTap={{ scale: 0.95 }}
               className="group relative gradient-bg text-white px-6 py-2 rounded-full font-medium transition-all duration-300 overflow-hidden"
+              type="button"
+              onClick={() => setIsWhatsAppSelectorOpen(true)}
             >
               {hasMounted && (
                 <>
@@ -755,7 +720,7 @@ function NavigationContent() {
                   />
                 </>
               )}
-              <span className="relative z-10">Agendar Visita</span>
+              <span className="relative z-10">Entre em Contato</span>
             </motion.button>
           </div>
 
@@ -865,6 +830,7 @@ function NavigationContent() {
           />
         </motion.div>
       )}
+      <WhatsAppUnitSelector isOpen={isWhatsAppSelectorOpen} onClose={() => setIsWhatsAppSelectorOpen(false)} />
     </>
   )
 }

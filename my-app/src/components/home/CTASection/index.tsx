@@ -1,14 +1,14 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import ContactForm from './ContactForm'
+import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
+  const [showWhatsAppSelector, setShowWhatsAppSelector] = useState(false)
   const sectionRef = useRef(null)
-
-  
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -179,7 +179,6 @@ export default function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
-          {/* FIXED: Changed from <p> to <div> to allow nested motion.div */}
           <div className="relative">
             Agende uma visita e descubra como podemos ajudar você a alcançar seus objetivos
             
@@ -200,14 +199,16 @@ export default function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
+          {/* WhatsApp Button - Agora abre o seletor de unidades */}
           <motion.button
+            onClick={() => setShowWhatsAppSelector(true)}
             whileHover={{ 
               scale: 1.05,
-              boxShadow: "0 20px 40px rgba(30, 64, 175, 0.4)",
+              boxShadow: "0 20px 40px rgba(34, 197, 94, 0.4)",
               y: -5
             }}
             whileTap={{ scale: 0.95 }}
-            className="group relative bg-white text-flex-secondary px-10 py-5 rounded-full font-medium text-lg transition-all duration-300 inline-flex items-center justify-center shadow-lg overflow-hidden border-2 border-transparent hover:border-white/20"
+            className="group relative bg-white text-green-600 px-10 py-5 rounded-full font-medium text-lg transition-all duration-300 inline-flex items-center justify-center shadow-lg overflow-hidden border-2 border-transparent hover:border-white/20"
           >
             {/* WhatsApp icon animation */}
             <motion.div
@@ -230,8 +231,17 @@ export default function CTASection() {
           </motion.button>
         </motion.div>
 
+        {/* Modals */}
         {showForm && (
           <ContactForm onClose={() => setShowForm(false)} />
+        )}
+
+        {showWhatsAppSelector && (
+          <WhatsAppUnitSelector 
+            isOpen={showWhatsAppSelector}
+            onClose={() => setShowWhatsAppSelector(false)}
+            message="Olá! Gostaria de conhecer a academia e saber mais sobre os planos disponíveis."
+          />
         )}
 
         {/* Enhanced stats section */}
@@ -244,7 +254,7 @@ export default function CTASection() {
           {[
             { value: "5.000+", label: "Alunos Ativos", color: "primary", icon: "👥" },
             { value: "98%", label: "Satisfação", color: "white", icon: "⭐" },
-            { value: "10+", label: "Anos de Excelência", color: "primary", icon: "🏆" }
+            { value: "30+", label: "Anos de Excelência", color: "primary", icon: "🏆" }
           ].map((stat, index) => (
             <motion.div 
               key={index}

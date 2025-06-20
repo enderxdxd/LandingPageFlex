@@ -164,21 +164,7 @@ export default function HeroClean() {
             <span className="relative z-10">Conheça Nossas Unidades</span>
           </motion.button>
           
-          <motion.button
-            whileHover={{ 
-              scale: 1.05,
-              backgroundColor: "rgba(255, 255, 255, 1)",
-              color: "rgb(37, 99, 235)",
-            }}
-            whileTap={{ scale: 0.98 }}
-            className="group relative bg-transparent text-white border-2 border-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 backdrop-blur-sm"
-          >
-            <motion.div
-              className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-left rounded-full"
-              transition={{ duration: 0.3 }}
-            />
-            <span className="relative z-10">Agendar Visita</span>
-          </motion.button>
+          
         </motion.div>
 
         {/* Stats menores */}

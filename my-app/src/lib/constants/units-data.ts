@@ -29,6 +29,7 @@ export interface Unit {
     lat: number
     lng: number
   }
+  instagram: string
 }
 
 export const unitsData: Unit[] = [
@@ -88,11 +89,11 @@ export const unitsData: Unit[] = [
       '/images/units/alphaville/Flex_Alphaville_by_NelsonPacheco_158.jpg'
     ],
     heroImage: '/images/units/alphaville/hero.jpeg',
-    
+    instagram: 'https://www.instagram.com/flexfitnesscenter/',
     hasPool: false,
     hasCrossfit: true,
     area: '1.200m²',
-    parking: '120 vagas',
+    parking: '80+ vagas',
     accessibility: true,
     landmark: 'Próximo ao AlphaPark Hotel',
     coordinates: {
@@ -133,16 +134,31 @@ export const unitsData: Unit[] = [
       'Aulas ao Ar Livre'
     ],
     images: [
-      '/images/units/buenavista/area-musculacao.jpg',
-      '/images/units/buenavista/terraco.jpg',
-      '/images/units/buenavista/cardio.jpg',
-      '/images/units/buenavista/vestiarios.jpg',
-      '/images/units/buenavista/recepcao.jpg',
-      '/images/units/buenavista/vista-cidade.jpg'
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_001.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_005.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_006.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_012.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_021.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_025.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_028.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_029.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_033.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_034.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_039.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_042.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_044.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_056.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_069.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_094.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_099.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_121.jpg',
+      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_156.jpg',
+      '/images/units/buenavista/hero.jpeg'
     ],
     heroImage: '/images/units/buenavista/hero.jpeg',
+    instagram: 'https://www.instagram.com/flexfitnesscenter/',
     area: '950m²',
-    parking: '60 vagas',
+    parking: '100+ vagas',
     accessibility: true,
     landmark: 'Dentro do Shopping Buena-Vista',
     coordinates: {
@@ -183,16 +199,41 @@ export const unitsData: Unit[] = [
       'Horários Flexíveis'
     ],
     images: [
-      '/images/units/marista/area-musculacao.jpg',
-      '/images/units/marista/kids-space.jpg',
-      '/images/units/marista/cardio.jpg',
-      '/images/units/marista/vestiarios.jpg',
-      '/images/units/marista/aulas-coletivas.jpg',
-      '/images/units/marista/recepcao.jpg'
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_002.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_008.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_009.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_015.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_019.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_022.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_023.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_024.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_030.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_032.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_034.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_038.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_041.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_044.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_050.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_054.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_055.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_058.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_060.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_061.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_062.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_065.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_068.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_078.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_119.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_121.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_123.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_136.jpg',
+      '/images/units/marista/Flex_Marista_by_NelsonPacheco_145.jpg',
+      '/images/units/marista/hero.jpeg'
     ],
     heroImage: '/images/units/marista/hero.jpeg',
+    instagram: 'https://www.instagram.com/flexfitnesscenter/',
     area: '800m²',
-    parking: '200+',
+    parking: '150+',
     accessibility: true,
     landmark: 'Dentro do ASSAÍ ATACADISTA',
     coordinates: {
@@ -242,6 +283,7 @@ export const unitsData: Unit[] = [
       '/images/units/palmas/projeto-externa.jpg'
     ],
     heroImage: '/images/units/palmas/hero-projeto.jpg',
+    instagram: 'https://www.instagram.com/flexfitnesscenter/',
     comingSoon: true,
     hasPool: true,
     area: '1.500m²',

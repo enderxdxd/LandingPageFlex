@@ -3,8 +3,40 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Unit } from '@/types/unit.types'
+// Interface atualizada baseada no units-data.ts
+interface Unit {
+  id: string
+  slug: string
+  name: string
+  description: string
+  address: string
+  phone: string
+  whatsapp: string
+  hours: {
+    weekdays: string
+    saturday: string
+    sunday: string
+  }
+  features: string[]
+  specialFeatures?: string[]
+  images: string[]
+  heroImage: string
+  heroVideo?: string
+  comingSoon?: boolean
+  hasPool?: boolean
+  hasCrossfit?: boolean
+  area: string
+  parking: string
+  accessibility: boolean
+  metro?: string
+  landmark: string
+  coordinates: {
+    lat: number
+    lng: number
+  }
+}
 import { HiLocationMarker, HiArrowRight } from 'react-icons/hi'
+import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
@@ -60,7 +92,6 @@ export default function OptimizedUnitCard({
     const img = document.createElement('img')
     img.onload = () => {
       setImageLoaded(true)
-      // Trigger suave de entrada
       if (imageRef.current) {
         imageRef.current.style.opacity = '1'
       }
@@ -77,11 +108,29 @@ export default function OptimizedUnitCard({
     triggerHaptic('light')
   }, [triggerHaptic])
 
-  const handleCardHover = useCallback(() => {
-    if (!isMobile) {
-      triggerHaptic('light')
-    }
-  }, [isMobile, triggerHaptic])
+  const handleSocialClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    triggerHaptic('medium')
+  }, [triggerHaptic])
+
+  // Função para abrir Instagram
+  const handleInstagramClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    triggerHaptic('medium')
+    window.open('https://www.instagram.com/flexfitnesscenter/', '_blank', 'noopener,noreferrer')
+  }, [triggerHaptic])
+
+  // Função para abrir WhatsApp
+  const handleWhatsAppClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    triggerHaptic('medium')
+    const phoneNumber = unit.whatsapp.replace(/\D/g, '')
+    const whatsappUrl = `https://wa.me/55${phoneNumber}?text=${encodeURIComponent(`Olá! Gostaria de conhecer a unidade ${unit.name} da Flex Fitness.`)}`
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+  }, [triggerHaptic, unit.whatsapp, unit.name])
 
   // Variantes de animação otimizadas
   const cardVariants = {
@@ -127,13 +176,46 @@ export default function OptimizedUnitCard({
       animate="visible"
       whileHover={!isMobile ? "hover" : undefined}
       whileTap={isMobile ? "tap" : undefined}
-      onHoverStart={handleCardHover}
       className="relative group cursor-pointer"
       style={{ 
         willChange: config.performance.enableGPU ? 'transform' : 'auto',
-        transform: 'translateZ(0)' // Force GPU acceleration
+        transform: 'translateZ(0)'
       }}
     >
+      {/* Social Media Links - FORA DO LINK, POSICIONADOS ABSOLUTAMENTE */}
+      <div className="absolute top-4 left-4 flex gap-2 z-30">
+        {/* Instagram Link - SEMPRE VISÍVEL para todas as unidades */}
+        <motion.button
+          onClick={handleInstagramClick}
+          className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-full p-2.5 text-white hover:bg-white/30 transition-all duration-300 group/social shadow-lg"
+          whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.4)" }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          title="Seguir no Instagram"
+        >
+          <FaInstagram className="text-lg group-hover/social:text-pink-400 transition-colors" />
+        </motion.button>
+
+        {/* WhatsApp Link - Só aparece se tiver WhatsApp válido */}
+        {unit.whatsapp && unit.whatsapp !== '----' && !unit.comingSoon && (
+          <motion.button
+            onClick={handleWhatsAppClick}
+            className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-full p-2.5 text-white hover:bg-white/30 transition-all duration-300 group/social shadow-lg"
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.4)" }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            title={`WhatsApp da unidade ${unit.name}`}
+          >
+            <FaWhatsapp className="text-lg group-hover/social:text-green-400 transition-colors" />
+          </motion.button>
+        )}
+      </div>
+
+      {/* Link do Card - SEM os botões sociais dentro */}
       <Link 
         href={`/unidades/${unit.slug}`}
         onClick={handleCardClick}
@@ -281,7 +363,7 @@ export default function OptimizedUnitCard({
 
       {/* Performance monitor (dev only) */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="absolute top-0 left-0 bg-black/50 text-white text-xs p-1 rounded">
+        <div className="absolute bottom-0 right-0 bg-black/50 text-white text-xs p-1 rounded">
           {imageLoaded ? '✓' : '⏳'} 
           {config.performance.enableGPU ? ' GPU' : ' CPU'}
         </div>
