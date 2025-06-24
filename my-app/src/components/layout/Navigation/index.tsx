@@ -607,16 +607,16 @@ function NavigationContent() {
               
               {hasMounted && (
                 <>
-                  <motion.div
-                    className="absolute -inset-2 bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm"
-                    transition={{ duration: 0.3 }}
-                  />
-                  <motion.div
-                    className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                    initial={{ width: 0 }}
-                    whileHover={{ width: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
+              <motion.div
+                className="absolute -inset-2 bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm"
+                transition={{ duration: 0.3 }}
+              />
+              <motion.div
+                className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+                initial={{ width: 0 }}
+                whileHover={{ width: "100%" }}
+                transition={{ duration: 0.3 }}
+              />
                 </>
               )}
             </motion.div>
@@ -625,42 +625,42 @@ function NavigationContent() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             {/* Home */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
               animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
               transition={{ delay: 0, duration: 0.5 }}
-            >
-              <Link
-                href="/"
-                className={`relative group ${
-                  hasMounted && isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
               >
-                <motion.span
-                  whileHover={{ y: -2 }}
-                  className="relative z-10"
+                <Link
+                href="/"
+                  className={`relative group ${
+                  hasMounted && isScrolled
+                      ? 'text-flex-dark hover:text-flex-primary' 
+                      : 'text-white hover:text-flex-primary'
+                  } transition-colors duration-300 font-medium`}
                 >
+                  <motion.span
+                    whileHover={{ y: -2 }}
+                    className="relative z-10"
+                  >
                   Home
-                </motion.span>
-                
+                  </motion.span>
+                  
                 {hasMounted && (
                   <>
-                    <motion.div
-                      className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-                      transition={{ duration: 0.2 }}
-                    />
-                    <motion.div
-                      className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                      initial={{ width: 0 }}
-                      whileHover={{ width: "100%" }}
-                      transition={{ duration: 0.3 }}
-                    />
+                  <motion.div
+                    className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
+                    transition={{ duration: 0.2 }}
+                  />
+                  <motion.div
+                    className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+                    initial={{ width: 0 }}
+                    whileHover={{ width: "100%" }}
+                    transition={{ duration: 0.3 }}
+                  />
                   </>
                 )}
-              </Link>
-            </motion.div>
+                </Link>
+              </motion.div>
             {/* Dropdown Unidades */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
@@ -706,18 +706,18 @@ function NavigationContent() {
             >
               {hasMounted && (
                 <>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
-                    transition={{ duration: 0.6 }}
-                  />
-                  <motion.div
-                    className="absolute inset-0 border-2 border-white/30 rounded-full"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: [0.5, 0.8, 0.5]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
+                transition={{ duration: 0.6 }}
+              />
+              <motion.div
+                className="absolute inset-0 border-2 border-white/30 rounded-full"
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: [0.5, 0.8, 0.5]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
                 </>
               )}
               <span className="relative z-10">Entre em Contato</span>
@@ -741,14 +741,14 @@ function NavigationContent() {
             }`}
           >
             {hasMounted && (
-              <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 0.8, 0.5]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
+            <motion.div
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 0.8, 0.5]
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
             )}
             <HiMenuAlt4 className="relative z-10" />
           </motion.button>

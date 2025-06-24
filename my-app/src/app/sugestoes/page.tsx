@@ -4,14 +4,10 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
-import { HiLightBulb, HiCamera, HiCheck, HiExclamationCircle, HiChevronDown } from 'react-icons/hi'
+import { HiLightBulb, HiCamera, HiCheck, HiExclamationCircle, HiChevronDown, HiX } from 'react-icons/hi'
 import { AnimatePresence } from 'framer-motion'
-import emailjs from '@emailjs/browser'
 
-// Configurar EmailJS
-emailjs.init("YOUR_PUBLIC_KEY") // Substitua pela sua chave pública
-
-// CustomSelect Component
+// CustomSelect Component (mesmo do anterior)
 interface Option {
   value: string
   label: string
@@ -57,7 +53,7 @@ function CustomSelect({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-left text-flex-light focus:ring-2 focus:ring-flex-primary focus:border-transparent transition-all duration-200 ${
+          className={`w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-left text-flex-light focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all duration-200 ${
             error ? 'border-red-400' : ''
           }`}
         >
@@ -123,31 +119,83 @@ function CustomSelect({
   )
 }
 
+// Tipagem
 type SugData = {
   nome: string
-  celular: string
+  telefone: string
+  email?: string
   sou: string
-  flex: string
+  qual_flex: string
   sugestao: string
-  fotos?: FileList
+}
+
+// Mapas de valores para labels
+const souLabels: Record<string, string> = {
+  'aluno': 'Aluno(a) da Flex',
+  'ex-aluno': 'Ex-aluno(a)',
+  'visitante': 'Visitante',
+  'funcionario': 'Funcionário(a)',
+  'fornecedor': 'Fornecedor/Parceiro',
+  'familiar': 'Familiar de aluno',
+  'outro': 'Outro'
+}
+
+const flexLabels: Record<string, string> = {
+  'marista': 'Flex Fitness Marista',
+  'buena-vista': 'Flex Fitness Buena Vista',
+  'alphaville': 'Flex Fitness Alphaville',
+  'palmas': 'Flex Fitness Palmas (Em breve)',
+  'geral': 'Sugestão Geral'
 }
 
 export default function Sugestoes() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [fotosSelecionadas, setFotosSelecionadas] = useState<File[]>([])
+  
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<SugData>()
 
-  const convertFilesToBase64 = async (files: FileList): Promise<string[]> => {
-    const promises = Array.from(files).map(file => {
-      return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = error => reject(error)
-      })
+  // Função para converter arquivos para base64
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = error => reject(error)
     })
-    return Promise.all(promises)
+  }
+
+  // Lidar com seleção de fotos
+  const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    
+    // Validar quantidade máxima
+    if (fotosSelecionadas.length + files.length > 5) {
+      setSubmitError('Máximo 5 fotos permitidas')
+      return
+    }
+
+    // Validar tamanho e tipo de cada arquivo
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB
+        setSubmitError(`Arquivo ${file.name} é muito grande. Máximo 5MB por foto.`)
+        return
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        setSubmitError(`Arquivo ${file.name} não é uma imagem válida.`)
+        return
+      }
+    }
+
+    setFotosSelecionadas(prev => [...prev, ...files])
+    setSubmitError(null)
+  }
+
+  // Remover foto
+  const removerFoto = (index: number) => {
+    setFotosSelecionadas(prev => prev.filter((_, i) => i !== index))
   }
 
   async function onSubmit(data: SugData) {
@@ -155,41 +203,70 @@ export default function Sugestoes() {
     setSubmitError(null)
 
     try {
+      // Validações obrigatórias
+      if (!data.sou) {
+        setSubmitError('Por favor, selecione quem você é')
+        return
+      }
+      if (!data.qual_flex) {
+        setSubmitError('Por favor, selecione para qual Flex é a sugestão')
+        return
+      }
+
+      // Processar fotos se existirem
       let fotosBase64: string[] = []
       let nomesFotos: string[] = []
 
-      if (data.fotos && data.fotos.length > 0) {
-        fotosBase64 = await convertFilesToBase64(data.fotos)
-        nomesFotos = Array.from(data.fotos).map(file => file.name)
+      if (fotosSelecionadas.length > 0) {
+        try {
+          fotosBase64 = await Promise.all(
+            fotosSelecionadas.map(foto => convertFileToBase64(foto))
+          )
+          nomesFotos = fotosSelecionadas.map(foto => foto.name)
+        } catch (error) {
+          setSubmitError('Erro ao processar as fotos. Tente novamente.')
+          return
+        }
       }
 
-      const templateParams = {
-        to_email: 'henriquepcosta@hotmail.com',
-        from_name: data.nome,
-        celular: data.celular,
-        sou: data.sou,
-        flex: data.flex,
+      // Dados para envio
+      const dadosEnvio = {
+        nome: data.nome,
+        telefone: data.telefone,
+        email: data.email, // Opcional
+        sou: souLabels[data.sou] || data.sou,
+        qual_flex: flexLabels[data.qual_flex] || data.qual_flex, // Nome completo para exibição
+        codigo_flex: data.qual_flex, // Código para filtro de email
         sugestao: data.sugestao,
-        fotos: fotosBase64.join('|||'),
-        nomes_fotos: nomesFotos.join(', '),
-        quantidade_fotos: fotosBase64.length,
-        data_sugestao: new Date().toLocaleString('pt-BR'),
-        reply_to: data.celular
+        fotos: fotosBase64,
+        nomes_fotos: nomesFotos,
+        quantidade_fotos: fotosBase64.length
       }
 
-      const result = await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID_SUGESTAO',
-        templateParams
+      // Enviar para API
+      const response = await fetch('/api/send-sugestoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosEnvio)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Erro ao enviar sugestão')
+      }
+
+      setIsSubmitted(true)
+      setFotosSelecionadas([])
+      reset()
+
+    } catch (err) {
+      console.error('Erro ao enviar:', err)
+      setSubmitError(
+        err instanceof Error 
+          ? err.message 
+          : 'Erro ao enviar sugestão. Tente novamente.'
       )
-
-      if (result.status === 200) {
-        setIsSubmitted(true)
-        reset()
-      }
-    } catch (error) {
-      console.error('Erro ao enviar:', error)
-      setSubmitError('Erro ao enviar sugestão. Tente novamente.')
     } finally {
       setIsSubmitting(false)
     }
@@ -277,25 +354,38 @@ export default function Sugestoes() {
               <input
                 {...register('nome', { required: 'Nome é obrigatório' })}
                 placeholder="Seu nome completo"
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {errors.nome && (
                 <p className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
               )}
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
-                Celular *
-              </label>
-              <input
-                {...register('celular', { required: 'Celular é obrigatório' })}
-                placeholder="(62) 99999-9999"
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent"
-              />
-              {errors.celular && (
-                <p className="text-red-400 text-sm mt-1">{errors.celular.message}</p>
-              )}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-flex-light mb-2">
+                  Telefone *
+                </label>
+                <input
+                  {...register('telefone', { required: 'Telefone é obrigatório' })}
+                  placeholder="(62) 99999-9999"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+                {errors.telefone && (
+                  <p className="text-red-400 text-sm mt-1">{errors.telefone.message}</p>
+                )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-flex-light mb-2">
+                  E-mail (Opcional)
+                </label>
+                <input
+                  type="email"
+                  {...register('email')}
+                  placeholder="seu@email.com"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                />
+              </div>
             </div>
 
             <CustomSelect
@@ -326,9 +416,9 @@ export default function Sugestoes() {
                 { value: 'palmas', label: 'Flex Fitness Palmas (Em breve)' },
                 { value: 'geral', label: 'Sugestão Geral' }
               ]}
-              value={watch('flex') || ''}
-              onChange={(value) => setValue('flex', value)}
-              error={errors.flex?.message}
+              value={watch('qual_flex') || ''}
+              onChange={(value) => setValue('qual_flex', value)}
+              error={errors.qual_flex?.message}
               placeholder="Selecione a unidade"
             />
 
@@ -346,25 +436,28 @@ export default function Sugestoes() {
                 })}
                 rows={6}
                 placeholder="Compartilhe sua ideia, sugestão ou feedback. Seja específico(a) para que possamos entender melhor..."
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent resize-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
               />
               {errors.sugestao && (
                 <p className="text-red-400 text-sm mt-1">{errors.sugestao.message}</p>
               )}
             </div>
 
+            {/* Sistema de Upload de Fotos Melhorado */}
             <div>
               <label className="block text-sm font-medium text-flex-light mb-2">
                 Anexar Fotos (Opcional)
               </label>
+              
+              {/* Área de Upload */}
               <div className="relative">
                 <input
                   type="file"
                   multiple
-                  {...register('fotos')}
-                  accept=".jpg,.jpeg,.png"
+                  accept="image/*"
                   className="hidden"
                   id="fotos"
+                  onChange={handleFotoChange}
                 />
                 <label
                   htmlFor="fotos"
@@ -373,14 +466,61 @@ export default function Sugestoes() {
                   <div className="text-center">
                     <HiCamera className="mx-auto text-3xl text-flex-light/50 mb-2" />
                     <p className="text-flex-light/70 text-sm">
-                      Clique para anexar fotos
+                      {fotosSelecionadas.length === 0 
+                        ? 'Clique para anexar fotos' 
+                        : 'Clique para adicionar mais fotos'
+                      }
                     </p>
                     <p className="text-flex-light/50 text-xs mt-1">
-                      JPG, PNG até 5MB cada (máx. 5 fotos)
+                      JPG, PNG até 5MB cada (máx. {5 - fotosSelecionadas.length} fotos restantes)
                     </p>
                   </div>
                 </label>
               </div>
+
+              {/* Preview das Fotos Selecionadas */}
+              {fotosSelecionadas.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mt-4 space-y-2"
+                >
+                  <p className="text-flex-light/70 text-sm font-medium">
+                    Fotos selecionadas ({fotosSelecionadas.length}/5):
+                  </p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {fotosSelecionadas.map((foto, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                            <HiCamera className="text-yellow-500" />
+                          </div>
+                          <div>
+                            <p className="text-flex-light text-sm font-medium truncate max-w-[200px]">
+                              {foto.name}
+                            </p>
+                            <p className="text-flex-light/50 text-xs">
+                              {(foto.size / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removerFoto(index)}
+                          className="p-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded transition-colors"
+                        >
+                          <HiX className="w-4 h-4" />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {submitError && (

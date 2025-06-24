@@ -218,10 +218,10 @@ export default function MobileSwiper({ units }: MobileSwiperProps) {
         onTouchEnd={handleTouchEnd}
         className="units-swiper pb-12"
         autoplay={isAutoplayActive && isVisible ? swiperConfig.autoplay : false}
-      >
+        >
         {units.map((unit, index) => (
-          <SwiperSlide key={unit.id}>
-            <motion.div
+            <SwiperSlide key={unit.id}>
+              <motion.div
               className="h-full relative"
               variants={slideVariants}
               initial="inactive"
@@ -234,8 +234,8 @@ export default function MobileSwiper({ units }: MobileSwiperProps) {
                 scale: 0.98,
                 transition: { duration: 0.1 }
               }}
-            >
-              <UnitCard unit={unit} />
+              >
+                <UnitCard unit={unit} />
               
               {/* Overlay para slides inativos */}
               <AnimatePresence>
@@ -261,10 +261,10 @@ export default function MobileSwiper({ units }: MobileSwiperProps) {
                   }}
                 />
               )}
-            </motion.div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+              </motion.div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
       {/* Progress bar mobile */}
       <motion.div 
@@ -399,7 +399,7 @@ export default function MobileSwiper({ units }: MobileSwiperProps) {
             padding-right: 0.5rem;
             touch-action: pan-y pinch-zoom;
           }
-
+          
           .units-swiper .swiper-slide {
             border-radius: 1rem;
             overflow: hidden;
@@ -409,7 +409,7 @@ export default function MobileSwiper({ units }: MobileSwiperProps) {
           .units-swiper .swiper-slide:not(.swiper-slide-active) {
             filter: brightness(0.85) contrast(0.95);
           }
-
+          
           .units-swiper .swiper-slide-active {
             filter: brightness(1) contrast(1);
             box-shadow: 

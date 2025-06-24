@@ -4,12 +4,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
-import { HiBriefcase, HiDocumentText, HiCheck, HiExclamationCircle, HiChevronDown } from 'react-icons/hi'
+import { HiBriefcase, HiDocumentText, HiCheck, HiExclamationCircle, HiChevronDown, HiX } from 'react-icons/hi'
 import { AnimatePresence } from 'framer-motion'
-import emailjs from '@emailjs/browser'
-
-// Configurar EmailJS
-emailjs.init("YOUR_PUBLIC_KEY") // Substitua pela sua chave pública
 
 // CustomSelect Component
 interface Option {
@@ -57,7 +53,7 @@ function CustomSelect({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-left text-flex-light focus:ring-2 focus:ring-flex-primary focus:border-transparent transition-all duration-200 ${
+          className={`w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-left text-flex-light focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 ${
             error ? 'border-red-400' : ''
           }`}
         >
@@ -123,23 +119,48 @@ function CustomSelect({
   )
 }
 
+// Tipagem
 type CVData = {
-  departamento: string
-  unidade: string
+  nome: string
   email: string
   telefone: string
-  nome: string
-  cargo: string
-  experiencia: string
-  arquivo: FileList
+  departamento: string
+  unidade: string
+  cargo?: string
+  experiencia?: string
+}
+
+// Mapas de valores para labels
+const departmentLabels: Record<string, string> = {
+  'estagio-educacao-fisica': 'Estágio Educação Física',
+  'financeiro':              'Financeiro',
+  'limpeza':                 'Limpeza',
+  'manutencao':              'Manutenção',
+  'marketing':               'Marketing',
+  'natacao':                 'Natação- Apenas Unid Palmas',
+  'professor-ginastica':     'Professor Ginástica',
+  'professor-musculacao':    'Professor Musculação',
+  'recepcao':                'Recepção',
+  'vendas':                  'Vendas'
+}
+
+const unitLabels: Record<string, string> = {
+  'marista':     'Flex Fitness Marista',
+  'buena-vista': 'Flex Fitness Buena Vista',
+  'alphaville':  'Flex Fitness Alphaville',
+  'palmas':      'Flex Fitness Palmas (Em breve)',
+  'qualquer':    'Qualquer Unidade'
 }
 
 export default function TrabalheAqui() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [arquivoSelecionado, setArquivoSelecionado] = useState<File | null>(null)
+  
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<CVData>()
 
+  // Função para converter arquivo para base64
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -149,47 +170,94 @@ export default function TrabalheAqui() {
     })
   }
 
+  // Lidar com seleção de arquivo
+  const handleArquivoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar tamanho (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setSubmitError('Arquivo muito grande. Máximo 10MB.')
+      return
+    }
+
+    // Validar tipo
+    const tiposPermitidos = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    if (!tiposPermitidos.includes(file.type)) {
+      setSubmitError('Tipo de arquivo não permitido. Use PDF, DOC ou DOCX.')
+      return
+    }
+
+    setArquivoSelecionado(file)
+    setSubmitError(null)
+  }
+
   async function onSubmit(data: CVData) {
     setIsSubmitting(true)
     setSubmitError(null)
 
     try {
-      let curriculoBase64 = ''
-      let nomeArquivo = ''
-
-      if (data.arquivo && data.arquivo[0]) {
-        curriculoBase64 = await convertFileToBase64(data.arquivo[0])
-        nomeArquivo = data.arquivo[0].name
+      // Validações obrigatórias
+      if (!data.departamento) {
+        setSubmitError('Por favor, selecione o departamento')
+        return
+      }
+      if (!data.unidade) {
+        setSubmitError('Por favor, selecione a unidade')
+        return
+      }
+      if (!arquivoSelecionado) {
+        setSubmitError('Por favor, anexe seu currículo')
+        return
       }
 
-      const templateParams = {
-        to_email: 'henriquepcosta@hotmail.com',
-        from_name: data.nome,
-        from_email: data.email,
+      // Processar arquivo
+      let curriculoBase64 = ''
+      try {
+        curriculoBase64 = await convertFileToBase64(arquivoSelecionado)
+      } catch (error) {
+        setSubmitError('Erro ao processar o arquivo. Tente novamente.')
+        return
+      }
+
+      // Dados para envio
+      const dadosEnvio = {
+        nome: data.nome,
+        email: data.email,
         telefone: data.telefone,
-        departamento: data.departamento,
-        unidade: data.unidade,
+        departamento: departmentLabels[data.departamento] || data.departamento,
+        codigo_departamento: data.departamento,
+        unidade: unitLabels[data.unidade] || data.unidade,
         cargo: data.cargo || 'Não especificado',
         experiencia: data.experiencia || 'Não informado',
         curriculo: curriculoBase64,
-        nome_arquivo: nomeArquivo,
-        data_envio: new Date().toLocaleString('pt-BR'),
-        reply_to: data.email
+        nome_arquivo: arquivoSelecionado.name
       }
 
-      const result = await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID_CURRICULO',
-        templateParams
+      // Enviar para API
+      const response = await fetch('/api/send-curriculos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosEnvio)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Erro ao enviar currículo')
+      }
+
+      setIsSubmitted(true)
+      setArquivoSelecionado(null)
+      reset()
+
+    } catch (err) {
+      console.error('Erro ao enviar:', err)
+      setSubmitError(
+        err instanceof Error 
+          ? err.message 
+          : 'Erro ao enviar currículo. Tente novamente.'
       )
-
-      if (result.status === 200) {
-        setIsSubmitted(true)
-        reset()
-      }
-    } catch (error) {
-      console.error('Erro ao enviar:', error)
-      setSubmitError('Erro ao enviar currículo. Tente novamente.')
     } finally {
       setIsSubmitting(false)
     }
@@ -305,7 +373,7 @@ export default function TrabalheAqui() {
                 <input
                   {...register('nome', { required: 'Nome é obrigatório' })}
                   placeholder="Seu nome completo"
-                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
                 {errors.nome && (
                   <p className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
@@ -326,7 +394,7 @@ export default function TrabalheAqui() {
                     }
                   })}
                   placeholder="seu@email.com"
-                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
                 {errors.email && (
                   <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
@@ -341,7 +409,7 @@ export default function TrabalheAqui() {
               <input
                 {...register('telefone', { required: 'Telefone é obrigatório' })}
                 placeholder="(62) 99999-9999"
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
               {errors.telefone && (
                 <p className="text-red-400 text-sm mt-1">{errors.telefone.message}</p>
@@ -349,27 +417,24 @@ export default function TrabalheAqui() {
             </div>
 
             <CustomSelect
-              label="Área de Interesse"
+              label="Departamento"
               required
               options={[
-                { value: 'vendas', label: 'Vendas/Consultoria' },
-                { value: 'personal', label: 'Personal Trainer' },
-                { value: 'professor', label: 'Professor de Aulas Coletivas' },
-                { value: 'recepcao', label: 'Recepção/Atendimento' },
-                { value: 'limpeza', label: 'Limpeza/Manutenção' },
-                { value: 'crossfit', label: 'CrossFit Coach' },
-                { value: 'nutricao', label: 'Nutrição' },
-                { value: 'fisioterapia', label: 'Fisioterapia' },
-                { value: 'marketing', label: 'Marketing/Social Media' },
-                { value: 'administrativa', label: 'Área Administrativa' },
-                { value: 'ti', label: 'Tecnologia da Informação' },
-                { value: 'gerencia', label: 'Gerência/Supervisão' },
-                { value: 'outras', label: 'Outras Áreas' }
+                { value: 'estagio-educacao-fisica', label: 'Estágio Educação Física' },
+                { value: 'financeiro', label: 'Financeiro' },
+                { value: 'limpeza', label: 'Limpeza' },
+                { value: 'manutencao', label: 'Manutenção' },
+                { value: 'marketing', label: 'Marketing' },
+                { value: 'natacao', label: 'Natação- Apenas Unid Palmas' },
+                { value: 'professor-ginastica', label: 'Professor Ginástica' },
+                { value: 'professor-musculacao', label: 'Professor Musculação' },
+                { value: 'recepcao', label: 'Recepção' },
+                { value: 'vendas', label: 'Vendas' }
               ]}
               value={watch('departamento') || ''}
               onChange={(value) => setValue('departamento', value)}
               error={errors.departamento?.message}
-              placeholder="Selecione a área"
+              placeholder="Selecione o departamento"
             />
 
             <CustomSelect
@@ -395,7 +460,7 @@ export default function TrabalheAqui() {
               <input
                 {...register('cargo')}
                 placeholder="Ex: Personal Trainer, Consultor de Vendas, etc."
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
 
@@ -407,7 +472,7 @@ export default function TrabalheAqui() {
                 {...register('experiencia')}
                 rows={4}
                 placeholder="Descreva brevemente sua experiência na área, principais qualificações, certificações, etc."
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-flex-primary focus:border-transparent resize-none"
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
               />
             </div>
 
@@ -415,13 +480,14 @@ export default function TrabalheAqui() {
               <label className="block text-sm font-medium text-flex-light mb-2">
                 Anexar Currículo *
               </label>
+              
               <div className="relative">
                 <input
                   type="file"
-                  {...register('arquivo', { required: 'Currículo é obrigatório' })}
                   accept=".pdf,.doc,.docx"
                   className="hidden"
                   id="arquivo"
+                  onChange={handleArquivoChange}
                 />
                 <label
                   htmlFor="arquivo"
@@ -429,18 +495,40 @@ export default function TrabalheAqui() {
                 >
                   <div className="text-center">
                     <HiDocumentText className="mx-auto text-4xl text-flex-light/50 mb-3" />
-                    <p className="text-flex-light/70 text-base font-medium mb-1">
-                      Clique para anexar seu currículo
-                    </p>
-                    <p className="text-flex-light/50 text-sm">
-                      PDF, DOC ou DOCX até 10MB
-                    </p>
+                    {arquivoSelecionado ? (
+                      <div>
+                        <p className="text-flex-light text-base font-medium mb-1">
+                          {arquivoSelecionado.name}
+                        </p>
+                        <p className="text-flex-light/50 text-sm">
+                          {(arquivoSelecionado.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setArquivoSelecionado(null)
+                            const input = document.getElementById('arquivo') as HTMLInputElement
+                            if (input) input.value = ''
+                          }}
+                          className="text-red-400 text-sm mt-2 hover:text-red-300"
+                        >
+                          Remover arquivo
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-flex-light/70 text-base font-medium mb-1">
+                          Clique para anexar seu currículo
+                        </p>
+                        <p className="text-flex-light/50 text-sm">
+                          PDF, DOC ou DOCX até 10MB
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </label>
               </div>
-              {errors.arquivo && (
-                <p className="text-red-400 text-sm mt-1">{errors.arquivo.message}</p>
-              )}
             </div>
 
             {submitError && (

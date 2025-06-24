@@ -9,7 +9,86 @@ import { AnimatePresence } from 'framer-motion'
 import emailjs from '@emailjs/browser'
 
 // Configurar EmailJS
-emailjs.init("YOUR_PUBLIC_KEY") // Substitua pela sua chave pública
+emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_USER!)
+
+function buildFieldsTable(data: FormData): string {
+  const rows: [string, string][] = [
+    ['Unidade',      data.unidade],
+    ['Procedimento', data.procedimento],
+    ['Motivo',       data.motivo],
+    ['Data Início',  data.dataInicio || '—'],
+    ['Data Fim',     data.dataFim    || '—'],
+    ['Matrícula',    data.matricula  || '—'],
+    ['Nome',         data.nome],
+    ['WhatsApp',     data.whatsapp],
+    ['E-mail',       data.email],
+    ['Detalhes',     data.detalhes   || '—'],
+  ]
+
+  const trs = rows
+    .map(
+      ([label, value]) =>
+        `<tr>` +
+        `<td style="padding:8px 12px;border:1px solid #ddd;background:#f8f9fa;"><strong>${label}</strong></td>` +
+        `<td style="padding:8px 12px;border:1px solid #ddd;">${value}</td>` +
+        `</tr>`
+    )
+    .join('')
+
+  return `<table style="border-collapse:collapse;width:100%;margin:16px 0;font-family:Arial,sans-serif;">${trs}</table>`
+}
+
+// Mapeia destinatários por unidade
+const unitRecipients: Record<string, string> = {
+  'marista': 'vendas.alphaville@flexacademia.com.br,henriquepcosta@hotmail.com,supervisaotecnicaalphaville@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br',
+  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br',
+  'alphaville': 'gestao-alphaville@flex.com,vendasmarista@flexacademia.com.br,jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br'
+}
+
+// Mapeia nomes das unidades
+const unitNames: Record<string, string> = {
+  'marista':     'Flex Fitness Marista',
+  'buena-vista': 'Flex Fitness Buena Vista',
+  'alphaville':  'Flex Fitness Alphaville',
+}
+
+// Mapeia nomes dos procedimentos
+const procedureNames: Record<string, string> = {
+  'cancelamento': 'Cancelamento de Plano',
+  'transferencia-credito': 'Transferência de Crédito (R$)',
+  'transferencia-dias': 'Transferência de Dias',
+  'trancamento': 'Lançamento de Trancamento',
+  'trancamento-pago': 'Trancamento Pago R$ 100,00',
+  'resgate-cheque': 'Resgate Cheque para Troca',
+  'trocar-pagamento': 'Trocar Forma de Pagamento',
+  'trocar-unidade': 'Trocar de Unidade',
+  'retencao-credito': 'Retenção de Crédito para Novo Plano'
+}
+
+// Mapeia nomes dos motivos
+const reasonNames: Record<string, string> = {
+  'mudanca': 'Mudança de Cidade ou Bairro',
+  'tempo': 'Falta de Tempo',
+  'insatisfacao': 'Insatisfação',
+  'saude': 'Problemas de Saúde',
+  'financeiros': 'Problemas Financeiros',
+  'outros': 'Outros'
+}
+
+// Tipagem do formulário
+type FormData = {
+  unidade: string
+  procedimento: string
+  motivo: string
+  dataInicio?: string
+  dataFim?: string
+  matricula?: string
+  nome: string
+  whatsapp: string
+  email: string
+  detalhes?: string
+  arquivo?: FileList
+}
 
 // CustomSelect Component
 interface Option {
@@ -25,6 +104,7 @@ interface CustomSelectProps {
   error?: string
   required?: boolean
   label?: string
+  name: string
 }
 
 function CustomSelect({
@@ -34,7 +114,8 @@ function CustomSelect({
   placeholder = "Selecione uma opção",
   error,
   required = false,
-  label
+  label,
+  name
 }: CustomSelectProps) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -123,25 +204,13 @@ function CustomSelect({
   )
 }
 
-type FormData = {
-  unidade: string
-  procedimento: string
-  motivo: string
-  dataInicio?: string
-  dataFim?: string
-  matricula?: string
-  nome: string
-  whatsapp: string
-  email: string
-  detalhes?: string
-  arquivo?: FileList
-}
-
 export default function Procedimentos() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
-  const { register, handleSubmit, watch, formState: { errors }, reset, setValue } = useForm<FormData>()
+  const [arquivoSelecionado, setArquivoSelecionado] = useState<File | null>(null)
+  
+  const { register, handleSubmit, watch, formState: { errors }, reset, setValue, trigger } = useForm<FormData>()
   
   const procedimentoSelecionado = watch('procedimento')
   const mostrarDatas = procedimentoSelecionado?.includes('trancamento')
@@ -155,50 +224,167 @@ export default function Procedimentos() {
     })
   }
 
+  // Substitua a função onSubmit por esta:
   async function onSubmit(data: FormData) {
     setIsSubmitting(true)
     setSubmitError(null)
-
+  
     try {
+      // Validações
+      if (!data.unidade) {
+        setSubmitError('Por favor, selecione uma unidade')
+        return
+      }
+      if (!data.procedimento) {
+        setSubmitError('Por favor, selecione um procedimento')
+        return
+      }
+      if (!data.motivo) {
+        setSubmitError('Por favor, selecione um motivo')
+        return
+      }
+  
+      // Processar arquivo se existir
       let anexoBase64 = ''
       let nomeArquivo = ''
-
-      if (data.arquivo && data.arquivo[0]) {
-        anexoBase64 = await convertFileToBase64(data.arquivo[0])
-        nomeArquivo = data.arquivo[0].name
+      
+      if (arquivoSelecionado) {
+        // Validar tamanho (máximo 10MB)
+        if (arquivoSelecionado.size > 10 * 1024 * 1024) {
+          setSubmitError('Arquivo muito grande. Máximo 10MB.')
+          return
+        }
+        
+        // Validar tipo
+        const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
+        if (!tiposPermitidos.includes(arquivoSelecionado.type)) {
+          setSubmitError('Tipo de arquivo não permitido. Use PDF, JPG ou PNG.')
+          return
+        }
+        
+        try {
+          anexoBase64 = await convertFileToBase64(arquivoSelecionado)
+          nomeArquivo = arquivoSelecionado.name
+        } catch (error) {
+          setSubmitError('Erro ao processar o arquivo. Tente novamente.')
+          return
+        }
       }
-
-      const templateParams = {
-        to_email: 'henriquepcosta@hotmail.com',
-        from_name: data.nome,
-        from_email: data.email,
-        unidade: data.unidade,
-        procedimento: data.procedimento,
-        motivo: data.motivo,
-        data_inicio: data.dataInicio || 'Não informado',
-        data_fim: data.dataFim || 'Não informado',
-        matricula: data.matricula || 'Não informado',
+  
+      // Dados formatados
+      const dataFormatada = new Date().toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+  
+      const unidadeNome = unitNames[data.unidade] || data.unidade
+      const procedimentoNome = procedureNames[data.procedimento] || data.procedimento
+      const motivoNome = reasonNames[data.motivo] || data.motivo
+      const numeroSolicitacao = `FLEX-${Date.now().toString().slice(-6)}`
+      
+      // Obter emails da unidade (string separada por vírgula)
+      const managerEmailString = unitRecipients[data.unidade]
+  
+      if (!managerEmailString) {
+        throw new Error('Unidade não encontrada no sistema')
+      }
+  
+      // Converter string em array de emails
+      const managerEmails = managerEmailString.split(',').map(email => email.trim())
+  
+      // Blocos condicionais
+      const resgateBlock = data.procedimento.includes('resgate-cheque')
+        ? `<div style="background:#fff3cd;padding:15px;border-left:4px solid #ffc107;margin:20px 0;">
+           <h4 style="color:#856404;margin:0 0 10px 0;">Sobre resgate de cheques:</h4>
+           <p style="color:#856404;margin:0;">O processo para resgate de cheques só poderá ser efetuado após o pagamento total dos cheques a serem resgatados + a taxa de resgate.</p>
+           </div>`
+        : ''
+  
+      const cancelBlock = data.procedimento === 'cancelamento'
+        ? `<div style="background:#f8d7da;padding:15px;border-left:4px solid #dc3545;margin:20px 0;">
+           <h4 style="color:#721c24;margin:0 0 10px 0;">Em caso de solicitação de rescisão:</h4>
+           <p style="color:#721c24;margin:0;">O prazo é de <strong>ATÉ 40 DIAS</strong>.</p>
+           </div>`
+        : ''
+  
+      // Dados comuns para ambos os emails
+      const emailData = {
+        numero_solicitacao: numeroSolicitacao,
+        unidade: unidadeNome,
+        procedimento: procedimentoNome,
+        motivo: motivoNome,
+        data_solicitacao: dataFormatada,
+        nome_cliente: data.nome,
         whatsapp: data.whatsapp,
+        email_cliente: data.email,
+        matricula: data.matricula || 'Não informado',
         detalhes: data.detalhes || 'Nenhum detalhe adicional',
+        data_inicio: data.dataInicio || 'Não se aplica',
+        data_fim: data.dataFim || 'Não se aplica',
+        resgate_block: resgateBlock,
+        cancelamento_block: cancelBlock,
+        link_assinatura: 'https://app.zapsign.com.br/verificar/doc/7e0e84ef-36ac-432d-b60e-614136502106',
         anexo: anexoBase64,
-        nome_arquivo: nomeArquivo,
-        data_solicitacao: new Date().toLocaleString('pt-BR'),
-        reply_to: data.email
+        nome_arquivo: nomeArquivo
       }
-
-      const result = await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
-        templateParams
+  
+      // Definir tipo de email
+      const isCancelamento = data.procedimento === 'cancelamento'
+      
+      // Criar destinatários
+      const destinatarios = []
+  
+      // 1. Email para o cliente (SEM anexo)
+      destinatarios.push({
+        email: data.email,
+        subject: isCancelamento 
+          ? `📋 Confirmação Necessária - Cancelamento ${numeroSolicitacao} - Flex Fitness`
+          : `✅ Comprovante de Solicitação - ${numeroSolicitacao} - Flex Fitness`,
+        template: isCancelamento ? 'cancelamento' : 'comprovante',
+        anexo: '',
+        nome_arquivo: ''
+      })
+  
+      // 2. Emails para a empresa (COM anexo se existir)
+      managerEmails.forEach(email => {
+        destinatarios.push({
+          email: email,
+          subject: `🚨 Nova Solicitação - ${procedimentoNome} - ${numeroSolicitacao}`,
+          template: 'empresa',
+          anexo: anexoBase64,
+          nome_arquivo: nomeArquivo
+        })
+      })
+  
+      // Enviar todos os emails de uma vez
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destinatarios: destinatarios,
+          ...emailData
+        })
+      })
+  
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Erro ao enviar emails')
+      }
+  
+      setIsSubmitted(true)
+      setArquivoSelecionado(null) // Limpar arquivo selecionado
+      reset()
+      
+    } catch (err) {
+      console.error('Erro ao enviar:', err)
+      setSubmitError(
+        err instanceof Error 
+          ? err.message 
+          : 'Erro ao enviar solicitação. Tente novamente.'
       )
-
-      if (result.status === 200) {
-        setIsSubmitted(true)
-        reset()
-      }
-    } catch (error) {
-      console.error('Erro ao enviar:', error)
-      setSubmitError('Erro ao enviar solicitação. Tente novamente.')
     } finally {
       setIsSubmitting(false)
     }
@@ -222,7 +408,7 @@ export default function Procedimentos() {
           </motion.div>
           <h2 className="text-2xl font-bold text-flex-dark mb-4">Solicitação Enviada!</h2>
           <p className="text-flex-gray mb-6">
-            Sua solicitação foi recebida com sucesso. Nossa equipe entrará em contato em breve.
+            Sua solicitação foi recebida com sucesso. Um comprovante foi enviado para seu e-mail e nossa equipe entrará em contato em breve.
           </p>
           <div className="space-y-3">
             <motion.button
@@ -280,6 +466,7 @@ export default function Procedimentos() {
             className="glass-effect rounded-2xl p-8 backdrop-blur-lg border border-white/10 space-y-6"
           >
             <CustomSelect
+              name="unidade"
               label="Unidade"
               required
               options={[
@@ -294,6 +481,7 @@ export default function Procedimentos() {
             />
 
             <CustomSelect
+              name="procedimento"
               label="Tipo de Procedimento"
               required
               options={[
@@ -314,6 +502,7 @@ export default function Procedimentos() {
             />
 
             <CustomSelect
+              name="motivo"
               label="Motivo"
               required
               options={[
@@ -440,10 +629,15 @@ export default function Procedimentos() {
               <div className="relative">
                 <input
                   type="file"
-                  {...register('arquivo')}
                   accept=".pdf,.jpg,.jpeg,.png"
                   className="hidden"
                   id="arquivo"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      setArquivoSelecionado(file)
+                    }
+                  }}
                 />
                 <label
                   htmlFor="arquivo"
@@ -451,12 +645,38 @@ export default function Procedimentos() {
                 >
                   <div className="text-center">
                     <HiUpload className="mx-auto text-3xl text-flex-light/50 mb-2" />
-                    <p className="text-flex-light/70 text-sm">
-                      Clique para anexar um arquivo
-                    </p>
-                    <p className="text-flex-light/50 text-xs mt-1">
-                      PDF, JPG, PNG até 10MB
-                    </p>
+                    {arquivoSelecionado ? (
+                      <div>
+                        <p className="text-flex-light text-sm font-medium">
+                          {arquivoSelecionado.name}
+                        </p>
+                        <p className="text-flex-light/50 text-xs mt-1">
+                          {(arquivoSelecionado.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setArquivoSelecionado(null)
+                            // Reset input
+                            const input = document.getElementById('arquivo') as HTMLInputElement
+                            if (input) input.value = ''
+                          }}
+                          className="text-red-400 text-xs mt-2 hover:text-red-300"
+                        >
+                          Remover arquivo
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-flex-light/70 text-sm">
+                          Clique para anexar um arquivo
+                        </p>
+                        <p className="text-flex-light/50 text-xs mt-1">
+                          PDF, JPG, PNG até 10MB
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </label>
               </div>
