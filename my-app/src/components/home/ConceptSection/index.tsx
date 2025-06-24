@@ -207,7 +207,7 @@ export default function ConceptSection() {
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
                 >
-                  50+
+                  20+
                 </motion.div>
                 <div className="text-flex-gray relative z-10">Modalidades</div>
                 

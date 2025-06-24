@@ -21,7 +21,7 @@ const features = [
   },
   {
     icon: HiOutlineLightningBolt,
-    title: 'Personal Trainers',
+    title: 'Instrutores Flex',
     description: 'Profissionais certificados para maximizar seus resultados',
     color: 'secondary'
   },
