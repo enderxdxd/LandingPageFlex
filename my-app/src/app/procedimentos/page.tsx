@@ -40,7 +40,7 @@ function buildFieldsTable(data: FormData): string {
 
 // Mapeia destinatários por unidade
 const unitRecipients: Record<string, string> = {
-  'marista': 'vendas.alphaville@flexacademia.com.br,henriquepcosta@hotmail.com,supervisaotecnicaalphaville@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br',
+  'marista': 'vendas.alphaville@flexacademia.com.br,henriquepcosta@hotmail.com,supervisaotecnicaalphaville@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, xdhenriquecosta@gmail.com' ,
   'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br',
   'alphaville': 'gestao-alphaville@flex.com,vendasmarista@flexacademia.com.br,jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br'
 }

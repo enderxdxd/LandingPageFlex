@@ -6,16 +6,24 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Mapeia destinatários por departamento (baseado na imagem)
 const departmentRecipients: Record<string, string> = {
-  'estagio-educacao-fisica': 'henriquepcosta@hotmail.com',     // Estágio Educação Física
-  'financeiro':              'financeiro@flex.com',           // Financeiro
-  'limpeza':                 'operacional@flex.com',          // Limpeza
-  'manutencao':              'manutencao@flex.com',           // Manutenção
-  'marketing':               'marketing@flex.com',            // Marketing
-  'natacao':                 'natacao@flex.com',              // Natação - Apenas Unid Palmas
-  'professor-ginastica':     'professores@flex.com',          // Professor Ginástica
-  'professor-musculacao':    'musculacao@flex.com',           // Professor Musculação
-  'recepcao':                'recepcao@flex.com',             // Recepção
-  'vendas':                  'vendas@flex.com',               // Vendas
+  'estagio-educacao-fisica': 'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',   
+    // Estágio Educação Física
+  'financeiro':              'gestaofinanceira@flexacademia.com.br',     
+        // Financeiro
+  'limpeza':                 'rejane@flexacademia.com.br,marcio@flexacademia.com.br',        
+    // Limpeza
+  'manutencao':              'rejane@flexacademia.com.br,marcio@flexacademia.com.br',  
+           // Manutenção
+  'marketing':               'rejane@flexacademia.com.br',       
+       // Marketing
+  'natacao':                 'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',    
+            // Natação - Apenas Unid Palmas
+  'professor-ginastica':     'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',   
+         // Professor Ginástica
+  'professor-musculacao':    'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',   
+          // Professor Musculação
+  'recepcao':                'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',             // Recepção
+  'vendas':                  'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',               // Vendas
 };
 
 // Mapeia os códigos para nomes dos departamentos (exatamente como na imagem)
@@ -609,11 +617,11 @@ export async function POST(request: NextRequest) {
     const { destinatarios, ...emailData } = data;
 
     // Log para debug
-    console.log('Enviando currículo:', { 
+    console.log('📤 Iniciando envio de currículo:', { 
       nome: emailData.nome, 
       departamento: emailData.codigo_departamento,
       unidade: emailData.unidade,
-      destinatarios: destinatarios.length
+      destinatarios_fornecidos: !!destinatarios
     });
 
     // Gerar número do protocolo
@@ -621,11 +629,14 @@ export async function POST(request: NextRequest) {
 
     // Determinar email do departamento usando o código enviado
     const departmentCode = emailData.codigo_departamento;
-    const managerEmail = departmentRecipients[departmentCode];
+    const managerEmailString = departmentRecipients[departmentCode];
     
-    if (!managerEmail) {
+    if (!managerEmailString) {
       throw new Error('Departamento não encontrado no sistema');
     }
+
+    // Converter string em array de emails
+    const managerEmails = managerEmailString.split(',').map(email => email.trim());
 
     // Dados formatados
     const formattedEmailData = {
@@ -641,22 +652,25 @@ export async function POST(request: NextRequest) {
     }] : [];
 
     // Definir destinatários se não fornecidos
-    const defaultDestinatarios = [
-      // Email para o gestor do departamento (com currículo)
-      {
-        email: managerEmail,
+    const defaultDestinatarios = [];
+
+    // 1. Emails para o departamento (COM anexo)
+    managerEmails.forEach(email => {
+      defaultDestinatarios.push({
+        email: email,
         subject: `💼 Novo Currículo - ${emailData.departamento} - CV-${numeroProtocolo}`,
         template: 'empresa',
         attachments: attachments
-      },
-      // Email de confirmação para o candidato (sem anexo)
-      {
-        email: emailData.email,
-        subject: `🎉 Currículo Recebido com Sucesso - CV-${numeroProtocolo} - Flex Fitness`,
-        template: 'candidato',
-        attachments: []
-      }
-    ];
+      });
+    });
+
+    // 2. Email de confirmação para o candidato (SEM anexo)
+    defaultDestinatarios.push({
+      email: emailData.email,
+      subject: `🎉 Currículo Recebido com Sucesso - CV-${numeroProtocolo} - Flex Fitness`,
+      template: 'candidato',
+      attachments: []
+    });
 
     const finalDestinatarios = destinatarios || defaultDestinatarios;
 
@@ -666,39 +680,81 @@ export async function POST(request: NextRequest) {
       candidato: templateCandidato
     };
 
-    // Envia emails para múltiplos destinatários
-    const emailPromises = finalDestinatarios.map((dest: any) => {
-      const template = templates[dest.template as keyof typeof templates];
-      if (!template) {
-        throw new Error(`Template '${dest.template}' não encontrado`);
+    console.log(`📧 Enviando para ${finalDestinatarios.length} destinatários...`);
+
+    // ENVIO SEQUENCIAL com delay
+    const results = [];
+    const errors = [];
+
+    for (let i = 0; i < finalDestinatarios.length; i++) {
+      const dest = finalDestinatarios[i];
+      
+      try {
+        console.log(`📧 Enviando email ${i + 1}/${finalDestinatarios.length} para: ${dest.email}`);
+        
+        const template = templates[dest.template as keyof typeof templates];
+        if (!template) {
+          throw new Error(`Template '${dest.template}' não encontrado`);
+        }
+
+        const result = await resend.emails.send({
+          from: 'Flex Fitness <noreply@flexfitnesscenter.com.br>',
+          to: [dest.email],
+          subject: dest.subject,
+          html: template({ ...formattedEmailData, ...dest }),
+          attachments: dest.attachments || [],
+        });
+
+        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        results.push(result);
+
+        // Delay de 500ms entre envios para evitar rate limit
+        if (i < finalDestinatarios.length - 1) {
+          console.log('⏳ Aguardando 500ms antes do próximo envio...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+      } catch (error) {
+        console.error(`❌ Erro ao enviar email ${i + 1} para ${dest.email}:`, error);
+        errors.push({
+          email: dest.email,
+          error: error instanceof Error ? error.message : 'Erro desconhecido'
+        });
+        
+        // Continue tentando os próximos emails mesmo se um falhar
+        continue;
       }
+    }
 
-      return resend.emails.send({
-        from: 'Flex Fitness <onboarding@resend.dev>',
-        to: [dest.email],
-        subject: dest.subject,
-        html: template({ ...formattedEmailData, ...dest }),
-        attachments: dest.attachments || [],
-      });
-    });
-
-    const results = await Promise.all(emailPromises);
+    // Log dos resultados finais
+    console.log('📊 RESUMO FINAL DO ENVIO DE CURRÍCULO:');
+    console.log(`✅ Emails enviados com sucesso: ${results.length}`);
+    console.log(`❌ Emails com erro: ${errors.length}`);
     
-    // Log dos resultados
-    console.log('Emails enviados com sucesso:', results.map(r => r.data?.id));
+    if (errors.length > 0) {
+      console.log('🚨 Detalhes dos erros:', errors);
+    }
+
+    if (results.length > 0) {
+      console.log('🎯 IDs dos emails enviados:', results.map(r => r.data?.id));
+    }
 
     return NextResponse.json({ 
-      success: true, 
-      message: 'Currículo enviado com sucesso',
+      success: results.length > 0,
+      message: `Currículo enviado com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
       protocolo: numeroProtocolo,
-      enviado_para: managerEmail,
+      enviado_para: managerEmailString,
       departamento: emailData.departamento,
-      ids: results.map(r => r.data?.id)
+      enviados: results.length,
+      erros: errors.length,
+      detalhes_erros: errors.length > 0 ? errors : undefined,
+      ids: results.map(r => r.data?.id).filter(Boolean)
     });
 
   } catch (error) {
-    console.error('Erro ao enviar currículo:', error);
+    console.error('💥 Erro geral ao enviar currículo:', error);
     return NextResponse.json({ 
+      success: false,
       error: 'Erro interno do servidor',
       details: error instanceof Error ? error.message : 'Erro desconhecido'
     }, { status: 500 });

@@ -150,12 +150,26 @@ const templateCliente = (data: any) => `
 `;
 
 // Mapeia destinatários por unidade para sugestões
-const unitRecipients: Record<string, string> = {
-  'marista':     'henriquepcosta@hotmail.com',
-  'buena-vista': 'gestao-buena@flex.com',
-  'alphaville':  'gestao-alphaville@flex.com',
-  'palmas':      'gestao-palmas@flex.com',
-  'geral':       'henriquepcosta@hotmail.com', 
+const sharedRecipients = [
+  'vendas.alphaville@flexacademia.com.br',
+  'supervisaotecnicaalphaville@flexacademia.com.br',
+  'vendasflexbuenavista@flexacademia.com.br',
+  'supervisaotecnicabuenavista@flexacademia.com.br',
+  'vendasmarista@flexacademia.com.br',
+  'jonatas@flexacademia.com.br',
+  'wakson@flexacademia.com.br',
+  'hudson@flexacademia.com.br',
+  'comercial@flexacademia.com.br',
+  'comercial.atendimento@flexacademia.com.br',
+  'atendimento@paresconsultoria.com.br'
+];
+
+const unitRecipients: Record<string, string[]> = {
+  'marista': sharedRecipients,
+  'buena-vista': sharedRecipients,
+  'alphaville': sharedRecipients,
+  'palmas': sharedRecipients,
+  'geral': sharedRecipients,
 };
 
 export async function POST(request: NextRequest) {
@@ -164,11 +178,11 @@ export async function POST(request: NextRequest) {
     const { destinatarios, ...emailData } = data;
 
     // Log para debug
-    console.log('Enviando sugestão:', { 
+    console.log('📤 Iniciando envio de sugestão:', { 
       nome: emailData.nome, 
       qual_flex: emailData.qual_flex,
       quantidade_fotos: emailData.quantidade_fotos || 0,
-      destinatarios: destinatarios?.length || 0
+      destinatarios_fornecidos: !!destinatarios
     });
 
     // Gerar número do protocolo
@@ -176,9 +190,9 @@ export async function POST(request: NextRequest) {
 
     // Determinar email da unidade usando o código enviado
     const flexCode = emailData.codigo_flex || 'geral';
-    const managerEmail = unitRecipients[flexCode];
+    const managerEmails = unitRecipients[flexCode];
     
-    if (!managerEmail) {
+    if (!managerEmails || managerEmails.length === 0) {
       throw new Error('Unidade não encontrada no sistema');
     }
 
@@ -196,15 +210,12 @@ export async function POST(request: NextRequest) {
     })) : [];
 
     // Definir destinatários se não fornecidos
-    const defaultDestinatarios = [
-      // Email para a empresa responsável pela unidade (com fotos)
-      {
-        email: managerEmail,
-        subject: `💡 Nova Sugestão - ${emailData.qual_flex} - SUG-${numeroProtocolo}`,
-        template: 'empresa',
-        attachments: attachments
-      }
-    ];
+    const defaultDestinatarios = managerEmails.map(email => ({
+      email,
+      subject: `💡 Nova Sugestão - ${emailData.qual_flex} - SUG-${numeroProtocolo}`,
+      template: 'empresa',
+      attachments: attachments
+    }));
 
     // Adicionar email de confirmação para o cliente se tiver email
     if (emailData.email) {
@@ -224,39 +235,81 @@ export async function POST(request: NextRequest) {
       cliente: templateCliente
     };
 
-    // Envia emails para múltiplos destinatários
-    const emailPromises = finalDestinatarios.map((dest: any) => {
-      const template = templates[dest.template as keyof typeof templates];
-      if (!template) {
-        throw new Error(`Template '${dest.template}' não encontrado`);
+    console.log(`📧 Enviando para ${finalDestinatarios.length} destinatários...`);
+
+    // ENVIO SEQUENCIAL com delay
+    const results = [];
+    const errors = [];
+
+    for (let i = 0; i < finalDestinatarios.length; i++) {
+      const dest = finalDestinatarios[i];
+      
+      try {
+        console.log(`📧 Enviando email ${i + 1}/${finalDestinatarios.length} para: ${dest.email}`);
+        
+        const template = templates[dest.template as keyof typeof templates];
+        if (!template) {
+          throw new Error(`Template '${dest.template}' não encontrado`);
+        }
+
+        const result = await resend.emails.send({
+          from: 'Flex Fitness <noreply@flexfitnesscenter.com.br>',
+          to: [dest.email],
+          subject: dest.subject,
+          html: template({ ...formattedEmailData, ...dest }),
+          attachments: dest.attachments || [],
+        });
+
+        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        results.push(result);
+
+        // Delay de 500ms entre envios para evitar rate limit
+        if (i < finalDestinatarios.length - 1) {
+          console.log('⏳ Aguardando 500ms antes do próximo envio...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+      } catch (error) {
+        console.error(`❌ Erro ao enviar email ${i + 1} para ${dest.email}:`, error);
+        errors.push({
+          email: dest.email,
+          error: error instanceof Error ? error.message : 'Erro desconhecido'
+        });
+        
+        // Continue tentando os próximos emails mesmo se um falhar
+        continue;
       }
+    }
 
-      return resend.emails.send({
-        from: 'Flex Fitness <onboarding@resend.dev>',
-        to: [dest.email],
-        subject: dest.subject,
-        html: template({ ...formattedEmailData, ...dest }),
-        attachments: dest.attachments || [],
-      });
-    });
-
-    const results = await Promise.all(emailPromises);
+    // Log dos resultados finais
+    console.log('📊 RESUMO FINAL DO ENVIO DE SUGESTÃO:');
+    console.log(`✅ Emails enviados com sucesso: ${results.length}`);
+    console.log(`❌ Emails com erro: ${errors.length}`);
     
-    // Log dos resultados
-    console.log('Emails enviados com sucesso:', results.map(r => r.data?.id));
+    if (errors.length > 0) {
+      console.log('🚨 Detalhes dos erros:', errors);
+    }
+
+    if (results.length > 0) {
+      console.log('🎯 IDs dos emails enviados:', results.map(r => r.data?.id));
+    }
 
     return NextResponse.json({ 
-      success: true, 
-      message: 'Sugestão enviada com sucesso',
+      success: results.length > 0,
+      message: `Sugestão enviada com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
       protocolo: numeroProtocolo,
-      enviado_para: managerEmail,
+      enviado_para: managerEmails.join(', '),
       confirmacao_cliente: !!emailData.email,
-      ids: results.map(r => r.data?.id)
+      enviados: results.length,
+      erros: errors.length,
+      detalhes_erros: errors.length > 0 ? errors : undefined,
+      ids: results.map(r => r.data?.id).filter(Boolean)
     });
 
   } catch (error) {
-    console.error('Erro ao enviar sugestão:', error);
+    console.error('💥 Erro geral ao enviar sugestão:', error);
     return NextResponse.json({ 
+      success: false,
       error: 'Erro interno do servidor',
       details: error instanceof Error ? error.message : 'Erro desconhecido'
     }, { status: 500 });

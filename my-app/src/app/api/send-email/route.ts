@@ -289,54 +289,98 @@ export async function POST(request: NextRequest) {
     const { destinatarios, ...emailData } = data;
 
     // Log para debug
-    console.log('Enviando emails:', { quantidade: destinatarios.length });
+    console.log('📤 Iniciando envio para:', { quantidade: destinatarios.length });
 
-    // Enviar emails para cada destinatário individualmente
-    const emailPromises = destinatarios.map(async (dest: any) => {
-      // Escolher o template
-      const template = templates[dest.template as keyof typeof templates];
-      if (!template) {
-        throw new Error(`Template '${dest.template}' não encontrado`);
+    // Enviar emails sequencialmente com delay para evitar rate limit
+    const results = [];
+    const errors = [];
+
+    for (let i = 0; i < destinatarios.length; i++) {
+      const dest = destinatarios[i];
+      
+      try {
+        console.log(`📧 Enviando email ${i + 1}/${destinatarios.length} para: ${dest.email}`);
+        
+        // Escolher o template
+        const template = templates[dest.template as keyof typeof templates];
+        if (!template) {
+          throw new Error(`Template '${dest.template}' não encontrado`);
+        }
+
+        // Preparar dados específicos para este destinatário
+        const dadosEspecificos = {
+          ...emailData,
+          anexo: dest.anexo || '',
+          nome_arquivo: dest.nome_arquivo || ''
+        };
+
+        // Preparar anexos se existirem
+        const attachments = dest.anexo ? [{
+          filename: dest.nome_arquivo || 'documento.pdf',
+          content: dest.anexo.split(',')[1] || dest.anexo, // Remove "data:type;base64," se existir
+        }] : [];
+
+        const result = await resend.emails.send({
+          from: 'Flex Fitness <noreply@flexfitnesscenter.com.br>',
+          to: [dest.email],
+          subject: dest.subject,
+          html: template(dadosEspecificos),
+          attachments: attachments,
+        });
+
+        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        results.push(result);
+
+        // Delay de 500ms entre envios para evitar rate limit
+        if (i < destinatarios.length - 1) {
+          console.log('⏳ Aguardando 500ms antes do próximo envio...');
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+      } catch (error) {
+        console.error(`❌ Erro ao enviar email ${i + 1} para ${dest.email}:`, error);
+        errors.push({
+          email: dest.email,
+          error: error instanceof Error ? error.message : 'Erro desconhecido'
+        });
+        
+        // Continue tentando os próximos emails mesmo se um falhar
+        continue;
       }
+    }
 
-      // Preparar dados específicos para este destinatário
-      const dadosEspecificos = {
-        ...emailData,
-        anexo: dest.anexo || '',
-        nome_arquivo: dest.nome_arquivo || ''
-      };
-
-      // Preparar anexos se existirem
-      const attachments = dest.anexo ? [{
-        filename: dest.nome_arquivo || 'documento.pdf',
-        content: dest.anexo.split(',')[1] || dest.anexo, // Remove "data:type;base64," se existir
-      }] : [];
-
-      return resend.emails.send({
-        from: 'Flex Fitness <onboarding@resend.dev>',
-        to: [dest.email],
-        subject: dest.subject,
-        html: template(dadosEspecificos),
-        attachments: attachments,
-      });
-    });
-
-    const results = await Promise.all(emailPromises);
+    // Log dos resultados finais
+    console.log('📊 RESUMO FINAL DO ENVIO:');
+    console.log(`✅ Emails enviados com sucesso: ${results.length}`);
+    console.log(`❌ Emails com erro: ${errors.length}`);
     
-    // Log dos resultados
-    console.log('Emails enviados com sucesso:', results.map(r => r.data?.id));
+    if (errors.length > 0) {
+      console.log('🚨 Detalhes dos erros:', errors);
+    }
 
+    if (results.length > 0) {
+      console.log('🎯 IDs dos emails enviados:', results.map(r => r.data?.id));
+    }
+
+    // Retornar resultado mesmo se houver alguns erros
     return NextResponse.json({ 
-      success: true, 
-      message: 'Emails enviados com sucesso',
-      ids: results.map(r => r.data?.id),
-      enviados_para: destinatarios.map((d: any) => d.email).join(', '),
-      total_enviados: destinatarios.length
+      success: results.length > 0, // Sucesso se pelo menos um foi enviado
+      message: `${results.length} de ${destinatarios.length} emails enviados com sucesso${errors.length > 0 ? `, ${errors.length} com erro` : ''}`,
+      enviados: results.length,
+      erros: errors.length,
+      detalhes_erros: errors.length > 0 ? errors : undefined,
+      ids: results.map(r => r.data?.id).filter(Boolean),
+      enviados_para: destinatarios
+        .filter((_: any, i: number) => i < results.length)
+        .map((d: any) => d.email)
+        .join(', '),
+      total_tentativas: destinatarios.length
     });
 
   } catch (error) {
-    console.error('Erro ao enviar email:', error);
+    console.error('💥 Erro geral no servidor:', error);
     return NextResponse.json({ 
+      success: false,
       error: 'Erro interno do servidor',
       details: error instanceof Error ? error.message : 'Erro desconhecido'
     }, { status: 500 });
