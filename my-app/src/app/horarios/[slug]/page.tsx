@@ -97,10 +97,17 @@ export default function SchedulePage() {
           <h1 className="text-2xl font-bold text-flex-dark mb-2">Unidade não encontrada</h1>
           <p className="text-flex-gray mb-6">A unidade solicitada não existe.</p>
           <motion.button
-            onClick={() => router.push('/')}
+            onClick={() => {
+              try {
+                router.push('/')
+              } catch (error) {
+                // Fallback se router.push falhar
+                window.location.href = '/'
+              }
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-flex-primary text-white px-6 py-3 rounded-lg font-medium"
+            className="relative z-10 bg-flex-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-flex-primary/90 transition-colors duration-200"
           >
             Voltar ao início
           </motion.button>
@@ -112,18 +119,9 @@ export default function SchedulePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-[linear-gradient(90deg,_#f8fafc_0%,_#eaf0ff_100%)] shadow-sm border-b">
         <div className="max-w-4xl mx-auto px-4 py-6">
-          <motion.button
-            onClick={() => router.back()}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 text-flex-gray hover:text-flex-primary transition-colors duration-200 mb-4"
-          >
-            <HiArrowLeft />
-            Voltar
-          </motion.button>
-
+          
           <div className="flex items-center gap-4">
             <motion.div
               initial={{ scale: 0 }}
