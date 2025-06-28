@@ -32,6 +32,10 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${inter.variable} ${bebasNeue.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <meta name="msapplication-TileImage" content="/favicon.ico" />
       </head>
       <body className="bg-flex-white text-flex-dark overflow-x-hidden">
         <ErrorBoundary>
