@@ -373,7 +373,11 @@ export default function UnitsShowcase() {
                 ))}
               </div>
             }>
-              <MobileSwiper units={unitsData} />
+              <MobileSwiper>
+                {unitsData.map(unit => (
+                  <UnitCard key={unit.id} unit={unit} />
+                ))}
+              </MobileSwiper>
             </Suspense>
           </ClientOnly>
         </div>
