@@ -5,6 +5,7 @@ import { useRef, Suspense, lazy } from 'react'
 import { unitsData } from '@/lib/constants/units-data'
 import UnitCard from './UnitCard'
 import ClientOnly, { useIsMobile, useIsClient } from '@/components/ClientOnly'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 // Lazy load do Swiper para melhor performance
 const MobileSwiper = lazy(() => import('@/components/MobileSwiper'))
@@ -13,13 +14,19 @@ export default function UnitsShowcase() {
   const sectionRef = useRef(null)
   const isClient = useIsClient()
   const isMobile = useIsMobile()
+  const { networkSpeed, prefersReducedMotion } = useMobileOptimization({
+    reduceAnimations: true,
+    optimizePerformance: true
+  })
+  
+  const shouldReduceAnimations = prefersReducedMotion || isMobile || networkSpeed === 'slow'
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '40%'])
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', shouldReduceAnimations ? '0%' : '40%'])
   const titleScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1])
 
   return (
@@ -31,30 +38,34 @@ export default function UnitsShowcase() {
       {/* Enhanced Background Animation - Simplificado para mobile */}
       <motion.div 
         className="absolute inset-0"
-        style={{ y: isClient && !isMobile ? backgroundY : 0 }}
+        style={{ y: isClient && !shouldReduceAnimations ? backgroundY : 0 }}
       >
         {/* Floating geometric shapes - Reduzido para mobile */}
-        <motion.div
-          className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-flex-primary/10 to-flex-secondary/10 rounded-full blur-3xl"
-          animate={isClient ? {
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-            opacity: [0.3, 0.5, 0.3]
-          } : {}}
-          transition={{ duration: 20, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-br from-flex-secondary/10 to-flex-accent/10 rounded-full blur-3xl"
-          animate={isClient ? {
-            scale: [1.1, 1, 1.1],
-            rotate: [360, 180, 0],
-            opacity: [0.4, 0.6, 0.4]
-          } : {}}
-          transition={{ duration: 25, repeat: Infinity }}
-        />
+        {!shouldReduceAnimations && (
+          <>
+            <motion.div
+              className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-flex-primary/10 to-flex-secondary/10 rounded-full blur-3xl"
+              animate={isClient ? {
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360],
+                opacity: [0.3, 0.5, 0.3]
+              } : {}}
+              transition={{ duration: 20, repeat: Infinity }}
+            />
+            <motion.div
+              className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-br from-flex-secondary/10 to-flex-accent/10 rounded-full blur-3xl"
+              animate={isClient ? {
+                scale: [1.1, 1, 1.1],
+                rotate: [360, 180, 0],
+                opacity: [0.4, 0.6, 0.4]
+              } : {}}
+              transition={{ duration: 25, repeat: Infinity }}
+            />
+          </>
+        )}
 
         {/* Animated grid pattern - Só no desktop */}
-        {isClient && !isMobile && (
+        {isClient && !shouldReduceAnimations && (
           <div className="absolute inset-0 opacity-5">
             <motion.div 
               className="w-full h-full"
@@ -81,7 +92,7 @@ export default function UnitsShowcase() {
         )}
 
         {/* Floating abstract shapes - Só no desktop */}
-        {isClient && !isMobile && (
+        {isClient && !shouldReduceAnimations && (
           <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1000 1000">
             <motion.path
               d="M100,400 Q300,200 500,400 T900,400"
@@ -117,7 +128,7 @@ export default function UnitsShowcase() {
 
         {/* Particle system - Reduzido para mobile */}
         <div className="absolute inset-0 overflow-hidden">
-          {Array.from({ length: isMobile ? 5 : 15 }).map((_, i) => (
+          {Array.from({ length: shouldReduceAnimations ? 3 : (isMobile ? 5 : 15) }).map((_, i) => (
             <motion.div
               key={i}
               className={`absolute w-2 h-2 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
@@ -125,7 +136,7 @@ export default function UnitsShowcase() {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
-              animate={isClient ? {
+              animate={isClient && !shouldReduceAnimations ? {
                 y: [-30, 30, -30],
                 x: [-20, 20, -20],
                 opacity: [0.1, 0.4, 0.1],
@@ -145,23 +156,23 @@ export default function UnitsShowcase() {
         {/* Enhanced title section */}
         <motion.div 
           className="text-center mb-16"
-          style={{ scale: isClient && !isMobile ? titleScale : 1 }}
+          style={{ scale: isClient && !shouldReduceAnimations ? titleScale : 1 }}
         >
           <motion.h2 
             className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll relative"
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: shouldReduceAnimations ? 0 : 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: shouldReduceAnimations ? 0.4 : 0.8 }}
           >
             <motion.span
               className="relative inline-block"
-              whileHover={isClient ? { scale: 1.05 } : {}}
+              whileHover={isClient && !shouldReduceAnimations ? { scale: 1.05 } : {}}
             >
               NOSSAS{' '}
               <motion.span 
                 className="gradient-text relative"
-                animate={isClient ? {
+                animate={isClient && !shouldReduceAnimations ? {
                   textShadow: [
                     "0 0 20px rgba(30, 64, 175, 0.3)",
                     "0 0 30px rgba(59, 130, 246, 0.3)",
@@ -178,11 +189,11 @@ export default function UnitsShowcase() {
                   initial={{ width: 0 }}
                   whileInView={{ width: "100%" }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.5, duration: 1.5 }}
+                  transition={{ delay: shouldReduceAnimations ? 0.2 : 0.5, duration: shouldReduceAnimations ? 0.8 : 1.5 }}
                 />
                 
                 {/* Floating decorative elements - Só no desktop */}
-                {isClient && !isMobile && (
+                {isClient && !shouldReduceAnimations && (
                   <>
                     <motion.div
                       className="absolute -top-4 -right-4 w-4 h-4 bg-flex-primary rounded-full"
@@ -220,7 +231,7 @@ export default function UnitsShowcase() {
               Escolha a unidade mais próxima e comece sua transformação
               
               {/* Text highlight effect - Só no desktop */}
-              {isClient && !isMobile && (
+              {isClient && !shouldReduceAnimations && (
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5 -z-10 blur-sm"
                   initial={{ opacity: 0 }}
@@ -368,7 +379,7 @@ export default function UnitsShowcase() {
       </div>
 
       {/* Background decorative elements - Só no desktop */}
-      {isClient && !isMobile && (
+      {isClient && !shouldReduceAnimations && (
         <>
           <motion.div
             className="absolute top-1/4 left-1/4 opacity-10"
