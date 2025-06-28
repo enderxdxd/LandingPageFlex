@@ -549,9 +549,13 @@ function NavigationContent() {
         animate={{ y: hasMounted ? 0 : -100 }}
         transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          hasMounted && isScrolled
-            ? 'bg-white/90 backdrop-blur-lg shadow-lg py-4 border-b border-gray-200/50' 
-            : 'bg-transparent py-6'
+          isMobile
+            ? hasMounted && isScrolled
+              ? 'bg-white/90 py-4 border-b border-gray-200/50'
+              : 'bg-transparent py-6'
+            : hasMounted && isScrolled
+              ? 'bg-white/90 backdrop-blur-lg shadow-lg py-4 border-b border-gray-200/50'
+              : 'bg-transparent backdrop-blur-md py-6'
         }`}
       >
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
