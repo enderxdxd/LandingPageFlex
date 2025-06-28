@@ -19,53 +19,104 @@ export default function UnitsShowcase() {
     optimizePerformance: true
   })
   
-  const shouldReduceAnimations = prefersReducedMotion || isMobile || networkSpeed === 'slow'
-  
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', shouldReduceAnimations ? '0%' : '40%'])
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '40%'])
   const titleScale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1])
 
+  // Se for mobile, renderiza versão simplificada sem animações
+  if (isMobile) {
+    return (
+      <section 
+        id="units"
+        ref={sectionRef}
+        className="scroll-section min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 relative overflow-hidden"
+      >
+        {/* Background simples para mobile */}
+        <div className="absolute inset-0">
+          {/* Grid pattern simples */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="w-full h-full" style={{
+              backgroundImage: `
+                linear-gradient(45deg, rgba(30, 64, 175, 0.3) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(59, 130, 246, 0.3) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, rgba(30, 64, 175, 0.3) 75%),
+                linear-gradient(-45deg, transparent 75%, rgba(59, 130, 246, 0.3) 75%)
+              `,
+              backgroundSize: '60px 60px',
+              backgroundPosition: '0 0, 0 30px, 30px -30px, -30px 0px'
+            }} />
+          </div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
+          {/* Title section simplificado */}
+          <div className="text-center mb-16">
+            <h2 className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll relative">
+              <span className="relative inline-block">
+                NOSSAS{' '}
+                <span className="gradient-text relative">
+                  UNIDADES
+                  
+                  {/* Underline simples */}
+                  <div className="absolute bottom-0 left-0 h-2 bg-gradient-to-r from-flex-primary to-flex-secondary" />
+                </span>
+              </span>
+            </h2>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Descubra a unidade Flex Fitness mais próxima de você e comece sua transformação hoje mesmo.
+            </p>
+          </div>
+
+          {/* Units grid simplificado */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {unitsData.map((unit, index) => (
+              <UnitCard key={unit.slug} unit={unit} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Versão desktop com todas as animações originais
   return (
     <section 
       id="units"
       ref={sectionRef}
       className="scroll-section min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-20 relative overflow-hidden"
     >
-      {/* Enhanced Background Animation - Simplificado para mobile */}
+      {/* Enhanced Background Animation */}
       <motion.div 
         className="absolute inset-0"
-        style={{ y: isClient && !shouldReduceAnimations ? backgroundY : 0 }}
+        style={{ y: isClient ? backgroundY : 0 }}
       >
-        {/* Floating geometric shapes - Reduzido para mobile */}
-        {!shouldReduceAnimations && (
-          <>
-            <motion.div
-              className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-flex-primary/10 to-flex-secondary/10 rounded-full blur-3xl"
-              animate={isClient ? {
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360],
-                opacity: [0.3, 0.5, 0.3]
-              } : {}}
-              transition={{ duration: 20, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-br from-flex-secondary/10 to-flex-accent/10 rounded-full blur-3xl"
-              animate={isClient ? {
-                scale: [1.1, 1, 1.1],
-                rotate: [360, 180, 0],
-                opacity: [0.4, 0.6, 0.4]
-              } : {}}
-              transition={{ duration: 25, repeat: Infinity }}
-            />
-          </>
-        )}
+        {/* Floating geometric shapes */}
+        <motion.div
+          className="absolute top-10 left-10 w-96 h-96 bg-gradient-to-br from-flex-primary/10 to-flex-secondary/10 rounded-full blur-3xl"
+          animate={isClient ? {
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
+            opacity: [0.3, 0.5, 0.3]
+          } : {}}
+          transition={{ duration: 20, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-10 right-10 w-80 h-80 bg-gradient-to-br from-flex-secondary/10 to-flex-accent/10 rounded-full blur-3xl"
+          animate={isClient ? {
+            scale: [1.1, 1, 1.1],
+            rotate: [360, 180, 0],
+            opacity: [0.4, 0.6, 0.4]
+          } : {}}
+          transition={{ duration: 25, repeat: Infinity }}
+        />
 
-        {/* Animated grid pattern - Só no desktop */}
-        {isClient && !shouldReduceAnimations && (
+        {/* Animated grid pattern */}
+        {isClient && (
           <div className="absolute inset-0 opacity-5">
             <motion.div 
               className="w-full h-full"
@@ -91,8 +142,8 @@ export default function UnitsShowcase() {
           </div>
         )}
 
-        {/* Floating abstract shapes - Só no desktop */}
-        {isClient && !shouldReduceAnimations && (
+        {/* Floating abstract shapes */}
+        {isClient && (
           <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 1000 1000">
             <motion.path
               d="M100,400 Q300,200 500,400 T900,400"
@@ -126,9 +177,9 @@ export default function UnitsShowcase() {
           </svg>
         )}
 
-        {/* Particle system - Reduzido para mobile */}
+        {/* Particle system */}
         <div className="absolute inset-0 overflow-hidden">
-          {Array.from({ length: shouldReduceAnimations ? 3 : (isMobile ? 5 : 15) }).map((_, i) => (
+          {Array.from({ length: 15 }).map((_, i) => (
             <motion.div
               key={i}
               className={`absolute w-2 h-2 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
@@ -136,7 +187,7 @@ export default function UnitsShowcase() {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
               }}
-              animate={isClient && !shouldReduceAnimations ? {
+              animate={isClient ? {
                 y: [-30, 30, -30],
                 x: [-20, 20, -20],
                 opacity: [0.1, 0.4, 0.1],
@@ -156,23 +207,23 @@ export default function UnitsShowcase() {
         {/* Enhanced title section */}
         <motion.div 
           className="text-center mb-16"
-          style={{ scale: isClient && !shouldReduceAnimations ? titleScale : 1 }}
+          style={{ scale: isClient ? titleScale : 1 }}
         >
           <motion.h2 
             className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll relative"
-            initial={{ opacity: 0, y: shouldReduceAnimations ? 0 : 50 }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: shouldReduceAnimations ? 0.4 : 0.8 }}
+            transition={{ duration: 0.8 }}
           >
             <motion.span
               className="relative inline-block"
-              whileHover={isClient && !shouldReduceAnimations ? { scale: 1.05 } : {}}
+              whileHover={isClient ? { scale: 1.05 } : {}}
             >
               NOSSAS{' '}
               <motion.span 
                 className="gradient-text relative"
-                animate={isClient && !shouldReduceAnimations ? {
+                animate={isClient ? {
                   textShadow: [
                     "0 0 20px rgba(30, 64, 175, 0.3)",
                     "0 0 30px rgba(59, 130, 246, 0.3)",
@@ -189,11 +240,11 @@ export default function UnitsShowcase() {
                   initial={{ width: 0 }}
                   whileInView={{ width: "100%" }}
                   viewport={{ once: true }}
-                  transition={{ delay: shouldReduceAnimations ? 0.2 : 0.5, duration: shouldReduceAnimations ? 0.8 : 1.5 }}
+                  transition={{ delay: 0.5, duration: 1.5 }}
                 />
                 
-                {/* Floating decorative elements - Só no desktop */}
-                {isClient && !shouldReduceAnimations && (
+                {/* Floating decorative elements */}
+                {isClient && (
                   <>
                     <motion.div
                       className="absolute -top-4 -right-4 w-4 h-4 bg-flex-primary rounded-full"
@@ -231,7 +282,7 @@ export default function UnitsShowcase() {
               Escolha a unidade mais próxima e comece sua transformação
               
               {/* Text highlight effect - Só no desktop */}
-              {isClient && !shouldReduceAnimations && (
+              {isClient && (
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5 -z-10 blur-sm"
                   initial={{ opacity: 0 }}
@@ -379,7 +430,7 @@ export default function UnitsShowcase() {
       </div>
 
       {/* Background decorative elements - Só no desktop */}
-      {isClient && !shouldReduceAnimations && (
+      {isClient && (
         <>
           <motion.div
             className="absolute top-1/4 left-1/4 opacity-10"
