@@ -171,7 +171,6 @@ const templates = {
             <ol style="color: #1976d2; margin: 0; padding-left: 20px;">
               <li>Clique no link acima para assinar o documento</li>
               <li>Após a assinatura, nossa equipe processará seu cancelamento</li>
-              <li>Você será contactado em até 24 horas úteis via WhatsApp</li>
             </ol>
           </div>
 
@@ -273,7 +272,7 @@ const templates = {
 
           <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
             <strong>⚠️ AÇÃO NECESSÁRIA:</strong><br>
-            Entre em contato com o cliente através do WhatsApp ${data.whatsapp} em até 24 horas úteis.
+            Entre em contato com o cliente através do WhatsApp ${data.whatsapp}.
           </div>
 
         </div>

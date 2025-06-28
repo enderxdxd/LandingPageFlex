@@ -711,7 +711,7 @@ export default function Procedimentos() {
             </motion.button>
 
             <p className="text-center text-flex-light/60 text-sm">
-              Sua solicitação será analisada em até 24 horas úteis
+              Sua solicitação será analisada pela nossa equipe.
             </p>
           </motion.form>
         </motion.div>
