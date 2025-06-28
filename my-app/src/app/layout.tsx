@@ -30,6 +30,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${bebasNeue.variable}`}>
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className="bg-flex-white text-flex-dark overflow-x-hidden">
         <ErrorBoundary>
           <AnimationProvider>

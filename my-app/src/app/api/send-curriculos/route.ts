@@ -605,6 +605,9 @@ const templateCandidato = (data: any) => `
         <div class="footer-logo">💪 FLEX FITNESS</div>
         <div class="footer-tagline">Transformando vidas através do movimento</div>
         <div class="footer-social">Siga-nos nas redes sociais para ficar por dentro das novidades!</div>
+        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 15px; border-radius: 4px;">
+          <p style="color: #856404; margin: 0; font-size: 12px;"><strong>💡 Dica:</strong> Se não receber nossa resposta, verifique sua pasta de spam/lixo eletrônico.</p>
+        </div>
       </div>
     </div>
   </body>

@@ -120,7 +120,10 @@ const templateCliente = (data: any) => `
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d;">
           <p><strong>Flex Fitness</strong><br>
           Transformando vidas através do movimento</p>
-          <p style="font-size: 12px;">Em caso de dúvidas, entre em contato conosco através dos canais disponíveis em nosso site.</p>
+          <p style="font-size: 12px;">Este é um e-mail automático. Guarde este comprovante para seus registros.</p>
+          <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 15px; border-radius: 4px;">
+            <p style="color: #856404; margin: 0; font-size: 12px;"><strong>💡 Dica:</strong> Se não receber nossa resposta, verifique sua pasta de spam/lixo eletrônico.</p>
+          </div>
         </div>
 
       </div>

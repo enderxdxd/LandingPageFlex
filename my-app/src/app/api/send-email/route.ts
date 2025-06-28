@@ -77,6 +77,9 @@ const templates = {
             <p><strong>Flex Fitness</strong><br>
             Transformando vidas através do movimento</p>
             <p style="font-size: 12px;">Este é um e-mail automático. Guarde este comprovante para seus registros.</p>
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 15px; border-radius: 4px;">
+              <p style="color: #856404; margin: 0; font-size: 12px;"><strong>💡 Dica:</strong> Se não receber nossa resposta, verifique sua pasta de spam/lixo eletrônico.</p>
+            </div>
           </div>
 
         </div>
@@ -179,6 +182,9 @@ const templates = {
             <p><strong>Flex Fitness</strong><br>
             Transformando vidas através do movimento</p>
             <p style="font-size: 12px;">Este é um e-mail automático. Guarde este comprovante para seus registros.</p>
+            <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 15px; border-radius: 4px;">
+              <p style="color: #856404; margin: 0; font-size: 12px;"><strong>💡 Dica:</strong> Se não receber nossa resposta, verifique sua pasta de spam/lixo eletrônico.</p>
+            </div>
           </div>
 
         </div>
@@ -250,7 +256,7 @@ const templates = {
             </tr>
             <tr>
               <td style="padding: 8px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Detalhes</td>
-              <td style="padding: 8px; border: 1px solid #ddd;">${data.detalhes}</td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${data.detalhes || 'Nenhum detalhe informado'}</td>
             </tr>
             <tr>
               <td style="padding: 8px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Anexo</td>
@@ -314,9 +320,9 @@ export async function POST(request: NextRequest) {
         };
 
         // Preparar anexos se existirem
-        const attachments = dest.anexo ? [{
+        const attachments = dest.anexo && dest.anexo.trim() !== '' ? [{
           filename: dest.nome_arquivo || 'documento.pdf',
-          content: dest.anexo.split(',')[1] || dest.anexo, // Remove "data:type;base64," se existir
+          content: dest.anexo.includes(',') ? dest.anexo.split(',')[1] : dest.anexo,
         }] : [];
 
         const result = await resend.emails.send({
