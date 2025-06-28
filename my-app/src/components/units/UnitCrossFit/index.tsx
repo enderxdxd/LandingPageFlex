@@ -14,7 +14,7 @@ interface UnitCrossFitProps {
 const crossfitFeatures = [
   {
     icon: GiWeightLiftingUp,
-    title: 'Equipamentos Rogue',
+    title: 'Equipamentos ELEIKO',
     description: 'Equipamentos oficiais Rogue Fitness, padrão mundial de CrossFit',
     color: 'primary'
   },
@@ -50,14 +50,6 @@ const crossfitFeatures = [
   }
 ]
 
-const scheduleData = [
-  { time: '06:00', class: 'CrossFit Iniciante', coach: 'Coach Ana', spots: '12/16' },
-  { time: '07:00', class: 'CrossFit Intermediário', coach: 'Coach João', spots: '15/16' },
-  { time: '08:00', class: 'CrossFit Avançado', coach: 'Coach Maria', spots: '10/12' },
-  { time: '18:00', class: 'CrossFit Open', coach: 'Coach Pedro', spots: '14/16' },
-  { time: '19:00', class: 'CrossFit Competição', coach: 'Coach Carlos', spots: '8/12' },
-  { time: '20:00', class: 'CrossFit Iniciante', coach: 'Coach Ana', spots: '11/16' }
-]
 
 export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
   const sectionRef = useRef(null)
@@ -197,43 +189,7 @@ export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
         </div>
 
 
-        {/* Stats Section */}
-        <motion.div
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        >
-          {[
-            { number: "300m²", label: "Área CrossFit", icon: GiStrongMan },
-            { number: "16", label: "Atletas/Aula", icon: FaUsers },
-            { number: "6", label: "Coaches", icon: FaTrophy },
-            { number: "50min", label: "Por Aula", icon: FaClock }
-          ].map((stat, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ 
-                scale: 1.05,
-                y: -5,
-                boxShadow: "0 15px 30px rgba(30, 64, 175, 0.2)"
-              }}
-              className="text-center glass-effect p-6 rounded-xl backdrop-blur-lg border border-white/10 group"
-            >
-              <motion.div
-                animate={{
-                  rotate: [0, 5, -5, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ duration: 3, repeat: Infinity, delay: index * 0.5 }}
-                className="text-4xl mb-3 text-flex-primary group-hover:text-flex-secondary transition-colors"
-              >
-                <stat.icon />
-              </motion.div>
-              <div className="font-display text-3xl gradient-text mb-1">{stat.number}</div>
-              <div className="text-flex-light/70 text-sm">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
+        
 
         {/* CTA Banner */}
         <motion.div
