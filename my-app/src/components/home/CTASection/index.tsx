@@ -4,11 +4,13 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { useState, useRef } from 'react'
 import ContactForm from './ContactForm'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
   const [showWhatsAppSelector, setShowWhatsAppSelector] = useState(false)
   const sectionRef = useRef(null)
+  const { isMobile } = useMobileOptimization();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -30,7 +32,7 @@ export default function CTASection() {
       >
         {/* Starfield effect */}
         <div className="absolute inset-0">
-          {Array.from({ length: 50 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 5 : 50 }).map((_, i) => (
             <motion.div
               key={i}
               className="absolute w-1 h-1 bg-white rounded-full"

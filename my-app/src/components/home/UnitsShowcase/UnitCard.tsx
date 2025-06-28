@@ -34,11 +34,13 @@ interface Unit {
     lat: number
     lng: number
   }
+  heroImageMobile?: string
 }
 import { HiLocationMarker, HiArrowRight } from 'react-icons/hi'
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa'
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import React from 'react'
 
 interface OptimizedUnitCardProps {
   unit: Unit
@@ -47,7 +49,7 @@ interface OptimizedUnitCardProps {
   index?: number
 }
 
-export default function OptimizedUnitCard({ 
+const OptimizedUnitCard = React.memo(function OptimizedUnitCard({ 
   unit, 
   lazy = false, 
   priority = false,
@@ -243,7 +245,7 @@ export default function OptimizedUnitCard({
           {isInView && !imageError && (
             <Image
               ref={imageRef}
-              src={unit.heroImage}
+              src={isMobile && unit.heroImageMobile ? unit.heroImageMobile : unit.heroImage}
               alt={`${unit.name} - Academia Flex Fitness`}
               fill
               className={`object-cover transition-all duration-700 ${
@@ -251,9 +253,9 @@ export default function OptimizedUnitCard({
                   ? 'group-active:scale-105' 
                   : 'group-hover:scale-110'
               } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              sizes={isMobile ? '100vw' : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'}
               priority={priority}
-              quality={isMobile ? 85 : 90}
+              quality={isMobile ? 75 : 90}
               placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkbHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+Qtnl8SBos"
               onLoad={() => setImageLoaded(true)}
@@ -370,7 +372,6 @@ export default function OptimizedUnitCard({
       )}
     </motion.div>
   )
-}
+})
 
-// Export do componente otimizado como padrão
 export { OptimizedUnitCard as UnitCard }

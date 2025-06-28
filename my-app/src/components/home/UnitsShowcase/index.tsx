@@ -3,12 +3,13 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, Suspense, lazy } from 'react'
 import { unitsData } from '@/lib/constants/units-data'
-import UnitCard from './UnitCard'
+import { UnitCard } from './UnitCard'
 import ClientOnly, { useIsMobile, useIsClient } from '@/components/ClientOnly'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import dynamic from 'next/dynamic'
 
 // Lazy load do Swiper para melhor performance
-const MobileSwiper = lazy(() => import('@/components/MobileSwiper'))
+const MobileSwiper = dynamic(() => import('@/components/MobileSwiper'), { ssr: false })
 
 export default function UnitsShowcase() {
   const sectionRef = useRef(null)
@@ -73,11 +74,11 @@ export default function UnitsShowcase() {
           </div>
 
           {/* Units grid simplificado */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {unitsData.map((unit, index) => (
-              <UnitCard key={unit.slug} unit={unit} index={index} />
+          <MobileSwiper>
+            {unitsData.map((unit, idx) => (
+              <UnitCard key={unit.id} unit={unit} priority={idx === 0} />
             ))}
-          </div>
+          </MobileSwiper>
         </div>
       </section>
     )
@@ -179,7 +180,7 @@ export default function UnitsShowcase() {
 
         {/* Particle system */}
         <div className="absolute inset-0 overflow-hidden">
-          {Array.from({ length: 15 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 3 : 15 }).map((_, i) => (
             <motion.div
               key={i}
               className={`absolute w-2 h-2 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
@@ -311,7 +312,7 @@ export default function UnitsShowcase() {
               }
             }}
           >
-            {unitsData.map((unit, index) => (
+            {unitsData.map((unit, idx) => (
               <motion.div
                 key={unit.id}
                 className="animate-on-scroll"
@@ -333,7 +334,7 @@ export default function UnitsShowcase() {
                   duration: 0.8,
                   type: "spring",
                   stiffness: 100,
-                  delay: index * 0.1
+                  delay: idx * 0.1
                 }}
                 whileHover={isClient ? { 
                   y: -10,
@@ -345,41 +346,10 @@ export default function UnitsShowcase() {
                   transformStyle: 'preserve-3d'
                 }}
               >
-                <UnitCard unit={unit} />
+                <UnitCard unit={unit} priority={idx === 0} />
               </motion.div>
             ))}
           </motion.div>
-        </div>
-
-        {/* Mobile View - Com ClientOnly e Lazy Loading */}
-        <div className="lg:hidden animate-on-scroll">
-          <ClientOnly 
-            fallback={
-              <div className="grid grid-cols-2 gap-4">
-                {unitsData.map((unit) => (
-                  <div key={unit.id} className="animate-pulse">
-                    <div className="aspect-square bg-gray-200 rounded-2xl mb-4" />
-                    <div className="h-4 bg-gray-200 rounded mb-2" />
-                    <div className="h-3 bg-gray-200 rounded w-3/4" />
-                  </div>
-                ))}
-              </div>
-            }
-          >
-            <Suspense fallback={
-              <div className="grid grid-cols-2 gap-4">
-                {unitsData.map((unit) => (
-                  <UnitCard key={unit.id} unit={unit} />
-                ))}
-              </div>
-            }>
-              <MobileSwiper>
-                {unitsData.map(unit => (
-                  <UnitCard key={unit.id} unit={unit} />
-                ))}
-              </MobileSwiper>
-            </Suspense>
-          </ClientOnly>
         </div>
 
         {/* Additional interactive elements */}
@@ -472,19 +442,19 @@ export default function UnitsShowcase() {
 
           {/* Floating location pins */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {unitsData.map((unit, index) => (
+            {Array.from({ length: isMobile ? 2 : unitsData.length }).map((_, index) => (
               <motion.div
-                key={unit.id}
+                key={index}
                 className="absolute text-3xl opacity-10"
                 style={{
                   left: `${15 + (index * 20)}%`,
                   top: `${20 + (index * 15)}%`,
                 }}
-                animate={{
+                animate={isClient ? {
                   y: [-15, 15, -15],
                   rotate: [0, 10, -10, 0],
                   opacity: [0.05, 0.15, 0.05]
-                }}
+                } : {}}
                 transition={{
                   duration: 6 + index,
                   repeat: Infinity,

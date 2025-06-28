@@ -8,12 +8,15 @@ import { HiLocationMarker, HiPhone, HiClock, HiOfficeBuilding } from 'react-icon
 import { FaWhatsapp, FaParking, FaWheelchair } from 'react-icons/fa'
 import { MdPool } from 'react-icons/md'
 import { GiWeightLiftingUp } from 'react-icons/gi'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 interface UnitHeroProps {
   unit: Unit
 }
 
 export default function UnitHero({ unit }: UnitHeroProps) {
+  const { isMobile } = useMobileOptimization();
+
   return (
     <section className="relative h-screen flex items-end overflow-hidden">
       {/* Background */}
@@ -36,7 +39,7 @@ export default function UnitHero({ unit }: UnitHeroProps) {
       
       {/* Floating elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {Array.from({ length: isMobile ? 3 : 20 }).map((_, i) => (
           <motion.div
             key={i}
             className={`absolute w-2 h-2 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}

@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { FaWhatsapp, FaMapMarkerAlt, FaPhone, FaClock } from 'react-icons/fa'
 import { HiMail, HiLocationMarker } from 'react-icons/hi'
 import { MdDirections } from 'react-icons/md'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 interface UnitContactProps {
   unit: Unit
@@ -14,6 +15,7 @@ interface UnitContactProps {
 
 export default function UnitContact({ unit }: UnitContactProps) {
   const [showForm, setShowForm] = useState(false)
+  const { isMobile } = useMobileOptimization();
 
   const contactMethods = [
     {
@@ -65,7 +67,7 @@ export default function UnitContact({ unit }: UnitContactProps) {
         />
 
         {/* Floating contact icons */}
-        {Array.from({ length: 15 }).map((_, i) => (
+        {Array.from({ length: isMobile ? 3 : 15 }).map((_, i) => (
           <motion.div
             key={i}
             className="absolute text-4xl opacity-5 text-flex-primary"
