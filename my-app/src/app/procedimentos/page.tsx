@@ -408,7 +408,7 @@ export default function Procedimentos() {
           </motion.div>
           <h2 className="text-2xl font-bold text-flex-dark mb-4">Solicitação Enviada!</h2>
           <p className="text-flex-gray mb-6">
-            Sua solicitação foi recebida com sucesso. Um comprovante foi enviado para seu e-mail e nossa equipe entrará em contato em breve.
+            Sua solicitação foi recebida com sucesso. Um comprovante foi enviado para seu e-mail e nossa equipe entrará em contato em breve.Confira o SPAM caso não receba o comprovante.
           </p>
           <div className="space-y-3">
             <motion.button

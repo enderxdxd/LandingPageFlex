@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
         }
 
         const result = await resend.emails.send({
-          from: 'Flex Fitness <noreply@flexfitnesscenter.com.br>',
+          from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
           to: [dest.email],
           subject: dest.subject,
           html: template({ ...formattedEmailData, ...dest }),

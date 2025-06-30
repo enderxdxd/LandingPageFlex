@@ -69,7 +69,7 @@ const templates = {
           <!-- Próximos Passos -->
           <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px;">
             <h4 style="color: #1976d2; margin: 0 0 10px 0;">📞 Próximos Passos</h4>
-            <p style="color: #1976d2; margin: 0;">Nossa equipe entrará em contato em até <strong>24 horas úteis</strong> através do WhatsApp informado para dar continuidade ao seu procedimento.</p>
+            <p style="color: #1976d2; margin: 0;">Nossa equipe entrará em contato em até através do WhatsApp informado para dar continuidade ao seu procedimento.</p>
           </div>
 
           <!-- Rodapé -->
