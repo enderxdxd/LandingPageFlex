@@ -126,7 +126,6 @@ type CVData = {
   telefone: string
   departamento: string
   unidade: string
-  cargo?: string
   experiencia?: string
 }
 
@@ -228,7 +227,6 @@ export default function TrabalheAqui() {
         departamento: departmentLabels[data.departamento] || data.departamento,
         codigo_departamento: data.departamento,
         unidade: unitLabels[data.unidade] || data.unidade,
-        cargo: data.cargo || 'Não especificado',
         experiencia: data.experiencia || 'Não informado',
         curriculo: curriculoBase64,
         nome_arquivo: arquivoSelecionado.name
@@ -452,17 +450,6 @@ export default function TrabalheAqui() {
               error={errors.unidade?.message}
               placeholder="Selecione a unidade"
             />
-
-            <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
-                Cargo/Posição Pretendida
-              </label>
-              <input
-                {...register('cargo')}
-                placeholder="Ex: Personal Trainer, Consultor de Vendas, etc."
-                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              />
-            </div>
 
             <div>
               <label className="block text-sm font-medium text-flex-light mb-2">
