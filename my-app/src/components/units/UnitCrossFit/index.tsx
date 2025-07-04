@@ -1,11 +1,12 @@
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Unit } from '@/lib/constants/units-data'
 import { GiWeightLiftingUp, GiStrongMan, GiMuscleUp } from 'react-icons/gi'
 import { FaClock, FaFire, FaTrophy, FaUsers } from 'react-icons/fa'
 import { HiLightningBolt } from 'react-icons/hi'
+import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
 
 interface UnitCrossFitProps {
   unit: Unit
@@ -52,6 +53,7 @@ const crossfitFeatures = [
 
 
 export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
+  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false)
   const sectionRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -226,21 +228,18 @@ export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
                   boxShadow: "0 10px 30px rgba(30, 64, 175, 0.4)"
                 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => setIsWhatsAppOpen(true)}
                 className="bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-all duration-300"
               >
                 Agendar Aula Grátis
               </motion.button>
-              <motion.button
-                whileHover={{ 
-                  scale: 1.05,
-                  backgroundColor: "rgba(255,255,255,0.1)"
-                }}
-                whileTap={{ scale: 0.95 }}
-                className="border-2 border-flex-primary text-flex-primary px-8 py-3 rounded-full font-medium hover:text-white hover:bg-flex-primary transition-all duration-300"
-              >
-                Conhecer o Espaço
-              </motion.button>
             </div>
+            
+            <WhatsAppUnitSelector 
+              isOpen={isWhatsAppOpen}
+              onClose={() => setIsWhatsAppOpen(false)}
+              message="Olá! Gostaria de agendar uma aula grátis de CrossFit ou conhecer o espaço."
+            />
           </motion.div>
         </motion.div>
       </div>

@@ -1,4 +1,3 @@
-// app/horarios/[slug]/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -9,7 +8,9 @@ import {
   HiArrowLeft, 
   HiDownload, 
   HiExclamationCircle,
-  HiRefresh 
+  HiRefresh,
+  HiEye,
+  HiCalendar
 } from 'react-icons/hi'
 import { ScheduleService } from '@/utils/scheduleService'
 import { Schedule } from '@/types/schedule'
@@ -20,7 +21,6 @@ const unitMap: { [key: string]: { id: string; name: string; displayName: string}
     id: 'alphaville',
     name: 'Alphaville',
     displayName: 'Flex Fitness Alphaville',
-    
   },
   'buena-vista': {
     id: 'buena-vista',
@@ -31,13 +31,11 @@ const unitMap: { [key: string]: { id: string; name: string; displayName: string}
     id: 'marista',
     name: 'Marista',
     displayName: 'Flex Fitness Marista',
-   
   },
   'palmas': {
     id: 'palmas',
     name: 'Palmas',
     displayName: 'Flex Fitness Palmas',
-  
   }
 }
 
@@ -49,6 +47,7 @@ export default function SchedulePage() {
   const [schedules, setSchedules] = useState<{ musculacao: Schedule | null; crossfit: Schedule | null }>({ musculacao: null, crossfit: null })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'musculacao' | 'crossfit'>('musculacao')
 
   const unit = unitMap[slug]
 
@@ -78,36 +77,22 @@ export default function SchedulePage() {
     }
   }
 
-  const handleDownload = (scheduleType: 'musculacao' | 'crossfit') => {
-    const schedule = schedules[scheduleType]
-    if (schedule?.imageUrl) {
-      window.open(schedule.imageUrl, '_blank')
-    }
-  }
-
   if (!unit) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center pt-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center"
+          className="text-center max-w-md mx-auto p-8"
         >
           <HiExclamationCircle className="mx-auto text-6xl text-red-500 mb-4" />
           <h1 className="text-2xl font-bold text-flex-dark mb-2">Unidade não encontrada</h1>
           <p className="text-flex-gray mb-6">A unidade solicitada não existe.</p>
           <motion.button
-            onClick={() => {
-              try {
-                router.push('/')
-              } catch (error) {
-                // Fallback se router.push falhar
-                window.location.href = '/'
-              }
-            }}
+            onClick={() => router.push('/')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="relative z-10 bg-flex-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-flex-primary/90 transition-colors duration-200"
+            className="bg-flex-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-flex-primary/90 transition-colors duration-200"
           >
             Voltar ao início
           </motion.button>
@@ -117,45 +102,66 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-[linear-gradient(90deg,_#f8fafc_0%,_#eaf0ff_100%)] shadow-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          
-          <div className="flex items-center gap-4">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="w-16 h-16 bg-gradient-to-r from-orange-500 to-amber-500 rounded-full flex items-center justify-center"
-            >
-              <HiClock className="text-white text-2xl" />
-            </motion.div>
-            
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-2xl md:text-3xl font-bold text-flex-dark mb-1"
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Header melhorado com espaçamento adequado */}
+      <div className="bg-white shadow-sm border-b sticky top-0 z-40 pt-20">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <motion.button
+                onClick={() => router.back()}
+                whileHover={{ scale: 1.05, x: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
               >
-                {unit.displayName}
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="text-flex-gray"
+                <HiArrowLeft className="text-xl text-gray-600" />
+              </motion.button>
+              
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="w-16 h-16 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-lg"
               >
-                Horários de funcionamento e aulas
-              </motion.p>
+                <HiClock className="text-white text-2xl" />
+              </motion.div>
+              
+              <div>
+                <motion.h1
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-2xl md:text-3xl font-bold text-flex-dark mb-1"
+                >
+                  {unit.displayName}
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-flex-gray flex items-center gap-1"
+                >
+                  <HiCalendar className="text-sm" />
+                  Horários de funcionamento e aulas
+                </motion.p>
+              </div>
             </div>
+            
+            <motion.button
+              onClick={loadSchedules}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md"
+            >
+              <HiRefresh className={loading ? 'animate-spin' : ''} />
+              Atualizar
+            </motion.button>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto p-4">
+      {/* Content com melhor espaçamento */}
+      <div className="max-w-6xl mx-auto p-4 pt-8">
         {loading ? (
           <motion.div
             initial={{ opacity: 0 }}
@@ -165,9 +171,9 @@ export default function SchedulePage() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full mb-4"
+              className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full mb-4"
             />
-            <p className="text-flex-gray">Carregando horários...</p>
+            <p className="text-flex-gray font-medium">Carregando horários...</p>
           </motion.div>
         ) : error ? (
           <motion.div
@@ -188,292 +194,284 @@ export default function SchedulePage() {
               Tentar novamente
             </motion.button>
           </motion.div>
-        ) : !schedules ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20"
-          >
-            <HiClock className="mx-auto text-6xl text-gray-400 mb-4" />
-            <h2 className="text-xl font-bold text-flex-dark mb-2">Horários não disponíveis</h2>
-            <p className="text-flex-gray mb-6">
-              Os horários desta unidade ainda não foram cadastrados.
-            </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-              <p className="text-sm text-blue-800 mb-2">
-                <strong>Entre em contato conosco:</strong>
-              </p>
-            </div>
-          </motion.div>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            {/* Info da unidade */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                 
-                </div>
-                
-                <div className="flex gap-3">
-                  <motion.button
-                    onClick={loadSchedules}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 bg-gray-100 text-flex-dark px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors duration-200"
-                  >
-                    <HiRefresh />
-                    Atualizar
-                  </motion.button>
-                </div>
-              </div>
-            </div>
-
-            {/* Horários - Layout diferente para Alphaville */}
+            {/* Layout especial para Alphaville com abas melhoradas */}
             {unit.id === 'alphaville' ? (
-              // Layout especial para Alphaville com abas
               <div className="space-y-6">
-                {/* Abas de navegação */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="flex border-b border-gray-200">
+                {/* Abas de navegação melhoradas */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+                  <div className="flex">
                     <button
-                      className={`flex-1 px-6 py-4 text-center font-medium transition-colors duration-200 ${
-                        schedules.musculacao 
-                          ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500' 
-                          : 'text-gray-500 hover:text-gray-700'
+                      onClick={() => setActiveTab('musculacao')}
+                      className={`flex-1 px-6 py-4 text-center font-medium transition-all duration-300 relative ${
+                        activeTab === 'musculacao'
+                          ? 'bg-blue-50 text-blue-700' 
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                       }`}
-                      onClick={() => {
-                        if (schedules.musculacao) {
-                          document.getElementById('musculacao-tab')?.scrollIntoView({ behavior: 'smooth' })
-                        }
-                      }}
                     >
-                      Horário de Musculação
-                      {schedules.musculacao && (
-                        <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Disponível
-                        </span>
-                      )}
-                    </button>
-                    <button
-                      className={`flex-1 px-6 py-4 text-center font-medium transition-colors duration-200 ${
-                        schedules.crossfit 
-                          ? 'bg-orange-50 text-orange-700 border-b-2 border-orange-500' 
-                          : 'text-gray-500 hover:text-gray-700'
-                      }`}
-                      onClick={() => {
-                        if (schedules.crossfit) {
-                          document.getElementById('crossfit-tab')?.scrollIntoView({ behavior: 'smooth' })
-                        }
-                      }}
-                    >
-                      Horário de CrossFit
-                      {schedules.crossfit && (
-                        <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                          Disponível
-                        </span>
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Conteúdo das abas */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Horário de Musculação */}
-                  <div id="musculacao-tab" className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="p-4 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-b border-gray-100">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-flex-dark">Horários de Musculação</h3>
+                      <div className="flex items-center justify-center gap-2">
+                        <HiClock className="text-lg" />
+                        <span>Horário de Musculação</span>
                         {schedules.musculacao && (
-                          <span className="text-xs text-flex-gray">
-                            Atualizado em {schedules.musculacao.updatedAt.toLocaleDateString('pt-BR')}
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            Disponível
                           </span>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="p-4">
-                      {schedules.musculacao ? (
+                      {activeTab === 'musculacao' && (
                         <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 0.3 }}
-                          className="relative"
-                        >
-                          {/* Visualizador de PDF */}
-                          <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
-                            <iframe
-                              src={`${schedules.musculacao.imageUrl}#toolbar=1&navpanes=1&scrollbar=1`}
-                              className="w-full h-[400px]"
-                              title={`Horários ${unit.displayName} - Musculação`}
-                            />
-                          </div>
-                          
-                          {/* Botão de download */}
-                          <div className="mt-4 text-center">
-                            <motion.a
-                              href={schedules.musculacao.imageUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="inline-flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200"
-                            >
-                              <HiDownload />
-                              Abrir PDF Musculação
-                            </motion.a>
-                          </div>
-                        </motion.div>
-                      ) : (
-                        <div className="text-center py-8">
-                          <HiClock className="mx-auto text-4xl text-gray-400 mb-4" />
-                          <p className="text-flex-gray">Horário de musculação não disponível</p>
-                        </div>
+                          layoutId="activeTab"
+                          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600"
+                        />
                       )}
-                    </div>
-                  </div>
-
-                  {/* Horário de CrossFit */}
-                  <div id="crossfit-tab" className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="p-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-gray-100">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-flex-dark">Horários de CrossFit</h3>
+                    </button>
+                    
+                    <button
+                      onClick={() => setActiveTab('crossfit')}
+                      className={`flex-1 px-6 py-4 text-center font-medium transition-all duration-300 relative ${
+                        activeTab === 'crossfit'
+                          ? 'bg-orange-50 text-orange-700' 
+                          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <HiClock className="text-lg" />
+                        <span>Horário de CrossFit</span>
                         {schedules.crossfit && (
-                          <span className="text-xs text-flex-gray">
-                            Atualizado em {schedules.crossfit.updatedAt.toLocaleDateString('pt-BR')}
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            Disponível
                           </span>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="p-4">
-                      {schedules.crossfit ? (
+                      {activeTab === 'crossfit' && (
                         <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 0.3 }}
-                          className="relative"
-                        >
-                          {/* Visualizador de PDF */}
-                          <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
-                            <iframe
-                              src={`${schedules.crossfit.imageUrl}#toolbar=1&navpanes=1&scrollbar=1`}
-                              className="w-full h-[400px]"
-                              title={`Horários ${unit.displayName} - CrossFit`}
-                            />
-                          </div>
-                          
-                          {/* Botão de download */}
-                          <div className="mt-4 text-center">
-                            <motion.a
-                              href={schedules.crossfit.imageUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-600 transition-colors duration-200"
-                            >
-                              <HiDownload />
-                              Abrir PDF CrossFit
-                            </motion.a>
-                          </div>
-                        </motion.div>
-                      ) : (
-                        <div className="text-center py-8">
-                          <HiClock className="mx-auto text-4xl text-gray-400 mb-4" />
-                          <p className="text-flex-gray">Horário de CrossFit não disponível</p>
-                        </div>
+                          layoutId="activeTab"
+                          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600"
+                        />
                       )}
-                    </div>
+                    </button>
                   </div>
                 </div>
-              </div>
-            ) : (
-              // Layout normal para outras unidades
-              schedules.musculacao && (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="p-4 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-b border-gray-100">
+
+                {/* Conteúdo das abas melhorado */}
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
+                >
+                  <div className={`p-6 ${
+                    activeTab === 'musculacao' 
+                      ? 'bg-gradient-to-r from-blue-500/10 to-blue-600/10' 
+                      : 'bg-gradient-to-r from-orange-500/10 to-orange-600/10'
+                  } border-b border-gray-100`}>
                     <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-flex-dark">Horários de Funcionamento</h3>
-                      <span className="text-xs text-flex-gray">
-                        Atualizado em {schedules.musculacao.updatedAt.toLocaleDateString('pt-BR')}
-                      </span>
+                      <h3 className="font-bold text-lg text-flex-dark flex items-center gap-2">
+                        <HiClock className={activeTab === 'musculacao' ? 'text-blue-600' : 'text-orange-600'} />
+                        Horários de {activeTab === 'musculacao' ? 'Musculação' : 'CrossFit'}
+                      </h3>
+                      {schedules[activeTab] && (
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm text-flex-gray">
+                            Atualizado em {schedules[activeTab]!.updatedAt.toLocaleDateString('pt-BR')}
+                          </span>
+                          <motion.a
+                            href={schedules[activeTab]!.imageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-white transition-all duration-200 shadow-md ${
+                              activeTab === 'musculacao'
+                                ? 'bg-blue-500 hover:bg-blue-600'
+                                : 'bg-orange-500 hover:bg-orange-600'
+                            }`}
+                          >
+                            <HiEye />
+                            Abrir PDF
+                          </motion.a>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
-                  <div className="p-4">
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="relative"
-                    >
-                      {/* Visualizador de PDF */}
-                      <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
-                        <iframe
-                          src={`${schedules.musculacao.imageUrl}#toolbar=1&navpanes=1&scrollbar=1`}
-                          className="w-full h-[600px] md:h-[800px]"
-                          title={`Horários ${unit.displayName} - Musculação`}
-                        />
+                  <div className="p-6">
+                    {schedules[activeTab] ? (
+                      <div className="space-y-4">
+                        {/* Visualizador de PDF melhorado */}
+                        <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
+                          <iframe
+                            src={`${schedules[activeTab]!.imageUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+                            className="w-full h-[500px] md:h-[600px]"
+                            title={`Horários ${unit.displayName} - ${activeTab === 'musculacao' ? 'Musculação' : 'CrossFit'}`}
+                          />
+                        </div>
+                        
+                        {/* Informações adicionais */}
+                        <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-50 rounded-xl">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-flex-dark mb-2">Dicas importantes:</h4>
+                            <ul className="text-sm text-flex-gray space-y-1">
+                              <li>• Chegue 15 minutos antes do horário</li>
+                              <li>• Traga água e toalha</li>
+                              <li>• Consulte a recepção para agendamentos</li>
+                            </ul>
+                          </div>
+                          <div className="flex items-center justify-center">
+                            <motion.a
+                              href={schedules[activeTab]!.imageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-gray-700 transition-colors duration-200"
+                            >
+                              <HiDownload />
+                              Download PDF
+                            </motion.a>
+                          </div>
+                        </div>
                       </div>
-                      
-                      {/* Fallback para dispositivos que não suportam iframe */}
-                      <div className="mt-4 text-center">
-                        <p className="text-sm text-flex-gray mb-3">
-                          Não consegue visualizar? Faça o download do arquivo.
+                    ) : (
+                      <div className="text-center py-12">
+                        <HiClock className="mx-auto text-5xl text-gray-400 mb-4" />
+                        <p className="text-flex-gray text-lg">
+                          Horário de {activeTab === 'musculacao' ? 'musculação' : 'CrossFit'} não disponível
                         </p>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Entre em contato conosco para mais informações
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+            ) : (
+              // Layout melhorado para outras unidades
+              schedules.musculacao && (
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+                  <div className="p-6 bg-gradient-to-r from-blue-500/10 to-blue-600/10 border-b border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-lg text-flex-dark flex items-center gap-2">
+                        <HiClock className="text-blue-600" />
+                        Horários de Funcionamento
+                      </h3>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-flex-gray">
+                          Atualizado em {schedules.musculacao.updatedAt.toLocaleDateString('pt-BR')}
+                        </span>
                         <motion.a
                           href={schedules.musculacao.imageUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="inline-flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200"
+                          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200"
                         >
-                          <HiDownload />
-                          Abrir PDF Musculação
+                          <HiEye />
+                          Abrir PDF
                         </motion.a>
                       </div>
-                    </motion.div>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6">
+                    <div className="space-y-4">
+                      {/* Visualizador de PDF */}
+                      <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50 shadow-inner">
+                        <iframe
+                          src={`${schedules.musculacao.imageUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+                          className="w-full h-[600px] md:h-[700px]"
+                          title={`Horários ${unit.displayName}`}
+                        />
+                      </div>
+                      
+                      {/* Botões de ação */}
+                      <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-50 rounded-xl">
+                        <div className="flex-1">
+                          <p className="text-sm text-flex-gray">
+                            Não consegue visualizar? Faça o download do arquivo ou abra em nova aba.
+                          </p>
+                        </div>
+                        <motion.a
+                          href={schedules.musculacao.imageUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center gap-2 bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors duration-200"
+                        >
+                          <HiDownload />
+                          Download PDF
+                        </motion.a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )
             )}
 
-            {/* Mensagem quando não há horários */}
+            {/* Mensagem quando não há horários - melhorada */}
             {!schedules.musculacao && (unit.id !== 'alphaville' || !schedules.crossfit) && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center py-20"
+                className="bg-white rounded-2xl shadow-lg p-8 text-center"
               >
                 <HiClock className="mx-auto text-6xl text-gray-400 mb-4" />
                 <h2 className="text-xl font-bold text-flex-dark mb-2">Horários não disponíveis</h2>
                 <p className="text-flex-gray mb-6">
                   Os horários desta unidade ainda não foram cadastrados.
                 </p>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
-                  <p className="text-sm text-blue-800 mb-2">
-                    <strong>Entre em contato conosco:</strong>
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 max-w-md mx-auto">
+                  <h4 className="font-semibold text-blue-800 mb-2">Entre em contato conosco:</h4>
+                  <p className="text-sm text-blue-700">
+                    Nossa equipe está sempre pronta para ajudar com informações sobre horários e agendamentos.
                   </p>
-                
                 </div>
               </motion.div>
             )}
 
-            {/* Informações adicionais */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
-              <h4 className="font-semibold text-amber-800 mb-3">Informações importantes:</h4>
-              <ul className="space-y-2 text-sm text-amber-700">
-                <li>• Os horários podem sofrer alterações em feriados</li>
-                <li>• Para agendamento de aulas, consulte a recepção</li>
-                <li>• Horários de funcionamento podem variar aos finais de semana</li>
-                <li>• Em caso de dúvidas, entre em contato conosco</li>
-              </ul>
-            </div>
+            {/* Informações adicionais melhoradas */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 shadow-md"
+            >
+              <h4 className="font-bold text-amber-800 mb-4 flex items-center gap-2">
+                <HiExclamationCircle />
+                Informações importantes
+              </h4>
+              <div className="grid md:grid-cols-2 gap-4">
+                <ul className="space-y-2 text-sm text-amber-700">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
+                    Os horários podem sofrer alterações em feriados
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
+                    Para agendamento de aulas, consulte a recepção
+                  </li>
+                </ul>
+                <ul className="space-y-2 text-sm text-amber-700">
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
+                    Horários podem variar aos finais de semana
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
+                    Em caso de dúvidas, entre em contato conosco
+                  </li>
+                </ul>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </div>

@@ -844,7 +844,7 @@ export default function Navigation() {
   return (
     <Suspense 
       fallback={
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg shadow-lg py-4 border-b border-gray-200/50">
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent shadow-lg py-4 border-b border-gray-200/50">
           <div className="section-padding flex items-center justify-between">
             <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
             <div className="lg:hidden">

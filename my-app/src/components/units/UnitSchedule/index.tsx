@@ -1,15 +1,19 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { Unit } from '@/lib/constants/units-data'
 import { HiClock, HiCalendar } from 'react-icons/hi'
 import { FaSun, FaRegMoon } from 'react-icons/fa'
+import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
 
 interface UnitScheduleProps {
   unit: Unit
 }
 
 export default function UnitSchedule({ unit }: UnitScheduleProps) {
+  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false)
+  
   const scheduleItems = [
     { 
       label: 'Segunda a Sexta', 
@@ -300,9 +304,9 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
               >
                 🎯
               </motion.div>
-              <h3 className="font-display text-xl gradient-text mb-2">Horário de Pico</h3>
+              <h3 className="font-display text-xl gradient-text mb-2">💪 Energia Total</h3>
               <p className="text-flex-light/70 text-sm group-hover:text-flex-light/90 transition-colors">
-                18h às 21h - Horário mais movimentado
+                Ambiente animado e motivador para seus treinos
               </p>
             </motion.div>
 
@@ -320,9 +324,9 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
               >
                 😌
               </motion.div>
-              <h3 className="font-display text-xl gradient-text mb-2">Horário Tranquilo</h3>
+              <h3 className="font-display text-xl gradient-text mb-2">🧹 Limpeza Premium</h3>
               <p className="text-flex-light/70 text-sm group-hover:text-flex-light/90 transition-colors">
-                10h às 16h - Ideal para treino focado
+                Ambiente sempre limpo e higienizado para seu conforto
               </p>
             </motion.div>
           </motion.div>
@@ -349,7 +353,7 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
                 }}
                 transition={{ duration: 4, repeat: Infinity }}
               >
-                ⏰ ENCONTRE SEU HORÁRIO IDEAL
+                ⏰ Venha fazer parte da nossa família
               </motion.h3>
               <p className="text-flex-light/80 text-lg mb-6">
                 Nossa equipe está pronta para ajudar você a escolher o melhor horário
@@ -360,6 +364,7 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
                   boxShadow: "0 10px 30px rgba(30, 64, 175, 0.4)"
                 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => setIsWhatsAppOpen(true)}
                 className="gradient-bg text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-300 relative overflow-hidden group"
               >
                 <motion.div
@@ -368,6 +373,12 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
                 />
                 <span className="relative z-10">Falar com Consultor</span>
               </motion.button>
+              
+              <WhatsAppUnitSelector 
+                isOpen={isWhatsAppOpen}
+                onClose={() => setIsWhatsAppOpen(false)}
+                message="Olá! Gostaria de saber mais sobre os horários de funcionamento."
+              />
             </motion.div>
           </motion.div>
         </div>

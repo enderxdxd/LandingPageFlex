@@ -19,8 +19,8 @@ const bebasNeue = Bebas_Neue({
 
 export const metadata: Metadata = {
   title: 'Flex Fitness Center - Academia Premium em Goiânia',
-  description: 'A maior e mais moderna academia de Goiânia. Unidades em Bueno Vista, Marista, Alphaville e em breve Palmas.',
-  keywords: 'academia goiania, flex fitness, academia premium, crossfit, natação',
+  description: 'A maior e mais moderna academia de Goiânia. Unidades em Buena Vista, Marista, Alphaville e em breve Palmas.',
+  keywords: 'Academia Goiânia, FlexFitnessCenter, academia premium, crossfit, natação',
 }
 
 export default function RootLayout({

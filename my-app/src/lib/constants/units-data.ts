@@ -42,7 +42,7 @@ export const unitsData: Unit[] = [
     phone: '+55 62 3414-7330',
     whatsapp: '(62) 9537-8033',
     hours: {
-      weekdays: '05:00 - 23:00',
+      weekdays: '04:30 - 23:00',
       saturday: '07:00 - 16:00',
       sunday: '07:00 - 14:00'
     },
@@ -60,7 +60,7 @@ export const unitsData: Unit[] = [
     ],
     specialFeatures: [
       'CrossFit Box Exclusivo',
-      'Equipamentos Rogue Fitness',
+      'Equipamentos de Alta Performance',
       'Treinadores Certificados CrossFit',
       'WODs Diários',
       'Competições Internas'
@@ -92,7 +92,7 @@ export const unitsData: Unit[] = [
     instagram: 'https://www.instagram.com/flexfitnesscenter/',
     hasPool: false,
     hasCrossfit: true,
-    area: '1.200m²',
+    area: '3500m',
     parking: '80+ vagas',
     accessibility: true,
     landmark: 'Próximo ao AlphaPark Hotel',
@@ -110,9 +110,9 @@ export const unitsData: Unit[] = [
     phone: '(62) 3515-0588',
     whatsapp: '(62) 9244-1708',
     hours: {
-      weekdays: '04:30 - 00:00',
-      saturday: '06:00 - 16:00',
-      sunday: '07:00 - 19:00'
+      weekdays: '05:00 - 23:00',
+      saturday: '07:00 - 16:00',
+      sunday: '07:00 - 14:00'
     },
     features: [
       'Musculação Completa',
@@ -129,9 +129,8 @@ export const unitsData: Unit[] = [
     ],
     specialFeatures: [
       'Terraço com Vista da Cidade',
-      'Sala VIP para Personal',
       'Equipamentos Life Fitness',
-      'Aulas ao Ar Livre'
+      
     ],
     images: [
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_001.jpg',
@@ -157,7 +156,7 @@ export const unitsData: Unit[] = [
     ],
     heroImage: '/images/units/buenavista/hero.jpeg',
     instagram: 'https://www.instagram.com/flexfitnesscenter/',
-    area: '950m²',
+    area: '2550m',
     parking: '100+ vagas',
     accessibility: true,
     landmark: 'Dentro do Shopping Buena-Vista',
@@ -175,8 +174,8 @@ export const unitsData: Unit[] = [
     phone: '(62) 3241-7700',
     whatsapp: '(62) 9383-0661',
     hours: {
-      weekdays: '05:00 - 00:00',
-      saturday: '06:00 - 16:00',
+      weekdays: '05:00 - 22:00',
+      saturday: '07:00 - 16:00',
       sunday: '07:00 - 14:00'
     },
     features: [
@@ -195,7 +194,6 @@ export const unitsData: Unit[] = [
     specialFeatures: [
       'Espaço Kids Monitorado',
       'Aulas para Terceira Idade',
-      'Programa Família Fit',
       'Horários Flexíveis'
     ],
     images: [
@@ -232,7 +230,7 @@ export const unitsData: Unit[] = [
     ],
     heroImage: '/images/units/marista/hero.jpeg',
     instagram: 'https://www.instagram.com/flexfitnesscenter/',
-    area: '800m²',
+    area: '2600m',
     parking: '150+',
     accessibility: true,
     landmark: 'Dentro do ASSAÍ ATACADISTA',
@@ -286,7 +284,7 @@ export const unitsData: Unit[] = [
     instagram: 'https://www.instagram.com/flexfitnesscenter/',
     comingSoon: true,
     hasPool: true,
-    area: '1.500m²',
+    area: 'm',
     parking: '100 vagas',
     accessibility: true,
     landmark: '',

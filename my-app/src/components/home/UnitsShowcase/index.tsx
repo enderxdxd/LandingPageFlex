@@ -48,7 +48,7 @@ const UnitsStats = ({ isClient, isMobile }: { isClient: boolean, isMobile: boole
     {[
       { number: '4', label: 'Unidades', icon: '🏢' },
       { number: '5k+', label: 'Alunos', icon: '👥' },
-      { number: '15+', label: 'Anos', icon: '⭐' }
+      { number: '30+', label: 'Anos', icon: '⭐' }
     ].map((stat, index) => (
       <motion.div
         key={index}
