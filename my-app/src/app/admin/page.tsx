@@ -77,7 +77,7 @@ function LoginForm({ onLogin }: { onLogin: () => void }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-flex-primary focus:border-transparent transition-all duration-200"
-              placeholder="admin@flexfitness.com"
+              placeholder=""
               required
             />
           </div>
