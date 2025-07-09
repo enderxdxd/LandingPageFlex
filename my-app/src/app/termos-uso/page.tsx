@@ -185,8 +185,7 @@ export default function TermsOfUsePage() {
               <div className="prose prose-lg max-w-none">
                 <p className="text-flex-gray leading-relaxed">
                   Estes Termos de Uso estabelecem as regras e condições para a utilização do website 
-                  e serviços da <strong>Flex Fitness Center</strong>, pessoa jurídica de direito privado, 
-                  inscrita no CNPJ sob o nº XX.XXX.XXX/0001-XX, com sede em Goiânia/GO.
+                  e serviços da <strong>Flex Fitness Center</strong>, pessoa jurídica de direito privado, com sede em Goiânia/GO.
                 </p>
                 
                 <p className="text-flex-gray leading-relaxed">

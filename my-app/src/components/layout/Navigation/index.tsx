@@ -92,6 +92,12 @@ const formulariosData = [
     href: '/trabalhe-aqui',
     icon: '👥',
     description: 'Faça parte da nossa equipe'
+  },
+  {
+    name: 'Free Pass',
+    href: '/freepass',
+    icon: '🎟️',
+    description: 'Ganhe um dia grátis para treinar conosco'
   }
 ]
 
