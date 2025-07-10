@@ -221,16 +221,22 @@ export default function UnitContact({ unit }: UnitContactProps) {
                 y: -5
               }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setShowForm(true)}
               className="group relative bg-flex-primary text-white px-10 py-5 rounded-full font-medium text-lg transition-all duration-300 shadow-lg overflow-hidden"
             >
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
                 transition={{ duration: 0.6 }}
               />
-              <span className="relative z-10 flex items-center gap-2">
-                {unit.comingSoon ? '📝 Cadastrar Interesse' : '📅 Agendar Visita'}
-              </span>
+  
+              <div className='relative z-10'>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.assign('/freepass');
+                  }}>
+                  📅 Agendar Visita
+                </button>
+              </div>
             </motion.button>
             
             <motion.a

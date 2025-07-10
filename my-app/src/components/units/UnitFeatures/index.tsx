@@ -303,7 +303,15 @@ export default function UnitFeatures({ unit }: UnitFeaturesProps) {
                 className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
                 transition={{ duration: 0.6 }}
               />
-              <span className="relative z-10">Agendar Visita</span>
+              <div className='relative z-10'>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.assign('/freepass');
+                  }}>
+                  Agendar Visita
+                </button>
+              </div>
             </motion.button>
           </motion.div>
         </motion.div>

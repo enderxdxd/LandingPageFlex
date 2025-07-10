@@ -125,10 +125,10 @@ export const unitsData: Unit[] = [
       'Ar Condicionado',
       'Área de Alongamento',
       'Loja de Suplementos',
-      'Vista Panorâmica'
+  
     ],
     specialFeatures: [
-      'Terraço com Vista da Cidade',
+      'Salas premium para coletivas',
       'Equipamentos Life Fitness',
       
     ],
