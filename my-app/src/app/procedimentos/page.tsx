@@ -42,7 +42,7 @@ function buildFieldsTable(data: FormData): string {
 const unitRecipients: Record<string, string> = {
   'marista': 'jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,vendasmarista@flexacademia.com.br' ,
   'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br',
-  'alphaville': 'gestao-alphaville@flex.com,vendasmarista@flexacademia.com.br,jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br'
+  'alphaville': 'gestao-alphaville@flex.com,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br'
 }
 
 // Mapeia nomes das unidades
