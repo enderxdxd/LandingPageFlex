@@ -127,7 +127,6 @@ const templateCliente = (data: any) => `
           <ul style="color: #0277bd; margin: 0; padding-left: 20px;">
             <li>Visita guiada pela academia</li>
             <li>Treino experimental gratuito</li>
-            <li>Avaliação física completa</li>
             <li>Orientação com nossos profissionais</li>
           </ul>
         </div>
