@@ -53,6 +53,10 @@ const templates = {
               <td style="padding: 12px; background: white;">${data.motivo}</td>
             </tr>
             <tr>
+              <td style="padding: 12px; background: #007bff; color: white; font-weight: bold;">Matrícula</td>
+              <td style="padding: 12px; background: #f8f9fa;">${data.detalhes}</td>
+            </tr>
+            <tr>
               <td style="padding: 12px; background: #007bff; color: white; font-weight: bold;">WhatsApp</td>
               <td style="padding: 12px; background: #f8f9fa;">${data.whatsapp}</td>
             </tr>
