@@ -176,29 +176,13 @@ const templateCliente = (data: any) => `
   </html>
 `;
 
-// Mapeia destinatários por unidade para freepass
-const sharedRecipients = [
-  'vendas.alphaville@flexacademia.com.br',
-  'supervisaotecnicaalphaville@flexacademia.com.br',
-  'vendasflexbuenavista@flexacademia.com.br',
-  'supervisaotecnicabuenavista@flexacademia.com.br',
-  'vendasmarista@flexacademia.com.br',
-  'jonatas@flexacademia.com.br',
-  'wakson@flexacademia.com.br',
-  'hudson@flexacademia.com.br',
-  'comercial@flexacademia.com.br',
-  'comercial.atendimento@flexacademia.com.br',
-  'atendimento@paresconsultoria.com.br',
-  'rejanerp@hotmail.com',
-  'edson@flexacademia.com.br',
-  'marcio@flexacademia.com.br',
-];
 
-const unitRecipients: Record<string, string[]> = {
-  'marista': sharedRecipients,
-  'buena-vista': sharedRecipients,
-  'alphaville': sharedRecipients,
-  'palmas': sharedRecipients,
+
+const unitRecipients: Record<string, string> = {
+  'marista': 'vendasmarista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
+  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
+  'alphaville': 'vendas.alphaville@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
+  'palmas': 'comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
 };
 
 export async function POST(request: NextRequest) {
@@ -219,9 +203,13 @@ export async function POST(request: NextRequest) {
 
     // Determinar email da unidade usando o código enviado
     const unidadeCode = emailData.codigo_unidade || 'marista';
-    const managerEmails = unitRecipients[unidadeCode];
-    
-    if (!managerEmails || managerEmails.length === 0) {
+    // Converte a lista de emails da unidade (separados por vírgula) em um array
+    const managerEmails = (unitRecipients[unidadeCode] || '')
+      .split(',')
+      .map(e => e.trim())
+      .filter(Boolean);
+
+    if (managerEmails.length === 0) {
       throw new Error('Unidade não encontrada no sistema');
     }
 
