@@ -574,7 +574,6 @@ const templateCandidato = (data: any) => `
         <div class="summary-card">
           <div class="summary-item"><strong>Área:</strong> ${data.departamento}</div>
           <div class="summary-item"><strong>Unidade:</strong> ${data.unidade}</div>
-          ${data.cargo && data.cargo !== 'Não especificado' ? `<div class="summary-item"><strong>Cargo:</strong> ${data.cargo}</div>` : ''}
         </div>
 
         <!-- Próximos Passos -->
