@@ -37,7 +37,7 @@ const templateEmpresa = (data: any) => `
           </tr>
           <tr>
             <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Email</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.email}</td>
+            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.email_interessado}</td>
           </tr>
           <tr>
             <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Celular</td>
@@ -217,6 +217,7 @@ export async function POST(request: NextRequest) {
       ...emailData,
       numero_protocolo: numeroProtocolo,
       data_solicitacao: new Date().toLocaleString('pt-BR'),
+      email_interessado: emailData.email,
     };
 
     // Definir destinatários se não fornecidos
@@ -262,7 +263,7 @@ export async function POST(request: NextRequest) {
           from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
           to: [dest.email],
           subject: dest.subject,
-          html: template({ ...formattedEmailData, ...dest }),
+          html: template(formattedEmailData),
         });
 
         console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);

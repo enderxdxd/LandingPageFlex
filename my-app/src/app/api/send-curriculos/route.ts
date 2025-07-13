@@ -6,21 +6,21 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Mapeia destinatários por departamento (baseado na imagem)
 const departmentRecipients: Record<string, string> = {
-  'estagio-educacao-fisica': 'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',   
+  'estagio-educacao-fisica': 'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
     // Estágio Educação Física
   'financeiro':              'gestaofinanceira@flexacademia.com.br',     
         // Financeiro
   'limpeza':                 'rejane@flexacademia.com.br,marcio@flexacademia.com.br',        
     // Limpeza
-  'manutencao':              'rejane@flexacademia.com.br,marcio@flexacademia.com.br',  
+  'manutencao':              'marcio@flexacademia.com.br',  
            // Manutenção
   'marketing':               'rejane@flexacademia.com.br',       
        // Marketing
-  'natacao':                 'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',    
+  'natacao':                 'hudson@flexacademia.com.br,wakson@flexacademia.com.br',    
             // Natação - Apenas Unid Palmas
-  'professor-ginastica':     'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',   
+  'professor-ginastica':     'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
          // Professor Ginástica
-  'professor-musculacao':    'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br',   
+  'professor-musculacao':    'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
           // Professor Musculação
   'recepcao':                'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',             // Recepção
   'vendas':                  'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',               // Vendas
