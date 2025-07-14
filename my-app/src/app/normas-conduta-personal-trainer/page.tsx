@@ -235,8 +235,8 @@ export default function NormasPersonalTrainerPage() {
 
               <div className="prose prose-lg max-w-none">
                 <p className="text-flex-gray leading-relaxed mb-4">
-                  Ao contratar o "Contrato de Cessão Onerosa de Espaço e Equipamentos", 
-                  o Personal Trainer ("Autorizado") concorda com as Normas de Utilização da 
+                  Ao contratar o &quot;Contrato de Cessão Onerosa de Espaço e Equipamentos&quot;, 
+                  o Personal Trainer (&quot;Autorizado&quot;) concorda com as Normas de Utilização da 
                   Flex Academia, cujas regras são aplicáveis ao Personal Trainer Autorizado e seus alunos.
                 </p>
                 
@@ -432,7 +432,7 @@ export default function NormasPersonalTrainerPage() {
                   <div className="space-y-3">
                     <p className="text-purple-700 text-sm">
                       <strong>Durante as aulas:</strong> O personal trainer somente poderá utilizar 
-                      a camisa com o nome "Personal Trainer" enquanto estiver ministrando suas aulas particulares.
+                      a camisa com o nome &quot;Personal Trainer&quot; enquanto estiver ministrando suas aulas particulares.
                     </p>
                     <p className="text-purple-700 text-sm">
                       <strong>Atividades pessoais:</strong> Para que não se confunda a prestação de 
