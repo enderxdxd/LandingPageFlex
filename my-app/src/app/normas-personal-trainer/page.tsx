@@ -48,7 +48,7 @@ export default function NormasPersonalTrainerPage() {
           </h2>
           
           <p className="mb-6 text-gray-700">
-            Ao contratar o "CONTRATO DE CESSÃO ONEROSA DE ESPAÇO E EQUIPAMENTOS" ("Termo"), o Personal Trainer ("Autorizado") concorda com as Normas de Utilização da Flex Academia, cujas regras são aplicáveis ao Personal Trainer Autorizado e seus alunos. Em caso de descumprimento destas normas, a Flex Academia poderá rescindir o Termo e não será responsabilizada.
+            Ao contratar o &quot;CONTRATO DE CESSÃO ONEROSA DE ESPAÇO E EQUIPAMENTOS&quot; (&quot;Termo&quot;), o Personal Trainer (&quot;Autorizado&quot;) concorda com as Normas de Utilização da Flex Academia, cujas regras são aplicáveis ao Personal Trainer Autorizado e seus alunos. Em caso de descumprimento destas normas, a Flex Academia poderá rescindir o Termo e não será responsabilizada.
           </p>
 
           <div className="space-y-6">
@@ -104,7 +104,7 @@ export default function NormasPersonalTrainerPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">8.</h3>
               <p className="text-gray-700">
-                O Autorizado declara ter a qualificação profissional e registro junto ao CREF, devendo comprovar estar apto para exercer a atividade de "Personal Trainer", sendo certo que qualquer irregularidade de documentação profissional do Autorizado, perante os órgãos competentes, facultará à Flex Academia a imediata resolução do presente Termo.
+                O Autorizado declara ter a qualificação profissional e registro junto ao CREF, devendo comprovar estar apto para exercer a atividade de &quot;Personal Trainer&quot;, sendo certo que qualquer irregularidade de documentação profissional do Autorizado, perante os órgãos competentes, facultará à Flex Academia a imediata resolução do presente Termo.
               </p>
             </div>
 
@@ -160,7 +160,7 @@ export default function NormasPersonalTrainerPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">16.</h3>
               <p className="text-gray-700">
-                Enquanto o Autorizado estiver ministrando suas aulas particulares, é obrigatória a utilização de camisa da Flex Personal Trainer contendo o nome "Personal Trainer" para facilitar a sua identificação no interior das Unidades Flex Academia.
+                Enquanto o Autorizado estiver ministrando suas aulas particulares, é obrigatória a utilização de camisa da Flex Personal Trainer contendo o nome &quot;Personal Trainer&quot; para facilitar a sua identificação no interior das Unidades Flex Academia.
               </p>
             </div>
 
@@ -195,14 +195,14 @@ export default function NormasPersonalTrainerPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">21.</h3>
               <p className="text-gray-700">
-                Para que não se confunda a prestação de serviços de Personal Trainer e a prática de atividades físicas pessoais, o Autorizado somente poderá utilizar a camisa com o nome de "Personal Trainer" enquanto estiver ministrando suas aulas particulares.
+                Para que não se confunda a prestação de serviços de Personal Trainer e a prática de atividades físicas pessoais, o Autorizado somente poderá utilizar a camisa com o nome de &quot;Personal Trainer&quot; enquanto estiver ministrando suas aulas particulares.
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">22.</h3>
               <p className="text-gray-700">
-                Não é permitida a utilização de vestimentas ou adereços que obstruam a camisa de identificação do Autorizado como "Personal Trainer" enquanto este estiver ministrando suas aulas particulares.
+                Não é permitida a utilização de vestimentas ou adereços que obstruam a camisa de identificação do Autorizado como &quot;Personal Trainer&quot; enquanto este estiver ministrando suas aulas particulares.
               </p>
             </div>
 

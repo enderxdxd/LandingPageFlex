@@ -1,8 +1,6 @@
 // src/app/normas-utilizacao/page.tsx
 'use client'
 
-/* eslint-disable react/no-unescaped-entities */
-
 import { HiDownload, HiPrinter } from 'react-icons/hi'
 
 export default function NormasUtilizacaoPage() {
@@ -152,7 +150,7 @@ export default function NormasUtilizacaoPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">13.</h3>
               <p className="text-gray-700">
-                O usuário dos serviços que praticar, no interior da academia, atos de agressão física, ameaça, venda de substâncias ilícitas, roubo, furto e outros que configurem ilícitos penais, bem como atos cuja gravidade jus fique tal medida, a critério da FLEX ACADEMIA, estará sujeito à rescisão imediata e permanente do contrato, sem prejuízo das penalidades contratuais aplicáveis e do ressarcimento de perdas e danos.
+                O usuário dos serviços que praticar, no interior da academia, atos de agressão física, ameaça, venda de substâncias ilícitas, roubo, furto e outros que configurem ilícitos penais, bem como atos cuja gravidade justifique tal medida, a critério da FLEX ACADEMIA, estará sujeito à rescisão imediata e permanente do contrato, sem prejuízo das penalidades contratuais aplicáveis e do ressarcimento de perdas e danos.
               </p>
             </div>
 
@@ -194,7 +192,7 @@ export default function NormasUtilizacaoPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">19.</h3>
               <p className="text-gray-700">
-                A utilização de guarda-volumes, se disponível, não implica dever de guarda da FLEX ACADEMIA, exceto nas hipóteses ora previstas, sendo vedado ao usuário dos serviços deixar seus pertences nos vestiários após a sua saída da FLEX. O usuário reconhece que a FLEX ACADEMIA poderá abrir o guarda-volumes ao final do dia e recolher os bens deixados, mantendo-os sob sua guarda pelo prazo de 30 dias. Decorrido este prazo, a FLEX ACADEMIA u lizará todos os procedimentos legais para liberação do dever de guarda.
+                A utilização de guarda-volumes, se disponível, não implica dever de guarda da FLEX ACADEMIA, exceto nas hipóteses ora previstas, sendo vedado ao usuário dos serviços deixar seus pertences nos vestiários após a sua saída da FLEX. O usuário reconhece que a FLEX ACADEMIA poderá abrir o guarda-volumes ao final do dia e recolher os bens deixados, mantendo-os sob sua guarda pelo prazo de 30 dias. Decorrido este prazo, a FLEX ACADEMIA utilizará todos os procedimentos legais para liberação do dever de guarda.
               </p>
             </div>
 
