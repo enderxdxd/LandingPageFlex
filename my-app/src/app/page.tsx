@@ -9,6 +9,7 @@ import UnitsShowcase from '@/components/home/UnitsShowcase'
 import FeaturesSection from '@/components/home/FeaturesSection'
 import CTASection from '@/components/home/CTASection'
 import ScrollProgress from '@/components/layout/ScrollProgress'
+import ResponsiveSocialSidebar from '@/components/ResponsiveSocialSidebar'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -42,7 +43,7 @@ export default function HomePage() {
         
         // Set inicial
         gsap.set(elements, { 
-          opacity: 0, 
+          opacity: 0,
           y: 60,
           scale: 0.95
         })
@@ -119,6 +120,9 @@ export default function HomePage() {
         <FeaturesSection />
         <CTASection />
       </main>
+      
+      {}
+      <ResponsiveSocialSidebar />
     </>
   )
 }
