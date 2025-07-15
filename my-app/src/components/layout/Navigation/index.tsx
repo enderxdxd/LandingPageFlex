@@ -77,18 +77,6 @@ const horariosData = [
 // Dados dos formulários
 const formulariosData = [
   {
-    name: 'Normas de Utilização',
-    href: '/normas-utilizacao',
-    icon: '📄',
-    description: 'Normas para usuários da academia'
-  },
-  {
-    name: 'Normas Personal Trainer',
-    href: '/normas-personal-trainer',
-    icon: '🏃',
-    description: 'Normas para personal trainers'
-  },
-  {
     name: 'Procedimentos',
     href: '/procedimentos',
     icon: '📋',
