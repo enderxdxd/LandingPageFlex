@@ -2,7 +2,16 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Pagination, Autoplay, EffectCoverflow } from 'swiper/modules'
+// Swiper modules - loaded only on client to avoid SSR issues
+let Pagination: any, Autoplay: any, EffectCoverflow: any;
+if (typeof window !== 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const swiperModules = require('swiper/modules');
+  Pagination = swiperModules.Pagination;
+  Autoplay = swiperModules.Autoplay;
+  EffectCoverflow = swiperModules.EffectCoverflow;
+}
+
 
 interface MobileOptimizationOptions {
   reduceAnimations?: boolean
