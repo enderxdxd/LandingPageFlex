@@ -77,7 +77,7 @@ export default function ResponsiveSocialSidebar() {
     setHasInteracted(true)
   }, [isExpanded])
 
-  if (!isMobile && window.innerWidth < 1024) return null // Não mostrar em tablets
+  if (typeof window !== 'undefined' && !isMobile && window.innerWidth < 1024) return null // Não mostrar em tablets
 
   return (
     <motion.div
