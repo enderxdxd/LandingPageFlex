@@ -2,14 +2,29 @@
 'use client'
 
 import { HiDownload, HiPrinter } from 'react-icons/hi'
+import { useEffect, useState } from 'react'
 
 export default function NormasPersonalTrainerPage() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const handlePrint = () => {
-    window.print()
+    if (typeof window !== 'undefined') {
+      window.print()
+    }
   }
 
   const handleExportPDF = () => {
-    window.print()
+    if (typeof window !== 'undefined') {
+      window.print()
+    }
+  }
+
+  if (!mounted) {
+    return null
   }
 
   return (

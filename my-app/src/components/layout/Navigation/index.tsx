@@ -1,3 +1,4 @@
+// components/Navigation.tsx
 'use client'
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
@@ -75,6 +76,18 @@ const horariosData = [
 
 // Dados dos formulários
 const formulariosData = [
+  {
+    name: 'Normas de Utilização',
+    href: '/normas-utilizacao',
+    icon: '📄',
+    description: 'Normas para usuários da academia'
+  },
+  {
+    name: 'Normas Personal Trainer',
+    href: '/normas-personal-trainer',
+    icon: '🏃',
+    description: 'Normas para personal trainers'
+  },
   {
     name: 'Procedimentos',
     href: '/procedimentos',
@@ -331,7 +344,6 @@ function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
                       />
                       <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
                       
-                      {/* Ícone de relógio sobreposto */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <HiClock className="text-white text-lg drop-shadow-lg opacity-80" />
                       </div>
@@ -363,8 +375,6 @@ function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
                 </motion.div>
               ))}
             </div>
-
-            
           </motion.div>
         )}
       </AnimatePresence>
@@ -432,8 +442,8 @@ function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, 
               <div className="flex items-center gap-2">
                 <HiDocumentText className="text-green-500 text-lg" />
                 <div>
-                  <h3 className="font-semibold text-flex-dark text-sm">Formulários</h3>
-                  <p className="text-flex-gray text-xs">Acesse nossos formulários online</p>
+                  <h3 className="font-semibold text-flex-dark text-sm">Formulários e Documentos</h3>
+                  <p className="text-flex-gray text-xs">Acesse nossos formulários e normas</p>
                 </div>
               </div>
             </div>
@@ -468,7 +478,7 @@ function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, 
                       <p className="text-flex-gray text-xs truncate">{formulario.description}</p>
                       <div className="flex items-center gap-1 text-green-600 text-xs mt-1">
                         <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <span>Online</span>
+                        <span>Disponível</span>
                       </div>
                     </div>
 
@@ -492,7 +502,7 @@ function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, 
               transition={{ delay: 0.3 }}
             >
               <div className="text-center text-xs text-gray-500">
-                Preencha nossos formulários online de forma rápida e segura
+                Acesse nossos documentos e formulários online
               </div>
             </motion.div>
           </motion.div>
@@ -501,10 +511,11 @@ function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, 
     </div>
   )
 }
-// Componente separado que usa usePathname de forma segura
+
+// Componente separado que usa pathname de forma segura
 function NavigationContent() {
   const isMobile = useIsMobile();
-  const isTablet = typeof window !== 'undefined' ? window.innerWidth >= 768 && window.innerWidth < 1024 : false;
+  const [isTablet, setIsTablet] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -514,13 +525,11 @@ function NavigationContent() {
 
   useEffect(() => {
     setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
     if (typeof window !== 'undefined') {
-      setPathname(window.location.pathname)
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+      setPathname(window.location.pathname);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -533,39 +542,62 @@ function NavigationContent() {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
+    const handleResize = () => {
+      if (typeof window !== 'undefined') {
+        setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+      }
+    }
+
     if (typeof window !== 'undefined') {
       window.addEventListener('scroll', handleScroll)
       window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('resize', handleResize)
       
       return () => {
         window.removeEventListener('scroll', handleScroll)
         window.removeEventListener('mousemove', handleMouseMove)
+        window.removeEventListener('resize', handleResize)
       }
     }
   }, [])
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-  ]
+  if (!hasMounted) {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent shadow-lg py-4 border-b border-gray-200/50">
+        <div className="section-padding flex items-center justify-between">
+          <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
+          <div className="lg:hidden">
+            <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
+          </div>
+          <div className="hidden lg:flex items-center space-x-8">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="w-16 h-4 bg-gray-200 rounded animate-pulse" />
+            ))}
+            <div className="w-24 h-8 bg-gray-200 rounded-full animate-pulse" />
+          </div>
+        </div>
+      </nav>
+    )
+  }
 
   return (
     <>
       <motion.nav
         initial={{ y: -100 }}
-        animate={{ y: hasMounted ? 0 : -100 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isMobile
-            ? hasMounted && isScrolled
+            ? isScrolled
               ? 'bg-white/90 py-4 border-b border-gray-200/50'
               : 'bg-transparent py-6'
-            : hasMounted && isScrolled
+            : isScrolled
               ? 'bg-white/90 backdrop-blur-lg shadow-lg py-4 border-b border-gray-200/50'
               : 'bg-transparent backdrop-blur-md py-6'
         }`}
       >
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {hasMounted && isScrolled && (
+          {isScrolled && (
             <motion.div
               className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5"
               initial={{ opacity: 0 }}
@@ -574,7 +606,7 @@ function NavigationContent() {
             />
           )}
           
-          {hasMounted && !isTablet && !isMobile && Array.from({ length: 3 }).map((_, i) => (
+          {!isTablet && !isMobile && Array.from({ length: 3 }).map((_, i) => (
             <motion.div
               key={i}
               className={`absolute w-1 h-1 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
@@ -601,7 +633,7 @@ function NavigationContent() {
             <motion.div
               whileHover={{ 
                 scale: 1.05,
-                filter: hasMounted && isScrolled
+                filter: isScrolled
                   ? "drop-shadow(0 0 20px rgba(30, 64, 175, 0.3))"
                   : "drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))"
               }}
@@ -615,8 +647,6 @@ function NavigationContent() {
                 className="h-10 w-auto object-contain"
               />
               
-              {hasMounted && (
-                <>
               <motion.div
                 className="absolute -inset-2 bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm"
                 transition={{ duration: 0.3 }}
@@ -627,54 +657,49 @@ function NavigationContent() {
                 whileHover={{ width: "100%" }}
                 transition={{ duration: 0.3 }}
               />
-                </>
-              )}
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             {/* Home */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0, duration: 0.5 }}
-              >
-                <Link
+            >
+              <Link
                 href="/"
-                  className={`relative group ${
-                  hasMounted && isScrolled
-                      ? 'text-flex-dark hover:text-flex-primary' 
-                      : 'text-white hover:text-flex-primary'
-                  } transition-colors duration-300 font-medium`}
+                className={`relative group ${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-medium`}
+              >
+                <motion.span
+                  whileHover={{ y: -2 }}
+                  className="relative z-10"
                 >
-                  <motion.span
-                    whileHover={{ y: -2 }}
-                    className="relative z-10"
-                  >
                   Home
-                  </motion.span>
-                  
-                {hasMounted && (
-                  <>
-                  <motion.div
-                    className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-                    transition={{ duration: 0.2 }}
-                  />
-                  <motion.div
-                    className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                    initial={{ width: 0 }}
-                    whileHover={{ width: "100%" }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  </>
-                )}
-                </Link>
-              </motion.div>
+                </motion.span>
+                
+                <motion.div
+                  className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
+                  transition={{ duration: 0.2 }}
+                />
+                <motion.div
+                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                />
+              </Link>
+            </motion.div>
+
             {/* Dropdown Unidades */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
-              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.5 }}
             >
               <UnidadesDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
@@ -683,26 +708,25 @@ function NavigationContent() {
             {/* Dropdown Horários */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
-              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
               <HorariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
             </motion.div>
+
             {/* Dropdown formularios */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
-              animate={hasMounted ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
             >
               <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
             </motion.div>
             
-           
-            
             {/* CTA Button */}
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={hasMounted ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               whileHover={{ 
                 scale: 1.05,
@@ -714,8 +738,6 @@ function NavigationContent() {
               type="button"
               onClick={() => setIsWhatsAppSelectorOpen(true)}
             >
-              {hasMounted && (
-                <>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
                 transition={{ duration: 0.6 }}
@@ -728,8 +750,6 @@ function NavigationContent() {
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
-                </>
-              )}
               <span className="relative z-10">Entre em Contato</span>
             </motion.button>
           </div>
@@ -740,17 +760,16 @@ function NavigationContent() {
             whileTap={{ scale: 0.9, rotate: 90 }}
             whileHover={{ 
               scale: 1.1,
-              boxShadow: hasMounted && isScrolled
+              boxShadow: isScrolled
                 ? "0 5px 15px rgba(0,0,0,0.2)"
                 : "0 5px 15px rgba(255,255,255,0.3)"
             }}
             transition={{ duration: 0.2 }}
             onClick={() => setIsMobileMenuOpen(true)}
             className={`lg:hidden text-2xl relative p-2 rounded-full transition-all duration-300 ${
-              hasMounted && isScrolled ? 'text-flex-dark bg-white/80' : 'text-white bg-white/10'
+              isScrolled ? 'text-flex-dark bg-white/80' : 'text-white bg-white/10'
             }`}
           >
-            {hasMounted && (
             <motion.div
               className="absolute inset-0 rounded-full bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20"
               animate={{
@@ -759,13 +778,12 @@ function NavigationContent() {
               }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            )}
             <HiMenuAlt4 className="relative z-10" />
           </motion.button>
         </div>
 
         {/* Animated border */}
-        {hasMounted && isScrolled && (
+        {isScrolled && (
           <motion.div
             className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary via-flex-secondary to-flex-primary"
             initial={{ width: 0 }}
@@ -840,6 +858,7 @@ function NavigationContent() {
           />
         </motion.div>
       )}
+      
       <WhatsAppUnitSelector isOpen={isWhatsAppSelectorOpen} onClose={() => setIsWhatsAppSelectorOpen(false)} />
     </>
   )
