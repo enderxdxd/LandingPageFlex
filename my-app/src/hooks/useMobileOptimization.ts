@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 // Swiper modules - loaded only on client to avoid SSR issues
 let Pagination: any, Autoplay: any, EffectCoverflow: any;
 if (typeof window !== 'undefined') {
-  // eslint-disable-next-line no-var-requires
+  // eslint-disable-next-line
   const swiperModules = require('swiper/modules');
   Pagination = swiperModules.Pagination;
   Autoplay = swiperModules.Autoplay;
