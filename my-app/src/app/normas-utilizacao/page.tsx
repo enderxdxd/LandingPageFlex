@@ -1,6 +1,8 @@
 // src/app/normas-utilizacao/page.tsx
 'use client'
 
+/* eslint-disable react/no-unescaped-entities */
+
 import { HiDownload, HiPrinter } from 'react-icons/hi'
 
 export default function NormasUtilizacaoPage() {
