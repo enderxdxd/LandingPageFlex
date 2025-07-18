@@ -223,7 +223,6 @@ export const unitsData: Unit[] = [
       '/images/units/marista/Flex_Marista_by_NelsonPacheco_078.jpg',
       '/images/units/marista/Flex_Marista_by_NelsonPacheco_119.jpg',
       '/images/units/marista/Flex_Marista_by_NelsonPacheco_121.jpg',
-      '/images/units/marista/Flex_Marista_by_NelsonPacheco_123.jpg',
       '/images/units/marista/Flex_Marista_by_NelsonPacheco_136.jpg',
       '/images/units/marista/Flex_Marista_by_NelsonPacheco_145.jpg',
       '/images/units/marista/hero.jpeg'

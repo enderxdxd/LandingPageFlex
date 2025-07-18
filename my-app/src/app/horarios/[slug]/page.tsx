@@ -315,14 +315,6 @@ export default function SchedulePage() {
                         
                         {/* Informações adicionais */}
                         <div className="flex flex-col sm:flex-row gap-4 p-4 bg-gray-50 rounded-xl">
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-flex-dark mb-2">Dicas importantes:</h4>
-                            <ul className="text-sm text-flex-gray space-y-1">
-                              <li>• Chegue 15 minutos antes do horário</li>
-                              <li>• Traga água e toalha</li>
-                              <li>• Consulte a recepção para agendamentos</li>
-                            </ul>
-                          </div>
                           <div className="flex items-center justify-center">
                             <motion.a
                               href={schedules[activeTab]!.imageUrl}
@@ -461,10 +453,7 @@ export default function SchedulePage() {
                   </li>
                 </ul>
                 <ul className="space-y-2 text-sm text-amber-700">
-                  <li className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
-                    Horários podem variar aos finais de semana
-                  </li>
+                  
                   <li className="flex items-start gap-2">
                     <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 flex-shrink-0"></span>
                     Em caso de dúvidas, entre em contato conosco
