@@ -142,7 +142,7 @@ export default function SchedulePage() {
                   className="text-flex-gray flex items-center gap-1"
                 >
                   <HiCalendar className="text-sm" />
-                  Horários de funcionamento e aulas
+                  Horários Coletivas
                 </motion.p>
               </div>
             </div>
@@ -216,7 +216,7 @@ export default function SchedulePage() {
                     >
                       <div className="flex items-center justify-center gap-2">
                         <HiClock className="text-lg" />
-                        <span>Horário de Musculação</span>
+                        <span>Horário Coletiva</span>
                         {schedules.musculacao && (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             Disponível
@@ -274,7 +274,7 @@ export default function SchedulePage() {
                     <div className="flex items-center justify-between">
                       <h3 className="font-bold text-lg text-flex-dark flex items-center gap-2">
                         <HiClock className={activeTab === 'musculacao' ? 'text-blue-600' : 'text-orange-600'} />
-                        Horários de {activeTab === 'musculacao' ? 'Musculação' : 'CrossFit'}
+                        Horários de {activeTab === 'musculacao' ? 'Coletivas' : 'CrossFit'}
                       </h3>
                       {schedules[activeTab] && (
                         <div className="flex items-center gap-4">
@@ -309,7 +309,7 @@ export default function SchedulePage() {
                           <iframe
                             src={`${schedules[activeTab]!.imageUrl}#toolbar=1&navpanes=1&scrollbar=1`}
                             className="w-full h-[500px] md:h-[600px]"
-                            title={`Horários ${unit.displayName} - ${activeTab === 'musculacao' ? 'Musculação' : 'CrossFit'}`}
+                            title={`Horários ${unit.displayName} - ${activeTab === 'musculacao' ? 'Coletivas' : 'CrossFit'}`}
                           />
                         </div>
                         
@@ -334,7 +334,7 @@ export default function SchedulePage() {
                       <div className="text-center py-12">
                         <HiClock className="mx-auto text-5xl text-gray-400 mb-4" />
                         <p className="text-flex-gray text-lg">
-                          Horário de {activeTab === 'musculacao' ? 'musculação' : 'CrossFit'} não disponível
+                          Horário de {activeTab === 'musculacao' ? 'Coletivas' : 'CrossFit'} não disponível
                         </p>
                         <p className="text-sm text-gray-500 mt-2">
                           Entre em contato conosco para mais informações

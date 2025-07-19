@@ -110,7 +110,7 @@ export const unitsData: Unit[] = [
     phone: '(62) 3515-0588',
     whatsapp: '(62) 9244-1708',
     hours: {
-      weekdays: '05:00 - 23:00',
+      weekdays: '04:30 - 23:00',
       saturday: '07:00 - 16:00',
       sunday: '07:00 - 14:00'
     },
