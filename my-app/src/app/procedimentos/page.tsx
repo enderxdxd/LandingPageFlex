@@ -40,9 +40,9 @@ function buildFieldsTable(data: FormData): string {
 
 // Mapeia destinatários por unidade
 const unitRecipients: Record<string, string> = {
-  'marista': 'jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,vendasmarista@flexacademia.com.br' ,
-  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br',
-  'alphaville': 'wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,vendas.alphaville@flexacademia.com.br,supervisaotecnicaalphaville@flexacademia.com.br'
+  'marista': 'jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendasmarista@flexacademia.com.br' ,
+  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br',
+  'alphaville': 'wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendas.alphaville@flexacademia.com.br,supervisaotecnicaalphaville@flexacademia.com.br'
 }
 
 // Mapeia nomes das unidades
