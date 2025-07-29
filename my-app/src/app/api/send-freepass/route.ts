@@ -135,7 +135,6 @@ const templateCliente = (data: any) => `
         <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; border-radius: 4px;">
           <h4 style="color: #059669; margin: 0 0 10px 0;">🚀 O que acontece agora?</h4>
           <ul style="color: #059669; margin: 0; padding-left: 20px;">
-            <li>Nossa equipe entrará em contato em até 24 horas</li>
             <li>Agendaremos sua visita no melhor horário para você</li>
             <li>Você receberá todas as orientações por WhatsApp/telefone</li>
             <li>No dia, será recebido(a) por um de nossos profissionais</li>
