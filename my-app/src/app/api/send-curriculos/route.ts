@@ -290,10 +290,7 @@ const templateEmpresa = (data: any) => `
             <td class="label-cell">Unidade</td>
             <td class="value-cell">${data.unidade}</td>
           </tr>
-          <tr>
-            <td class="label-cell">Cargo Pretendido</td>
-            <td class="value-cell">${data.cargo}</td>
-          </tr>
+  
         </table>
 
         ${data.experiencia && data.experiencia !== 'Não informado' ? `
@@ -656,10 +653,10 @@ export async function POST(request: NextRequest) {
     // Definir destinatários se não fornecidos
     const defaultDestinatarios = [];
 
-    // 1. Emails para o departamento (COM anexo)
-    managerEmails.forEach(email => {
+// 1. Emails para o departamento (COM anexo)
+    managerEmails.forEach(emailDestinatario => {
       defaultDestinatarios.push({
-        email: email,
+        to: emailDestinatario,  // ← MUDOU: 'email' para 'to'
         subject: `💼 Novo Currículo - ${emailData.departamento} - CV-${numeroProtocolo}`,
         template: 'empresa',
         attachments: attachments
@@ -668,7 +665,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Email de confirmação para o candidato (SEM anexo)
     defaultDestinatarios.push({
-      email: emailData.email,
+      to: emailData.email,  // ← MUDOU: 'email' para 'to'
       subject: `🎉 Currículo Recebido com Sucesso - CV-${numeroProtocolo} - Flex Fitness`,
       template: 'candidato',
       attachments: []
@@ -692,7 +689,7 @@ export async function POST(request: NextRequest) {
       const dest = finalDestinatarios[i];
       
       try {
-        console.log(`📧 Enviando email ${i + 1}/${finalDestinatarios.length} para: ${dest.email}`);
+        console.log(`📧 Enviando email ${i + 1}/${finalDestinatarios.length} para: ${dest.to}`);
         
         const template = templates[dest.template as keyof typeof templates];
         if (!template) {
@@ -701,9 +698,9 @@ export async function POST(request: NextRequest) {
 
         const result = await resend.emails.send({
           from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
-          to: [dest.email],
+          to: [dest.to],  // ← MUDOU: dest.email para dest.to
           subject: dest.subject,
-          html: template({ ...formattedEmailData, ...dest }),
+          html: template(formattedEmailData),  // ← MUDOU: removeu o ...dest
           attachments: dest.attachments || [],
         });
 
@@ -717,9 +714,9 @@ export async function POST(request: NextRequest) {
         }
 
       } catch (error) {
-        console.error(`❌ Erro ao enviar email ${i + 1} para ${dest.email}:`, error);
+        console.error(`❌ Erro ao enviar email ${i + 1} para ${dest.to}:`, error);
         errors.push({
-          email: dest.email,
+          email: dest.to,
           error: error instanceof Error ? error.message : 'Erro desconhecido'
         });
         
