@@ -141,7 +141,6 @@ export const unitsData: Unit[] = [
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_025.jpg',
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_028.jpg',
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_029.jpg',
-      '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_033.jpg',
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_034.jpg',
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_039.jpg',
       '/images/units/buenavista/Flex_BuenaVista_by_NelsonPacheco_042.jpg',
