@@ -28,7 +28,6 @@ const templates = {
 
           <!-- Saudação -->
           <p style="font-size: 16px; color: #333;">Olá <strong>${data.nome_cliente}</strong>,</p>
-          <p style="color: #666;">Sua solicitação foi <strong>concluída com sucesso</strong>.</p>
 
           <!-- Protocolo -->
           <div style="background: #007bff; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
