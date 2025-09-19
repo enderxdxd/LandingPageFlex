@@ -4,23 +4,107 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import Image from 'next/image'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { MotionDiv, MotionSection, useOptimizedAnimation } from '@/components/shared/MotionWrapper'
 
 export default function ConceptSection() {
   const sectionRef = useRef(null)
+  const { isMobile, prefersReducedMotion } = useMobileOptimization({
+    reduceAnimations: true,
+    optimizePerformance: true
+  })
+  const { shouldAnimate, variants, transition } = useOptimizedAnimation()
+
+  // Só cria scroll transforms se não for mobile
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
-  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+  const backgroundY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '50%']) : undefined
+  const textY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '-20%']) : undefined
+
+  // Versão mobile simplificada sem animações pesadas
+  if (isMobile || !shouldAnimate) {
+    return (
+      <section 
+        ref={sectionRef}
+        className="scroll-section min-h-screen bg-flex-dark text-white py-20 relative overflow-hidden"
+      >
+        {/* Background estático para mobile */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-flex-primary/20 to-flex-secondary/20 rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-20 left-10 w-96 h-96 bg-gradient-to-br from-flex-secondary/15 to-flex-accent/15 rounded-full blur-3xl opacity-50" />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div>
+              <h2 className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll">
+                <span className="text-flex-red relative inline-block">
+                  REDEFINA
+                </span>
+                <br />
+                <span className="text-flex-blue relative inline-block">
+                  SEUS LIMITES
+                </span>
+              </h2>
+              
+              <div className="animate-on-scroll relative mb-6">
+                <div className="text-lg text-flex-gray relative">
+                  Na Flex Fitness Center, acreditamos que o verdadeiro luxo está na 
+                  excelência. Nossos espaços foram projetados para proporcionar uma 
+                  experiência única de treino, onde tecnologia, conforto e resultados 
+                  se encontram.
+                </div>
+              </div>
+              
+              <div className="animate-on-scroll mb-8">
+                <div className="text-lg text-flex-gray">
+                  Com equipamentos de última geração, profissionais altamente 
+                  qualificados e ambientes exclusivos, transformamos cada visita 
+                  em uma jornada de superação pessoal.
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 animate-on-scroll">
+                <div className="text-center bg-flex-red/10 border border-flex-red/30 rounded-lg p-6 backdrop-blur-sm">
+                  <div className="text-4xl font-display text-flex-red mb-2">4</div>
+                  <div className="text-flex-gray">Unidades Premium</div>
+                </div>
+                
+                <div className="text-center bg-flex-blue/10 border border-flex-blue/30 rounded-lg p-6 backdrop-blur-sm">
+                  <div className="text-4xl font-display text-flex-blue mb-2">20+</div>
+                  <div className="text-flex-gray">Modalidades</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative animate-on-scroll">
+              <div className="relative rounded-2xl overflow-hidden">
+                <Image
+                  src="/images/units/alphaville/alphaville1.jpeg"
+                  alt="Flex Fitness Center - Ambiente Premium"
+                  width={600}
+                  height={400}
+                  className="w-full h-[400px] object-cover"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-flex-dark/50 to-transparent" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section 
       ref={sectionRef}
       className="scroll-section min-h-screen bg-flex-dark text-white py-20 relative overflow-hidden"
     >
-      {/* Animated Background */}
+      {/* Animated Background - Só no desktop */}
       <motion.div 
         className="absolute inset-0"
         style={{ y: backgroundY }}
