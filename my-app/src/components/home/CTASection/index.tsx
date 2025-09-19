@@ -5,20 +5,97 @@ import { useState, useRef } from 'react'
 import ContactForm from './ContactForm'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { useOptimizedAnimation } from '@/components/shared/MotionWrapper'
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
   const [showWhatsAppSelector, setShowWhatsAppSelector] = useState(false)
   const sectionRef = useRef(null)
-  const { isMobile } = useMobileOptimization();
+  const { isMobile, prefersReducedMotion } = useMobileOptimization({
+    reduceAnimations: true,
+    optimizePerformance: true
+  });
+  const { shouldAnimate } = useOptimizedAnimation()
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
-  const starsRotation = useTransform(scrollYProgress, [0, 1], [0, 360])
+  const backgroundY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '50%']) : undefined
+  const starsRotation = shouldAnimate ? useTransform(scrollYProgress, [0, 1], [0, 360]) : undefined
+
+  // Versão mobile simplificada
+  if (isMobile || !shouldAnimate) {
+    return (
+      <section 
+        ref={sectionRef}
+        className="scroll-section min-h-screen bg-gradient-to-br from-flex-dark via-slate-900 to-flex-navy text-white py-20 relative overflow-hidden"
+      >
+        {/* Background estático para mobile */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-80 h-80 bg-gradient-to-br from-flex-primary/20 to-transparent rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-br from-flex-secondary/20 to-transparent rounded-full blur-3xl opacity-50" />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
+          <h2 className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll relative">
+            <span className="relative inline-block">
+              COMECE SUA{' '}
+              <span className="text-flex-primary relative">
+                TRANSFORMAÇÃO
+              </span>
+            </span>
+          </h2>
+          
+          <div className="text-xl text-white/80 mb-12 max-w-3xl mx-auto animate-on-scroll">
+            Agende uma visita e descubra como podemos ajudar você a alcançar seus objetivos
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-on-scroll">
+            <button
+              onClick={() => setShowWhatsAppSelector(true)}
+              className="bg-white text-green-600 px-10 py-5 rounded-full font-medium text-lg transition-all duration-300 inline-flex items-center justify-center shadow-lg hover:shadow-xl"
+            >
+              <span className="flex items-center gap-2">
+                📱 Falar no WhatsApp
+              </span>
+            </button>
+            
+            <button
+              onClick={() => setShowForm(true)}
+              className="bg-transparent border-2 border-white text-white px-10 py-5 rounded-full font-medium text-lg transition-all duration-300 hover:bg-white hover:text-flex-dark"
+            >
+              Agendar Visita
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+              <div className="text-4xl mb-4">🏋️</div>
+              <h3 className="font-semibold text-xl mb-2">Equipamentos Premium</h3>
+              <p className="text-white/80">Tecnologia de ponta para seus treinos</p>
+            </div>
+            
+            <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+              <div className="text-4xl mb-4">👨‍🏫</div>
+              <h3 className="font-semibold text-xl mb-2">Instrutores Qualificados</h3>
+              <p className="text-white/80">Profissionais certificados para te guiar</p>
+            </div>
+            
+            <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20">
+              <div className="text-4xl mb-4">📍</div>
+              <h3 className="font-semibold text-xl mb-2">4 Unidades</h3>
+              <p className="text-white/80">Localizações estratégicas em Goiânia</p>
+            </div>
+          </div>
+        </div>
+
+        {showForm && <ContactForm onClose={() => setShowForm(false)} />}
+        <WhatsAppUnitSelector isOpen={showWhatsAppSelector} onClose={() => setShowWhatsAppSelector(false)} />
+      </section>
+    )
+  }
 
   return (
     <section 

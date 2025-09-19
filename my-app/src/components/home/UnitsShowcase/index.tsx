@@ -6,6 +6,7 @@ import { unitsData } from '@/lib/constants/units-data'
 import { UnitCard } from './UnitCard'
 import ClientOnly, { useIsMobile, useIsClient } from '@/components/ClientOnly'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { useOptimizedAnimation } from '@/components/shared/MotionWrapper'
 import dynamic from 'next/dynamic'
 import { HiSparkles, HiLocationMarker } from 'react-icons/hi'
 
@@ -243,6 +244,7 @@ export default function UnitsShowcase() {
     reduceAnimations: true,
     optimizePerformance: true
   })
+  const { shouldAnimate } = useOptimizedAnimation()
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,

@@ -11,6 +11,8 @@ import {
   HiOutlineClock,
   HiOutlineLocationMarker
 } from 'react-icons/hi'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { useOptimizedAnimation } from '@/components/shared/MotionWrapper'
 
 const features = [
   {
@@ -53,13 +55,73 @@ const features = [
 
 export default function FeaturesSection() {
   const sectionRef = useRef(null)
+  const { isMobile, prefersReducedMotion } = useMobileOptimization({
+    reduceAnimations: true,
+    optimizePerformance: true
+  })
+  const { shouldAnimate } = useOptimizedAnimation()
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
-  const titleY = useTransform(scrollYProgress, [0, 1], ['0%', '-10%'])
+  const backgroundY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '30%']) : undefined
+  const titleY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '-10%']) : undefined
+
+  // Versão mobile simplificada
+  if (isMobile || !shouldAnimate) {
+    return (
+      <section 
+        ref={sectionRef}
+        className="scroll-section min-h-screen bg-white py-20 relative overflow-hidden"
+      >
+        {/* Background estático para mobile */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-br from-flex-red/5 to-flex-blue/5 rounded-full blur-3xl opacity-30" />
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-flex-blue/5 to-flex-red/5 rounded-full blur-3xl opacity-30" />
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll relative">
+              POR QUE ESCOLHER A{' '}
+              <span className="gradient-text relative inline-block">
+                FLEX
+              </span>
+            </h2>
+            
+            <div className="text-xl text-flex-gray max-w-3xl mx-auto animate-on-scroll">
+              Oferecemos uma experiência completa que vai além do treino tradicional
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="animate-on-scroll">
+                <FeatureCard {...feature} />
+              </div>
+            ))}
+          </div>
+
+          {/* CTA section simplificada */}
+          <div className="mt-20 text-center">
+            <div className="inline-block bg-gradient-to-r from-flex-red/10 to-flex-blue/10 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50">
+              <h3 className="font-display text-3xl gradient-text mb-4">
+                PRONTO PARA COMEÇAR?
+              </h3>
+              <div className="text-flex-gray mb-6">
+                Descubra como podemos transformar sua rotina de exercícios
+              </div>
+              <button className="gradient-bg text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-300">
+                Conhecer Unidades
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section 
