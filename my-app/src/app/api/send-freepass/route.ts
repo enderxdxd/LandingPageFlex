@@ -278,7 +278,6 @@ export async function POST(request: NextRequest) {
 
         // Delay de 500ms entre envios para evitar rate limit
         if (i < finalDestinatarios.length - 1) {
-          console.log('⏳ Aguardando 500ms antes do próximo envio...');
           await new Promise(resolve => setTimeout(resolve, 500));
         }
 
@@ -289,15 +288,10 @@ export async function POST(request: NextRequest) {
           error: error instanceof Error ? error.message : 'Erro desconhecido'
         });
         
-        // Continue tentando os próximos emails mesmo se um falhar
         continue;
       }
     }
 
-    // Log dos resultados finais
-    console.log('📊 RESUMO FINAL DO ENVIO DE FREEPASS:');
-    console.log(`✅ Emails enviados com sucesso: ${results.length}`);
-    console.log(`❌ Emails com erro: ${errors.length}`);
     
     if (errors.length > 0) {
       console.log('🚨 Detalhes dos erros:', errors);

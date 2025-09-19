@@ -24,6 +24,27 @@ export default function HomePage() {
   useEffect(() => {
     // Se for mobile, não inicializa animações GSAP
     if (isMobile) {
+      // Garantir que todos os elementos estejam visíveis no mobile
+      const allElements = document.querySelectorAll('.animate-on-scroll')
+      allElements.forEach(element => {
+        gsap.set(element, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          clearProps: "all"
+        })
+      })
+      
+      // Garantir que o hero content também esteja visível
+      const heroContent = document.querySelector('.hero-content')
+      if (heroContent) {
+        gsap.set(heroContent, {
+          opacity: 1,
+          y: 0,
+          clearProps: "all"
+        })
+      }
+      
       return
     }
 
@@ -82,20 +103,22 @@ export default function HomePage() {
         })
       })
 
-      // Parallax simples para o hero
-      ScrollTrigger.create({
-        trigger: '.hero-section',
-        start: "top top",
-        end: "bottom top",
-        scrub: 1,
-        onUpdate: self => {
-          const progress = self.progress
-          gsap.set('.hero-content', {
-            y: progress * 100,
-            opacity: 1 - progress * 0.5
-          })
-        }
-      })
+      // Parallax para o hero apenas no desktop
+      if (!prefersReducedMotion) {
+        ScrollTrigger.create({
+          trigger: '.hero-section',
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+          onUpdate: self => {
+            const progress = self.progress
+            gsap.set('.hero-content', {
+              y: progress * 100,
+              opacity: 1 - progress * 0.5
+            })
+          }
+        })
+      }
 
     }, mainRef)
 
@@ -108,7 +131,7 @@ export default function HomePage() {
       clearTimeout(timer)
       ctx.revert()
     }
-  }, [isMobile])
+  }, [isMobile, prefersReducedMotion])
 
   return (
     <>
