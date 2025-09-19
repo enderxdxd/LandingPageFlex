@@ -5,6 +5,7 @@ import Navigation from '@/components/layout/Navigation'
 import AnimationProvider from '@/components/providers/AnimationProvider'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import CookieBanner from '@/components/CookieBanner'
+import MobileAnimationKiller from '@/components/shared/MobileAnimationKiller'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className="bg-flex-white text-flex-dark overflow-x-hidden">
         <ErrorBoundary>
           <AnimationProvider>
+            <MobileAnimationKiller />
             <Navigation />
             <main>{children}</main>
             {/* Cookie Banner - aparece automaticamente quando necessário */}

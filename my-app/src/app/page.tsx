@@ -45,10 +45,10 @@ export default function HomePage() {
         })
       }
       
-      return
+      return // Sai da função sem fazer mais nada
     }
 
-    // Configuração inicial do GSAP apenas para desktop
+    // Configuração inicial do GSAP APENAS para desktop
     gsap.config({
       nullTargetWarn: false,
       force3D: true
