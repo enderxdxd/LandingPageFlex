@@ -57,83 +57,26 @@ export default function AnimationProvider({ children }: { children: React.ReactN
     }
   }, [isMobile])
 
-  // Desabilita animações framer-motion globalmente no mobile
+  // Desabilita animações framer-motion globalmente no mobile (versão suave)
   useEffect(() => {
     if (isMobile || prefersReducedMotion) {
-      // Adiciona CSS global para desabilitar TODAS as animações
+      // CSS mais suave - apenas força visibilidade dos elementos importantes
       const style = document.createElement('style')
-      style.id = 'mobile-animation-killer'
+      style.id = 'mobile-animation-helper'
       style.textContent = `
-        *, *::before, *::after {
-          animation-duration: 0s !important;
-          animation-delay: 0s !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0s !important;
-          transition-delay: 0s !important;
-          transform: none !important;
-          will-change: auto !important;
-        }
-        
-        /* Mata todas as animações CSS */
-        .animate-pulse,
-        .animate-spin,
-        .animate-bounce,
-        .animate-ping,
-        .animate-fade,
-        [class*="animate-"] {
-          animation: none !important;
-        }
-        
-        /* Mata transforms de hover */
-        *:hover {
-          transform: none !important;
-        }
-        
-        /* Força elementos a ficarem visíveis */
+        /* Força elementos importantes a ficarem visíveis */
         .animate-on-scroll {
           opacity: 1 !important;
           transform: none !important;
         }
-        
-        /* Remove blur e filtros pesados */
-        .blur-3xl,
-        .blur-2xl,
-        .blur-xl {
-          filter: none !important;
-        }
-        
-        /* Remove backdrop-blur */
-        .backdrop-blur-sm,
-        .backdrop-blur-md,
-        .backdrop-blur-lg {
-          backdrop-filter: none !important;
-        }
       `
       document.head.appendChild(style)
 
-      // Força todos os elementos motion a ficarem estáticos
-      const forceStaticElements = () => {
-        const motionElements = document.querySelectorAll('[data-framer-motion]')
-        motionElements.forEach(el => {
-          if (el instanceof HTMLElement) {
-            el.style.transform = 'none'
-            el.style.opacity = '1'
-            el.style.willChange = 'auto'
-          }
-        })
-      }
-
-      // Executa imediatamente e depois a cada 100ms por 2 segundos
-      forceStaticElements()
-      const interval = setInterval(forceStaticElements, 100)
-      setTimeout(() => clearInterval(interval), 2000)
-
       return () => {
-        const existingStyle = document.getElementById('mobile-animation-killer')
+        const existingStyle = document.getElementById('mobile-animation-helper')
         if (existingStyle) {
           document.head.removeChild(existingStyle)
         }
-        clearInterval(interval)
       }
     }
   }, [isMobile, prefersReducedMotion])
