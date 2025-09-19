@@ -15,14 +15,14 @@ export default function ConceptSection() {
   })
   const { shouldAnimate, variants, transition } = useOptimizedAnimation()
 
-  // Só cria scroll transforms se não for mobile
+  // Sempre cria os hooks, mas só usa se shouldAnimate for true
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '50%']) : undefined
-  const textY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '-20%']) : undefined
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
+  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
 
   // Versão mobile simplificada sem animações pesadas
   if (isMobile || !shouldAnimate) {
@@ -107,7 +107,7 @@ export default function ConceptSection() {
       {/* Animated Background - Só no desktop */}
       <motion.div 
         className="absolute inset-0"
-        style={{ y: backgroundY }}
+        style={{ y: shouldAnimate ? backgroundY : 0 }}
       >
         {/* Geometric shapes */}
         <motion.div
@@ -164,7 +164,7 @@ export default function ConceptSection() {
 
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <motion.div style={{ y: textY }}>
+          <motion.div style={{ y: shouldAnimate ? textY : 0 }}>
             <motion.h2 
               className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll"
               whileInView={{ opacity: 1, y: 0 }}

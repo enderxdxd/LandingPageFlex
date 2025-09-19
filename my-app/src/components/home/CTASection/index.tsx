@@ -22,8 +22,8 @@ export default function CTASection() {
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '50%']) : undefined
-  const starsRotation = shouldAnimate ? useTransform(scrollYProgress, [0, 1], [0, 360]) : undefined
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%'])
+  const starsRotation = useTransform(scrollYProgress, [0, 1], [0, 360])
 
   // Versão mobile simplificada
   if (isMobile || !shouldAnimate) {
@@ -105,7 +105,7 @@ export default function CTASection() {
       {/* Animated Background */}
       <motion.div 
         className="absolute inset-0"
-        style={{ y: backgroundY }}
+        style={{ y: shouldAnimate ? backgroundY : 0 }}
       >
         {/* Starfield effect */}
         <div className="absolute inset-0">
@@ -185,7 +185,7 @@ export default function CTASection() {
         {/* Rotating elements */}
         <motion.div
           className="absolute top-1/4 right-1/4"
-          style={{ rotate: starsRotation }}
+          style={{ rotate: shouldAnimate ? starsRotation : 0 }}
         >
           <div className="w-32 h-32 border border-white/20 rounded-full">
             <div className="w-full h-full border border-white/10 rounded-full animate-pulse">

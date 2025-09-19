@@ -66,8 +66,8 @@ export default function FeaturesSection() {
     offset: ["start end", "end start"]
   })
 
-  const backgroundY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '30%']) : undefined
-  const titleY = shouldAnimate ? useTransform(scrollYProgress, [0, 1], ['0%', '-10%']) : undefined
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
+  const titleY = useTransform(scrollYProgress, [0, 1], ['0%', '-10%'])
 
   // Versão mobile simplificada
   if (isMobile || !shouldAnimate) {
@@ -131,7 +131,7 @@ export default function FeaturesSection() {
       {/* Animated Background Elements */}
       <motion.div 
         className="absolute inset-0"
-        style={{ y: backgroundY }}
+        style={{ y: shouldAnimate ? backgroundY : 0 }}
       >
         {/* Floating geometric shapes */}
         <motion.div
@@ -215,7 +215,7 @@ export default function FeaturesSection() {
       <div className="max-w-6xl mx-auto px-4 relative z-10">
         <motion.div 
           className="text-center mb-16"
-          style={{ y: titleY }}
+          style={{ y: shouldAnimate ? titleY : 0 }}
         >
           <motion.h2 
             className="font-display text-5xl md:text-7xl mb-6 animate-on-scroll relative"
