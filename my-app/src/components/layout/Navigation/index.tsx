@@ -9,6 +9,7 @@ import { HiMapPin } from 'react-icons/hi2'
 import MobileMenu from './MobileMenu'
 import { useIsMobile } from '@/components/ClientOnly'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
+import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 // Dados das unidades
 const unidadesData = [
@@ -103,7 +104,7 @@ const formulariosData = [
 ]
 
 // Componente do Dropdown Unidades
-function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, hasMounted: boolean }) {
+function UnidadesDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolled: boolean, hasMounted: boolean, shouldAnimate: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -244,7 +245,7 @@ function UnidadesDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
 }
 
 // Componente do Dropdown Horários
-function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, hasMounted: boolean }) {
+function HorariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolled: boolean, hasMounted: boolean, shouldAnimate: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -371,7 +372,7 @@ function HorariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, has
 }
 
 // Componente do Dropdown Formulários
-function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, hasMounted: boolean }) {
+function FormulariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolled: boolean, hasMounted: boolean, shouldAnimate: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -503,6 +504,10 @@ function FormulariosDropdown({ isScrolled, hasMounted }: { isScrolled: boolean, 
 // Componente separado que usa pathname de forma segura
 function NavigationContent() {
   const isMobile = useIsMobile();
+  const { prefersReducedMotion, config } = useMobileOptimization({
+    reduceAnimations: true,
+    optimizePerformance: true
+  });
   const [isTablet, setIsTablet] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -510,6 +515,9 @@ function NavigationContent() {
   const [pathname, setPathname] = useState('/')
   const [hasMounted, setHasMounted] = useState(false);
   const [isWhatsAppSelectorOpen, setIsWhatsAppSelectorOpen] = useState(false)
+
+  // Desabilitar animações no mobile
+  const shouldAnimate = !isMobile && !config.animations.disabled
 
   useEffect(() => {
     setHasMounted(true);
@@ -565,6 +573,106 @@ function NavigationContent() {
           </div>
         </div>
       </nav>
+    )
+  }
+
+  // Renderizar versão sem animações para mobile
+  if (isMobile || !shouldAnimate) {
+    return (
+      <>
+        <nav
+          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+            isScrolled
+              ? 'bg-white/95 shadow-lg py-3 border-b border-gray-200/50'
+              : 'bg-transparent py-4'
+          }`}
+        >
+          <div className="section-padding flex items-center justify-between relative z-10">
+            <Link href="/" className="relative z-10">
+              <div className="relative">
+                <img 
+                  src="/images/units/alphaville/flex-logo-navbar.png"
+                  alt="FLEX FITNESS"
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
+            </Link>
+
+            {/* Mobile Menu Button */}
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(true)}
+              className={`lg:hidden text-2xl relative p-2 rounded-full transition-all duration-300 ${
+                isScrolled ? 'text-flex-dark bg-white/80' : 'text-white bg-white/10'
+              }`}
+            >
+              <HiMenuAlt4 />
+            </button>
+
+            {/* Desktop Navigation - Simplified */}
+            <div className="hidden lg:flex items-center space-x-6">
+              <Link
+                href="/"
+                className={`${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-medium`}
+              >
+                Home
+              </Link>
+
+              <Link
+                href="/unidades"
+                className={`${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-medium`}
+              >
+                Unidades
+              </Link>
+
+              <Link
+                href="/horarios"
+                className={`${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-medium`}
+              >
+                Horários
+              </Link>
+
+              <Link
+                href="/freepass"
+                className={`${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-medium`}
+              >
+                Formulários
+              </Link>
+              
+              <button
+                className="gradient-bg text-white px-6 py-2 rounded-full font-medium transition-all duration-300 hover:shadow-lg"
+                type="button"
+                onClick={() => setIsWhatsAppSelectorOpen(true)}
+              >
+                Entre em Contato
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <MobileMenu onClose={() => setIsMobileMenuOpen(false)} />
+        )}
+        
+        <WhatsAppUnitSelector isOpen={isWhatsAppSelectorOpen} onClose={() => setIsWhatsAppSelectorOpen(false)} />
+      </>
     )
   }
 
@@ -690,7 +798,7 @@ function NavigationContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.5 }}
             >
-              <UnidadesDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
+              <UnidadesDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
             </motion.div>
 
             {/* Dropdown Horários */}
@@ -699,7 +807,7 @@ function NavigationContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
             >
-              <HorariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
+              <HorariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
             </motion.div>
 
             {/* Dropdown formularios */}
@@ -708,7 +816,7 @@ function NavigationContent() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} />
+              <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
             </motion.div>
             
             {/* CTA Button */}
