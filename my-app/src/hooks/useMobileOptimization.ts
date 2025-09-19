@@ -147,7 +147,7 @@ export function useMobileOptimization(options: MobileOptimizationOptions = {}) {
         enableComplexAnimations: !isMobile && !shouldReduceAnimations
       }
     }
-  }, [isMobile, isTablet, touchDevice, networkSpeed, prefersReducedMotion, options])
+  }, [isMobile, isTablet, networkSpeed, prefersReducedMotion, options])
 
   // Debounced scroll handler
   const createScrollHandler = useCallback((callback: () => void, delay: number = 16) => {
@@ -318,7 +318,7 @@ export function useMobileSwiperConfig() {
     onTouchStart: () => {
       triggerHaptic('light')
     }
-  }), [isMobile, isTablet, config, triggerHaptic])
+  }), [isMobile, config, triggerHaptic])
 
   return {
     swiperConfig: getSwiperConfig(),

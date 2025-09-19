@@ -3,6 +3,7 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { HiMenuAlt4, HiChevronDown, HiClock, HiDocumentText } from 'react-icons/hi'
 import { HiMapPin } from 'react-icons/hi2'
@@ -180,9 +181,11 @@ function UnidadesDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolle
                       className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0"
                       whileHover={{ scale: 1.05 }}
                     >
-                      <img
+                      <Image
                         src={unidade.image}
                         alt={unidade.name}
+                        width={48}
+                        height={48}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-br from-flex-primary/20 to-flex-secondary/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
@@ -326,9 +329,11 @@ function HorariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolle
                       className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0"
                       whileHover={{ scale: 1.05 }}
                     >
-                      <img
+                      <Image
                         src={horario.image}
                         alt={horario.name}
+                        width={48}
+                        height={48}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
@@ -590,10 +595,13 @@ function NavigationContent() {
           <div className="section-padding flex items-center justify-between relative z-10">
             <Link href="/" className="relative z-10">
               <div className="relative">
-                <img 
+                <Image 
                   src="/images/units/alphaville/flex-logo-navbar.png"
                   alt="FLEX FITNESS"
+                  width={120}
+                  height={40}
                   className="h-10 w-auto object-contain"
+                  priority
                 />
               </div>
             </Link>
@@ -737,10 +745,13 @@ function NavigationContent() {
               transition={{ duration: 0.2 }}
               className="relative group"
             >
-              <img 
+              <Image 
                 src="/images/units/alphaville/flex-logo-navbar.png"
                 alt="FLEX FITNESS"
+                width={120}
+                height={40}
                 className="h-10 w-auto object-contain"
+                priority
               />
               
               <motion.div
