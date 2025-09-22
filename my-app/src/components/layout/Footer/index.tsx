@@ -21,14 +21,7 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
-            <div className="mb-6">
-              <h3 className="font-elegant text-5xl text-flex-secondary mb-3 font-bold">
-                Flex Fitness Center
-              </h3>
-              <p className="font-body text-flex-slate text-lg font-light tracking-wide">
-                Evolution Flex Fitness Center Ltda
-              </p>
-            </div>
+           
             
             <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-8 font-body">
               <motion.div 
@@ -86,8 +79,6 @@ export default function Footer() {
         </motion.div>
       </div>
 
-      {/* Decorative gradient line */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-flex-primary via-flex-secondary to-flex-accent" />
     </footer>
   )
 }
