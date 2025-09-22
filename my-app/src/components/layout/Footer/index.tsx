@@ -21,7 +21,13 @@ export default function Footer() {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
-           
+            <div className="mb-6">
+              <h3 className="font-elegant text-5xl text-flex-secondary mb-3 font-bold">
+              </h3>
+              <p className="font-body text-flex-slate text-lg font-light tracking-wide">
+                Evolution Flex Fitness Center Ltda
+              </p>
+            </div>
             
             <div className="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-8 font-body">
               <motion.div 
