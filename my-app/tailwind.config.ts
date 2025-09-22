@@ -34,8 +34,11 @@ const config: Config = {
         'flex-blue-950': '#172554',
       },
       fontFamily: {
-        'display': ['var(--font-bebas)', 'Bebas Neue', 'sans-serif'],
-        'body': ['var(--font-inter)', 'Inter', 'sans-serif'],
+        'display': ['var(--font-oswald)', 'Oswald', 'sans-serif'],
+        'elegant': ['var(--font-playfair)', 'Playfair Display', 'serif'],
+        'body': ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
+        'sans': ['var(--font-montserrat)', 'Montserrat', 'sans-serif'],
+        'serif': ['var(--font-playfair)', 'Playfair Display', 'serif'],
       },
       animation: {
         'float': 'float 3s ease-in-out infinite',

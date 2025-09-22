@@ -28,17 +28,36 @@
   }
 
   body {
-    font-family: var(--font-inter);
+    font-family: var(--font-montserrat);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-white);
     color: var(--color-dark);
     overflow-x: hidden;
+    font-weight: 400;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-bebas);
-    letter-spacing: 0.05em;
+    font-family: var(--font-playfair);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .font-display {
+    font-family: var(--font-oswald);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .font-elegant {
+    font-family: var(--font-playfair);
+    font-weight: 500;
+  }
+
+  .font-body {
+    font-family: var(--font-montserrat);
+    font-weight: 400;
   }
 
   /* Custom Scrollbar */
