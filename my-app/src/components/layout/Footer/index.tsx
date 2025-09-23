@@ -79,9 +79,18 @@ export default function Footer() {
           <p className="font-body text-xs text-gray-400 font-light">
             © {new Date().getFullYear()} Evolution Flex Fitness Center Ltda. Todos os direitos reservados.
           </p>
-          <p className="font-body text-xs text-gray-400 mt-2 font-light italic">
-            Desenvolvido com 💪 para transformar vidas através do fitness
-          </p>
+          <div className="flex justify-center items-center gap-4 mt-3">
+            <a 
+              href="/privacy-policy" 
+              className="font-body text-xs text-gray-400 hover:text-flex-secondary transition-colors font-light"
+            >
+              Política de Privacidade
+            </a>
+            <span className="text-gray-600">•</span>
+            <p className="font-body text-xs text-gray-400 font-light italic">
+              Desenvolvido com 💪 para transformar vidas através do fitness
+            </p>
+          </div>
         </motion.div>
       </div>
 
