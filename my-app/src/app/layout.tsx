@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer'
 import AnimationProvider from '@/components/providers/AnimationProvider'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import CookieBanner from '@/components/CookieBanner'
+import { Analytics } from '@vercel/analytics/next'
 
 const playfairDisplay = Playfair_Display({ 
   subsets: ['latin'],
@@ -55,6 +56,7 @@ export default function RootLayout({
             <CookieBanner />
           </AnimationProvider>
         </ErrorBoundary>
+        <Analytics />
       </body>
     </html>
   )
