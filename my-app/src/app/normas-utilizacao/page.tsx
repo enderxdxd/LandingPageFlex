@@ -242,6 +242,13 @@ export default function NormasUtilizacaoPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">24.</h3>
               <p className="text-gray-700">
+              Penalidades pelo Descumprimento das Normas.
+              O não cumprimento das normas de utilização da FLEX FITNESS CENTER poderá acarretar sanções como advertência verbal, advertência por escrito, suspensão temporária das atividades e, em casos de reincidência ou infrações graves, a aplicação de multa no valor correspondente a 10% (dez por cento) do salário mínimo vigente, além da possibilidade de rescisão imediata e permanente do contrato, sem prejuízo da cobrança de eventuais perdas e danos.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">25.</h3>
+              <p className="text-gray-700">
                 Os casos omissos neste regulamento deverão ser analisados pela Direção.
               </p>
             </div>
