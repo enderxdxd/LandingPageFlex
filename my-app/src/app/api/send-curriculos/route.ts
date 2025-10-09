@@ -10,11 +10,11 @@ const departmentRecipients: Record<string, string> = {
     // Estágio Educação Física
   'financeiro':              'gestaofinanceira@flexacademia.com.br',     
         // Financeiro
-  'limpeza':                 'rejane@flexacademia.com.br,marcio@flexacademia.com.br',        
+  'limpeza':                 'rejane@flexacademia.com.br,marcio@flexacademia.com.br,vendaspalmas@flexacademia.com.br',        
     // Limpeza
-  'manutencao':              'marcio@flexacademia.com.br',  
+  'manutencao':              'marcio@flexacademia.com.br,vendaspalmas@flexacademia.com.br',  
            // Manutenção
-  'marketing':               'rejane@flexacademia.com.br',       
+  'marketing':               'rejane@flexacademia.com.br,vendaspalmas@flexacademia.com.br',       
        // Marketing
   'natacao':                 'hudson@flexacademia.com.br,wakson@flexacademia.com.br',    
             // Natação - Apenas Unid Palmas
@@ -22,8 +22,8 @@ const departmentRecipients: Record<string, string> = {
          // Professor Ginástica
   'professor-musculacao':    'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
           // Professor Musculação
-  'recepcao':                'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',             // Recepção
-  'vendas':                  'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',               // Vendas
+  'recepcao':                'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendaspalmas@flexacademia.com.br',             // Recepção
+  'vendas':                  'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendaspalmas@flexacademia.com.br',               // Vendas
 };
 
 // Mapeia os códigos para nomes dos departamentos (exatamente como na imagem)

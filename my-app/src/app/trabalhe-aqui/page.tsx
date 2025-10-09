@@ -147,7 +147,7 @@ const unitLabels: Record<string, string> = {
   'marista':     'Flex Fitness Marista',
   'buena-vista': 'Flex Fitness Buena Vista',
   'alphaville':  'Flex Fitness Alphaville',
-  'palmas':      'Flex Fitness Palmas (Em breve)',
+  'palmas':      'Flex Fitness Palmas ',
   'qualquer':    'Qualquer Unidade'
 }
 
