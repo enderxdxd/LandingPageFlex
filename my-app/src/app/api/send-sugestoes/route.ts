@@ -168,6 +168,7 @@ const sharedRecipients = [
   'rejanerp@hotmail.com',
   'edson@flexacademia.com.br',
   'marcio@flexacademia.com.br',
+  'vendaspalmas@flexacademia.com.br'
 ];
 
 const unitRecipients: Record<string, string[]> = {
