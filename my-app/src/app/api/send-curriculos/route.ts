@@ -23,7 +23,9 @@ const departmentRecipients: Record<string, string> = {
   'professor-musculacao':    'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
           // Professor Musculação
   'recepcao':                'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendaspalmas@flexacademia.com.br',             // Recepção
-  'vendas':                  'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendaspalmas@flexacademia.com.br',               // Vendas
+  'vendas':                  'vendas.alphaville@flexacademia.com.br,vendasmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendaspalmas@flexacademia.com.br',   
+  'crossfit':                'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
+  'professor-lutas':         'supervisaotecnicaalphaville@flexacademia.com.br,hudson@flexacademia.com.br,wakson@flexacademia.com.br,xdhenriquecosta@gmail.com,jonatas@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br',   
 };
 
 // Mapeia os códigos para nomes dos departamentos (exatamente como na imagem)
@@ -37,7 +39,9 @@ const departmentNames: Record<string, string> = {
   'professor-ginastica':     'Professor Ginástica',
   'professor-musculacao':    'Professor Musculação',
   'recepcao':                'Recepção',
-  'vendas':                  'Vendas'
+  'vendas':                  'Vendas',
+  'crossfit':                'Crossfit',
+  'professor-lutas':         'Professor Lutas'
 };
 
 // Mapeia unidades
@@ -45,7 +49,7 @@ const unitNames: Record<string, string> = {
   'marista':     'Flex Fitness Marista',
   'buena-vista': 'Flex Fitness Buena Vista',
   'alphaville':  'Flex Fitness Alphaville',
-  'palmas':      'Flex Fitness Palmas (Em breve)',
+  'palmas':      'Flex Fitness Palmas',
   'qualquer':    'Qualquer Unidade'
 };
 
@@ -734,10 +738,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log dos resultados finais
-    console.log('📊 RESUMO FINAL DO ENVIO DE CURRÍCULO:');
-    console.log(`✅ Emails enviados com sucesso: ${results.length}`);
-    console.log(`❌ Emails com erro: ${errors.length}`);
-    
+
     if (errors.length > 0) {
       console.log('🚨 Detalhes dos erros:', errors);
     }

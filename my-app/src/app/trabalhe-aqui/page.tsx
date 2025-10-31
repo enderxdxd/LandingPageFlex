@@ -140,7 +140,9 @@ const departmentLabels: Record<string, string> = {
   'professor-ginastica':     'Professor Ginástica',
   'professor-musculacao':    'Professor Musculação',
   'recepcao':                'Recepção',
-  'vendas':                  'Vendas'
+  'vendas':                  'Vendas',
+  'crossfit':                'Crossfit',
+  'professor-lutas':         'Professor Lutas'
 }
 
 const unitLabels: Record<string, string> = {
@@ -427,7 +429,9 @@ export default function TrabalheAqui() {
                 { value: 'professor-ginastica', label: 'Professor Ginástica' },
                 { value: 'professor-musculacao', label: 'Professor Musculação' },
                 { value: 'recepcao', label: 'Recepção' },
-                { value: 'vendas', label: 'Vendas' }
+                { value: 'vendas', label: 'Vendas' },
+                { value: 'crossfit', label: 'Crossfit' },
+                { value: 'professor-lutas', label: 'Professor Lutas' }
               ]}
               value={watch('departamento') || ''}
               onChange={(value) => setValue('departamento', value)}
