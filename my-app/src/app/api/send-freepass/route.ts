@@ -177,10 +177,10 @@ const templateCliente = (data: any) => `
 
 
 const unitRecipients: Record<string, string> = {
-  'marista': 'vendasmarista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
-  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
-  'alphaville': 'vendas.alphaville@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
-  'palmas': 'comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br',
+  'marista': 'vendasmarista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexbuenavista@flexacademia.com.br, vendas.alphaville@flexacademia.com.br',
+  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexmarista@flexacademia.com.br,vendas.flexalphaville@flexacademia.com.br,vendas.flexpalmas@flexacademia.com.br',
+  'alphaville': 'vendas.alphaville@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexmarista@flexacademia.com.br,vendas.flexbuenavista@flexacademia.com.br,vendas.flexpalmas@flexacademia.com.br',
+  'palmas': 'comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexmarista@flexacademia.com.br,vendas.flexbuenavista@flexacademia.com.br,vendas.flexalphaville@flexacademia.com.br',
 };
 
 export async function POST(request: NextRequest) {
