@@ -249,9 +249,17 @@ export default function NormasUtilizacaoPage() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-2">25.</h3>
               <p className="text-gray-700">
+                Nas unidades dotadas de fechaduras eletrônicas, o aluno é responsável pela criação de sua senha e pelo devido trancamento do compartimento. A negligência no uso desse dispositivo autoriza a Flex a remover e guardar os pertences ali encontrados para garantir a integridade dos mesmos.
+              </p>
+            </div>
+            <div>
+              <h3 className='font-semibold text-gray-900 mb-2'>26.</h3>
+              <p className="text-gray-700">
                 Os casos omissos neste regulamento deverão ser analisados pela Direção.
               </p>
             </div>
+            
+
           </div>
         </div>
       </div>
