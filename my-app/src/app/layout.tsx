@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Montserrat, Oswald } from 'next/font/google'
+import { Poppins, Manrope } from 'next/font/google'
 import './globals.css'
 import Navigation from '@/components/layout/Navigation'
 import Footer from '@/components/layout/Footer'
@@ -8,22 +8,18 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import CookieBanner from '@/components/CookieBanner'
 import { Analytics } from '@vercel/analytics/next'
 
-const playfairDisplay = Playfair_Display({ 
+const manrope = Manrope({ 
   subsets: ['latin'],
-  variable: '--font-playfair',
-  weight: ['400', '500', '600', '700', '800', '900'],
-})
-
-const montserrat = Montserrat({ 
-  subsets: ['latin'],
-  variable: '--font-montserrat',
+  variable: '--font-manrope',
   weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
 })
 
-const oswald = Oswald({ 
+const poppins = Poppins({ 
   subsets: ['latin'],
-  variable: '--font-oswald',
-  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -38,8 +34,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={`${playfairDisplay.variable} ${montserrat.variable} ${oswald.variable}`}>
+    <html lang="pt-BR" className={`${manrope.variable} ${poppins.variable}`}>
       <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-L2DB2KJKF9"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-L2DB2KJKF9');
+            `,
+          }}
+        />
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="shortcut icon" href="/favicon.ico" />
