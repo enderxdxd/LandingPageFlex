@@ -42,7 +42,8 @@ function buildFieldsTable(data: FormData): string {
 const unitRecipients: Record<string, string> = {
   'marista': 'jonatas@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendasmarista@flexacademia.com.br' ,
   'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br',
-  'alphaville': 'wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendas.alphaville@flexacademia.com.br,supervisaotecnicaalphaville@flexacademia.com.br'
+  'alphaville': 'wakson@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendas.alphaville@flexacademia.com.br,supervisaotecnicaalphaville@flexacademia.com.br',
+  'palmas': 'comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,COMERCIAL@FLEXPALMAS.COM.BR'
 }
 
 // Mapeia nomes das unidades
@@ -50,6 +51,7 @@ const unitNames: Record<string, string> = {
   'marista':     'Flex Fitness Marista',
   'buena-vista': 'Flex Fitness Buena Vista',
   'alphaville':  'Flex Fitness Alphaville',
+  'palmas':      'Flex Fitness Palmas',
 }
 
 // Mapeia nomes dos procedimentos
