@@ -474,7 +474,8 @@ export default function Procedimentos() {
               options={[
                 { value: 'marista', label: 'Flex Fitness Marista' },
                 { value: 'buena-vista', label: 'Flex Fitness Buena Vista' },
-                { value: 'alphaville', label: 'Flex Fitness Alphaville' }
+                { value: 'alphaville', label: 'Flex Fitness Alphaville' },
+                { value: 'palmas', label: 'Flex Fitness Palmas' }
               ]}
               value={watch('unidade') || ''}
               onChange={(value) => setValue('unidade', value)}
