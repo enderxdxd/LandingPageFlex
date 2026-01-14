@@ -243,8 +243,8 @@ export const unitsData: Unit[] = [
     name: 'Palmas',
     description: 'Nossa aguardada unidade em Palmas promete revolucionar o fitness na capital do Tocantins. Com projeto arquitetônico inovador e tecnologia de última geração.',
     address: 'Q. 206 Sul Avenida Ns 4, 469 - Arse, Palmas - TO',
-    phone: '----',
-    whatsapp: '----',
+    phone: '+55 62 9383-3713',
+    whatsapp: '(62) 9383-3713',
     hours: {
       weekdays: '05:00 - 00:00',
       saturday: '06:00 - 16:00',
@@ -280,7 +280,6 @@ export const unitsData: Unit[] = [
     ],
     heroImage: '/images/units/palmas/hero-projeto.jpg',
     instagram: 'https://www.instagram.com/flexfitnesscenter/',
-    comingSoon: true,
     hasPool: true,
     area: 'm',
     parking: '100 vagas',
