@@ -97,10 +97,10 @@ const formulariosData = [
     description: 'Faça parte da nossa equipe'
   },
   {
-    name: 'Free Pass',
+    name: 'Aula Experimental',
     href: '/freepass',
     icon: '🎟️',
-    description: 'Ganhe um dia grátis para treinar conosco'
+    description: 'Agende sua aula experimental gratuita'
   }
 ]
 
@@ -119,7 +119,7 @@ function UnidadesDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolle
           hasMounted && isScrolled
             ? 'text-flex-dark hover:text-flex-primary' 
             : 'text-white hover:text-flex-primary'
-        } transition-colors duration-300 font-medium`}
+        } transition-colors duration-300 font-sans font-normal`}
       >
         <motion.span
           whileHover={{ y: -2 }}
@@ -262,7 +262,7 @@ function HorariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolle
           hasMounted && isScrolled
             ? 'text-flex-dark hover:text-flex-primary' 
             : 'text-white hover:text-flex-primary'
-        } transition-colors duration-300 font-medium`}
+        } transition-colors duration-300 font-sans font-normal`}
       >
         <motion.span
           whileHover={{ y: -2 }}
@@ -391,7 +391,7 @@ function FormulariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScro
           hasMounted && isScrolled
             ? 'text-flex-dark hover:text-flex-primary' 
             : 'text-white hover:text-flex-primary'
-        } transition-colors duration-300 font-medium`}
+        } transition-colors duration-300 font-sans font-normal`}
       >
         <motion.span
           whileHover={{ y: -2 }}
@@ -625,7 +625,7 @@ function NavigationContent() {
                   isScrolled
                     ? 'text-flex-dark hover:text-flex-primary' 
                     : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
+                } transition-colors duration-300 font-sans font-normal`}
               >
                 Home
               </Link>
@@ -636,7 +636,7 @@ function NavigationContent() {
                   isScrolled
                     ? 'text-flex-dark hover:text-flex-primary' 
                     : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
+                } transition-colors duration-300 font-sans font-normal`}
               >
                 Unidades
               </Link>
@@ -647,7 +647,7 @@ function NavigationContent() {
                   isScrolled
                     ? 'text-flex-dark hover:text-flex-primary' 
                     : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
+                } transition-colors duration-300 font-sans font-normal`}
               >
                 Horários
               </Link>
@@ -658,9 +658,20 @@ function NavigationContent() {
                   isScrolled
                     ? 'text-flex-dark hover:text-flex-primary' 
                     : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
+                } transition-colors duration-300 font-sans font-normal`}
               >
                 Formulários
+              </Link>
+
+              <Link
+                href="/eventos"
+                className={`${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-sans font-normal`}
+              >
+                Eventos
               </Link>
               
               <button
@@ -781,7 +792,7 @@ function NavigationContent() {
                   isScrolled
                     ? 'text-flex-dark hover:text-flex-primary' 
                     : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-medium`}
+                } transition-colors duration-300 font-sans font-normal`}
               >
                 <motion.span
                   whileHover={{ y: -2 }}
@@ -828,6 +839,40 @@ function NavigationContent() {
               transition={{ delay: 0.3, duration: 0.5 }}
             >
               <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
+            </motion.div>
+
+            {/* Eventos */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+            >
+              <Link
+                href="/eventos"
+                className={`relative group ${
+                  isScrolled
+                    ? 'text-flex-dark hover:text-flex-primary' 
+                    : 'text-white hover:text-flex-primary'
+                } transition-colors duration-300 font-sans font-normal`}
+              >
+                <motion.span
+                  whileHover={{ y: -2 }}
+                  className="relative z-10"
+                >
+                  Eventos
+                </motion.span>
+                
+                <motion.div
+                  className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
+                  transition={{ duration: 0.2 }}
+                />
+                <motion.div
+                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                />
+              </Link>
             </motion.div>
             
             {/* CTA Button */}

@@ -20,6 +20,7 @@ export default function MobileMenu({ onClose }: MobileMenuProps) {
   
   const mainLinks = [
     { href: '/', label: 'Home' },
+    { href: '/eventos', label: 'Eventos' },
     { href: '#contato', label: 'Contato' }
   ]
 
