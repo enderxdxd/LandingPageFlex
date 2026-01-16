@@ -11,13 +11,13 @@ const templateEmpresa = (data: any) => `
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Solicitação de Freepass - Flex Fitness</title>
+    <title>Nova Solicitação de Aula Experimental - Flex Fitness</title>
   </head>
   <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
     <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
       <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
         
-        <h2 style="color: #f59e0b; margin: 0 0 20px 0;">🎁 NOVA SOLICITAÇÃO DE FREEPASS</h2>
+        <h2 style="color: #f59e0b; margin: 0 0 20px 0;">🎁 NOVA SOLICITAÇÃO DE AULA EXPERIMENTAL</h2>
         
         <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 4px; margin: 20px 0;">
           <strong>Data:</strong> ${data.data_solicitacao}<br>
@@ -50,13 +50,18 @@ const templateEmpresa = (data: any) => `
         </table>
 
         <div style="background: #e0f2fe; border-left: 4px solid #0288d1; padding: 15px; margin: 20px 0;">
-          <h4 style="color: #0277bd; margin: 0 0 10px 0;">🎯 O que inclui o Freepass:</h4>
+          <h4 style="color: #0277bd; margin: 0 0 10px 0;">🎯 O que inclui a Aula Experimental:</h4>
           <ul style="color: #0277bd; margin: 0; padding-left: 20px;">
             <li>Visita guiada pela academia</li>
             <li>Treino experimental gratuito</li>
             <li>Avaliação física completa</li>
             <li>Orientação com nossos profissionais</li>
           </ul>
+        </div>
+
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+          <strong style="color: #92400e;">⚠️ IMPORTANTE:</strong><br>
+          <span style="color: #92400e;">Cada CPF tem direito a apenas uma aula experimental.</span>
         </div>
 
         <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
@@ -88,7 +93,7 @@ const templateCliente = (data: any) => `
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freepass Solicitado - Flex Fitness</title>
+    <title>Aula Experimental Solicitada - Flex Fitness</title>
   </head>
   <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
     <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
@@ -98,13 +103,13 @@ const templateCliente = (data: any) => `
         <div style="text-align: center; border-bottom: 3px solid #f59e0b; padding-bottom: 20px; margin-bottom: 30px;">
           <h1 style="color: #f59e0b; font-size: 28px; margin: 0;">💪 FLEX FITNESS</h1>
           <div style="background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin: 15px 0;">
-            🎁 FREEPASS SOLICITADO
+            🎁 AULA EXPERIMENTAL SOLICITADA
           </div>
         </div>
 
         <!-- Saudação -->
         <p style="font-size: 16px; color: #333;">Olá <strong>${data.nome}</strong>,</p>
-        <p style="color: #666;">Sua solicitação de freepass foi <strong>recebida com sucesso</strong>!</p>
+        <p style="color: #666;">Sua solicitação de aula experimental foi <strong>recebida com sucesso</strong>!</p>
 
         <!-- Protocolo -->
         <div style="background: #f59e0b; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
@@ -123,12 +128,17 @@ const templateCliente = (data: any) => `
 
         <!-- O que está incluso -->
         <div style="background: #e0f2fe; border-left: 4px solid #0288d1; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <h4 style="color: #0277bd; margin: 0 0 10px 0;">🎯 Seu Freepass Inclui:</h4>
+          <h4 style="color: #0277bd; margin: 0 0 10px 0;">🎯 Sua Aula Experimental Inclui:</h4>
           <ul style="color: #0277bd; margin: 0; padding-left: 20px;">
             <li>Visita guiada pela academia</li>
             <li>Treino experimental gratuito</li>
             <li>Orientação com nossos profissionais</li>
           </ul>
+        </div>
+
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h4 style="color: #92400e; margin: 0 0 10px 0;">⚠️ Atenção:</h4>
+          <p style="color: #92400e; margin: 0; font-size: 14px;"><strong>Cada CPF tem direito a apenas uma aula experimental.</strong></p>
         </div>
 
         <!-- Próximos Passos -->
@@ -148,7 +158,7 @@ const templateCliente = (data: any) => `
             <li>Traga roupas adequadas para exercícios</li>
             <li>Leve uma toalha e garrafa de água</li>
             <li>Chegue 15 minutos antes do horário agendado</li>
-            <li>Seu freepass é válido por uma única visita</li>
+            <li>Limitado a uma aula experimental por CPF</li>
           </ul>
         </div>
 
@@ -230,14 +240,14 @@ export async function POST(request: NextRequest) {
     // Definir destinatários se não fornecidos
     const defaultDestinatarios = managerEmails.map(email => ({
       email,
-      subject: `🎁 Nova Solicitação de Freepass - ${emailData.qual_unidade} - FP-${numeroProtocolo}`,
+      subject: `🎁 Nova Solicitação de Aula Experimental - ${emailData.qual_unidade} - FP-${numeroProtocolo}`,
       template: 'empresa'
     }));
 
     // Adicionar email de confirmação para o cliente
     defaultDestinatarios.push({
       email: emailData.email,
-      subject: `🎁 Freepass Solicitado - FP-${numeroProtocolo} - Flex Fitness`,
+      subject: `🎁 Aula Experimental Solicitada - FP-${numeroProtocolo} - Flex Fitness`,
       template: 'cliente'
     });
 
@@ -303,7 +313,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: results.length > 0,
-      message: `Solicitação de freepass enviada com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
+      message: `Solicitação de aula experimental enviada com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
       protocolo: numeroProtocolo,
       enviado_para: managerEmails.join(', '),
       confirmacao_cliente: true,

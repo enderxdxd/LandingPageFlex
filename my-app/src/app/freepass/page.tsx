@@ -213,10 +213,15 @@ export default function Freepass() {
           >
             <HiCheck className="text-white text-4xl" />
           </motion.div>
-          <h2 className="text-2xl font-bold text-flex-dark mb-4">Freepass Solicitado!</h2>
+          <h2 className="text-2xl font-bold text-flex-dark mb-4">Aula Experimental Solicitada!</h2>
           <p className="text-flex-gray mb-6">
-            Seu freepass foi solicitado com sucesso! Em breve entraremos em contato para agendar sua visita.
+            Sua aula experimental foi solicitada com sucesso! Em breve entraremos em contato para agendar sua visita.
           </p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+            <p className="text-yellow-800 text-sm">
+              ⚠️ <strong>Importante:</strong> Cada CPF tem direito a apenas uma aula experimental.
+            </p>
+          </div>
           <div className="space-y-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -224,7 +229,7 @@ export default function Freepass() {
               onClick={() => setIsSubmitted(false)}
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-full font-medium"
             >
-              Solicitar Outro Freepass
+              Solicitar Outra Aula Experimental
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -258,11 +263,16 @@ export default function Freepass() {
               <HiGift className="text-white text-3xl" />
             </motion.div>
             <h1 className="font-display text-4xl md:text-5xl gradient-text mb-4">
-              SOLICITE SEU FREEPASS
+              AGENDAR AULA EXPERIMENTAL
             </h1>
             <p className="text-flex-light/80 text-lg">
               Conheça nossa academia e treine gratuitamente
             </p>
+            <div className="mt-4 bg-yellow-500/20 border border-yellow-500/40 rounded-lg p-3 inline-block">
+              <p className="text-yellow-300 text-sm font-medium">
+                ⚠️ Limitado a uma aula experimental por CPF
+              </p>
+            </div>
           </div>
 
           <motion.form
@@ -375,10 +385,10 @@ export default function Freepass() {
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Solicitando Freepass...
+                  Agendando Aula Experimental...
                 </div>
               ) : (
-                'Solicitar Freepass'
+                'Agendar Aula Experimental'
               )}
             </motion.button>
 
@@ -386,12 +396,15 @@ export default function Freepass() {
               <div className="flex items-start gap-3">
                 <HiGift className="text-yellow-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-yellow-500 font-medium text-sm mb-1">🎁 Seu Freepass Inclui</h4>
+                  <h4 className="text-yellow-500 font-medium text-sm mb-1">🎁 Sua Aula Experimental Inclui</h4>
                   <ul className="text-flex-light/70 text-sm space-y-1">
                     <li>• Visita guiada pela academia</li>
                     <li>• Treino experimental gratuito</li>
                     <li>• Orientação com nossos profissionais</li>
                   </ul>
+                  <p className="text-yellow-400 text-xs mt-2 font-medium">
+                    ⚠️ Limitado a uma aula por CPF
+                  </p>
                 </div>
               </div>
             </div>
