@@ -1,4 +1,4 @@
-// src/app/freepass/page.tsx
+// src/app/aula-experimental/page.tsx
 'use client'
 
 import { useState } from 'react'
@@ -120,7 +120,7 @@ function CustomSelect({
 }
 
 // Tipagem
-type FreepassData = {
+type AulaExperimentalData = {
   qual_unidade: string
   nome: string
   email: string
@@ -136,14 +136,14 @@ const unidadeLabels: Record<string, string> = {
   'palmas': 'Flex Fitness Palmas (Em breve)'
 }
 
-export default function Freepass() {
+export default function AulaExperimental() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   
-  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<FreepassData>()
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<AulaExperimentalData>()
 
-  async function onSubmit(data: FreepassData) {
+  async function onSubmit(data: AulaExperimentalData) {
     setIsSubmitting(true)
     setSubmitError(null)
 
@@ -179,7 +179,7 @@ export default function Freepass() {
       const result = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error || 'Erro ao solicitar freepass')
+        throw new Error(result.error || 'Erro ao solicitar aula experimental')
       }
 
       setIsSubmitted(true)
@@ -190,7 +190,7 @@ export default function Freepass() {
       setSubmitError(
         err instanceof Error 
           ? err.message 
-          : 'Erro ao solicitar freepass. Tente novamente.'
+          : 'Erro ao solicitar aula experimental. Tente novamente.'
       )
     } finally {
       setIsSubmitting(false)

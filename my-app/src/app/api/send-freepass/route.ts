@@ -1,10 +1,10 @@
-// app/api/send-freepass/route.ts
+// app/api/send-aula-experimental/route.ts
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Template da empresa para freepass
+// Template da empresa para aula experimental
 const templateEmpresa = (data: any) => `
   <!DOCTYPE html>
   <html>
@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
     const { destinatarios, ...emailData } = data;
 
     // Log para debug
-    console.log('🎁 Iniciando envio de solicitação de freepass:', { 
+    console.log('🎁 Iniciando envio de solicitação de aula experimental:', { 
       nome: emailData.nome, 
       qual_unidade: emailData.qual_unidade,
       email: emailData.email,
@@ -324,7 +324,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('💥 Erro geral ao solicitar freepass:', error);
+    console.error('💥 Erro geral ao solicitar aula experimental:', error);
     return NextResponse.json({ 
       success: false,
       error: 'Erro interno do servidor',
