@@ -10,11 +10,11 @@ const departmentRecipients: Record<string, string> = {
     // Estágio Educação Física
   'financeiro':              'gestaofinanceira@flexacademia.com.br',     
         // Financeiro
-  'limpeza':                 'rejane@flexacademia.com.br,marcio@flexacademia.com.br,vendaspalmas@flexacademia.com.br',        
+  'limpeza':                 'marcio@flexacademia.com.br,vendaspalmas@flexacademia.com.br',        
     // Limpeza
   'manutencao':              'marcio@flexacademia.com.br,vendaspalmas@flexacademia.com.br',  
            // Manutenção
-  'marketing':               'rejane@flexacademia.com.br,vendaspalmas@flexacademia.com.br',       
+  'marketing':               'vendaspalmas@flexacademia.com.br',       
        // Marketing
   'natacao':                 'hudson@flexacademia.com.br,wakson@flexacademia.com.br',    
             // Natação - Apenas Unid Palmas
