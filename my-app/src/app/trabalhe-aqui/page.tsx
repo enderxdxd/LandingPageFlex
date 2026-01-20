@@ -446,7 +446,7 @@ export default function TrabalheAqui() {
                 { value: 'marista', label: 'Flex Fitness Marista' },
                 { value: 'buena-vista', label: 'Flex Fitness Buena Vista' },
                 { value: 'alphaville', label: 'Flex Fitness Alphaville' },
-                { value: 'palmas', label: 'Flex Fitness Palmas (Em breve)' },
+                { value: 'palmas', label: 'Flex Fitness Palmas' },
                 { value: 'qualquer', label: 'Qualquer Unidade' }
               ]}
               value={watch('unidade') || ''}

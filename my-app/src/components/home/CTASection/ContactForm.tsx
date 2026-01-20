@@ -99,7 +99,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
                 <option value="">Selecione a unidade</option>
                 {unitsData.map((unit) => (
                   <option key={unit.id} value={unit.slug}>
-                    {unit.name} {unit.comingSoon && '(Em breve)'}
+                    {unit.name}
                   </option>
                 ))}
               </select>

@@ -133,7 +133,7 @@ const unidadeLabels: Record<string, string> = {
   'marista': 'Flex Fitness Marista',
   'buena-vista': 'Flex Fitness Buena Vista',
   'alphaville': 'Flex Fitness Alphaville',
-  'palmas': 'Flex Fitness Palmas (Em breve)'
+  'palmas': 'Flex Fitness Palmas'
 }
 
 export default function AulaExperimental() {
@@ -289,7 +289,7 @@ export default function AulaExperimental() {
                 { value: 'marista', label: 'Flex Fitness Marista' },
                 { value: 'buena-vista', label: 'Flex Fitness Buena Vista' },
                 { value: 'alphaville', label: 'Flex Fitness Alphaville' },
-                { value: 'palmas', label: 'Flex Fitness Palmas (Em breve)' }
+                { value: 'palmas', label: 'Flex Fitness Palmas' }
               ]}
               value={watch('qual_unidade') || ''}
               onChange={(value) => setValue('qual_unidade', value)}

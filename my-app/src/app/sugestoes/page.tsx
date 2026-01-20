@@ -144,7 +144,7 @@ const flexLabels: Record<string, string> = {
   'marista': 'Flex Fitness Marista',
   'buena-vista': 'Flex Fitness Buena Vista',
   'alphaville': 'Flex Fitness Alphaville',
-  'palmas': 'Flex Fitness Palmas (Em breve)',
+  'palmas': 'Flex Fitness Palmas',
   'geral': 'Sugestão Geral'
 }
 
@@ -413,7 +413,7 @@ export default function Sugestoes() {
                 { value: 'marista', label: 'Flex Fitness Marista' },
                 { value: 'buena-vista', label: 'Flex Fitness Buena Vista' },
                 { value: 'alphaville', label: 'Flex Fitness Alphaville' },
-                { value: 'palmas', label: 'Flex Fitness Palmas (Em breve)' },
+                { value: 'palmas', label: 'Flex Fitness Palmas' },
                 { value: 'geral', label: 'Sugestão Geral' }
               ]}
               value={watch('qual_flex') || ''}
