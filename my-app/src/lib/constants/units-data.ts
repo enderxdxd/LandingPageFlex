@@ -268,7 +268,7 @@ export const unitsData: Unit[] = [
       'Piscina Semi-olímpica',
       'Área Aquática Completa',
       'Hidromassagem',
-      'Sauna Seca e Úmida'
+      'Sauna Úmida'
     ],
     images: [
       '/images/units/palmas/p1 (1).jpeg',
