@@ -160,7 +160,6 @@ const sharedRecipients = [
   'supervisaotecnicabuenavista@flexacademia.com.br',
   'vendasmarista@flexacademia.com.br',
   'jonatas@flexacademia.com.br',
-  'wakson@flexacademia.com.br',
   'hudson@flexacademia.com.br',
   'comercial@flexacademia.com.br',
   'comercial.atendimento@flexacademia.com.br',
