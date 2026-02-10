@@ -137,7 +137,7 @@ const unitRecipients: Record<string, string> = {
   'marista':     'henriquepcosta@hotmail.com',
   'buena-vista': 'gestao-buena@flex.com',
   'alphaville':  'gestao-alphaville@flex.com',
-  'palmas':      'comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,COMERCIAL@FLEXPALMAS.COM.BR',
+  'palmas':      'comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,COMERCIAL@FLEXPALMAS.COM.BR,gestaotecnica@flexpalmas.com.br',
   'geral':       'henriquepcosta@hotmail.com', 
 };
 
