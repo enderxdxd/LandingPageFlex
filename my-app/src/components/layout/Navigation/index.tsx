@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
 import { HiMenuAlt4, HiChevronDown, HiClock, HiDocumentText } from 'react-icons/hi'
 import { HiMapPin } from 'react-icons/hi2'
+import { ClipboardList, Lightbulb, Users, Ticket } from 'lucide-react'
 import MobileMenu from './MobileMenu'
 import { useIsMobile } from '@/components/ClientOnly'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
@@ -81,25 +82,25 @@ const formulariosData = [
   {
     name: 'Procedimentos',
     href: '/procedimentos',
-    icon: '📋',
+    icon: ClipboardList,
     description: 'Consulte nossos procedimentos e normas'
   },
   {
-    name: 'Sugestões',
+    name: 'Sugestoes',
     href: '/sugestoes',
-    icon: '💡',
-    description: 'Envie suas sugestões e feedback'
+    icon: Lightbulb,
+    description: 'Envie suas sugestoes e feedback'
   },
   {
     name: 'Trabalhe Aqui',
     href: '/trabalhe-aqui',
-    icon: '👥',
-    description: 'Faça parte da nossa equipe'
+    icon: Users,
+    description: 'Faca parte da nossa equipe'
   },
   {
     name: 'Aula Experimental',
     href: '/freepass',
-    icon: '🎟️',
+    icon: Ticket,
     description: 'Agende sua aula experimental gratuita'
   }
 ]
@@ -458,7 +459,7 @@ function FormulariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScro
                       className="relative w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0"
                       whileHover={{ scale: 1.05 }}
                     >
-                      <span className="text-2xl">{formulario.icon}</span>
+                      {<formulario.icon className="w-5 h-5 text-green-600" />}
                       <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 rounded-lg" />
                     </motion.div>
 

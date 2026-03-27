@@ -159,28 +159,9 @@ const StatusBadge = ({ unit }: { unit: Unit }) => {
       animate={{ opacity: 1, scale: 1, rotate: 0 }}
       transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
     >
-      <motion.div
-        className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 rounded-full font-bold text-sm shadow-lg border-2 border-white/20"
-        animate={{ 
-          boxShadow: [
-            "0 4px 15px rgba(245, 158, 11, 0.4)",
-            "0 6px 20px rgba(245, 158, 11, 0.6)",
-            "0 4px 15px rgba(245, 158, 11, 0.4)"
-          ]
-        }}
-        transition={{ duration: 2, repeat: Infinity }}
-        whileHover={{ scale: 1.05, rotate: 2 }}
-      >
-        <div className="flex items-center gap-2">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          >
-            ⏳
-          </motion.div>
-          EM BREVE
-        </div>
-      </motion.div>
+      <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 rounded-full font-display text-sm shadow-lg">
+        EM BREVE
+      </div>
     </motion.div>
   )
 }
@@ -448,14 +429,10 @@ const OptimizedUnitCard = React.memo(function OptimizedUnitCard({
               transition={{ duration: 0.5 }}
             >
               <div className="text-center text-gray-600">
-                <motion.div 
-                  className="text-6xl mb-4"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  🏢
-                </motion.div>
-                <div className="text-lg font-medium">Imagem indisponível</div>
+                <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-gray-500/20 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 7.5h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" /></svg>
+                </div>
+                <div className="text-lg font-medium">Imagem indisponivel</div>
                 <div className="text-sm opacity-75">Tente novamente mais tarde</div>
               </div>
             </motion.div>
@@ -610,8 +587,8 @@ const OptimizedUnitCard = React.memo(function OptimizedUnitCard({
       {/* Performance Monitor (development only) */}
       {process.env.NODE_ENV === 'development' && (
         <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs p-2 rounded-lg font-mono">
-          <div>{imageLoaded ? '✅ Loaded' : '⏳ Loading'}</div>
-          <div>{config.performance.enableGPU ? '🚀 GPU' : '🐌 CPU'}</div>
+          <div>{imageLoaded ? 'Loaded' : 'Loading'}</div>
+          <div>{config.performance.enableGPU ? 'GPU' : 'CPU'}</div>
           <div>Index: {index}</div>
         </div>
       )}

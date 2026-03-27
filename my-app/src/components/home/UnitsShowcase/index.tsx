@@ -9,6 +9,7 @@ import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 import { useOptimizedAnimation } from '@/components/shared/MotionWrapper'
 import dynamic from 'next/dynamic'
 import { HiSparkles, HiLocationMarker } from 'react-icons/hi'
+import { Building2, Users, Award, Check } from 'lucide-react'
 
 // Lazy load do Swiper para melhor performance
 const MobileSwiper = dynamic(() => import('@/components/MobileSwiper'), { 
@@ -47,14 +48,14 @@ const UnitsStats = ({ isClient, isMobile }: { isClient: boolean, isMobile: boole
     transition={{ delay: 0.6, duration: 0.8 }}
   >
     {[
-      { number: '4', label: 'Unidades', icon: '🏢' },
-      { number: '5k+', label: 'Alunos', icon: '👥' },
-      { number: '30+', label: 'Anos', icon: '⭐' }
+      { number: '4', label: 'Unidades', icon: Building2 },
+      { number: '5k+', label: 'Alunos', icon: Users },
+      { number: '30+', label: 'Anos', icon: Award }
     ].map((stat, index) => (
       <motion.div
         key={index}
         className="text-center p-4 lg:p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg"
-        whileHover={isClient && !isMobile ? { 
+        whileHover={isClient && !isMobile ? {
           scale: 1.05,
           boxShadow: "0 20px 40px rgba(0,0,0,0.1)"
         } : {}}
@@ -63,7 +64,9 @@ const UnitsStats = ({ isClient, isMobile }: { isClient: boolean, isMobile: boole
         viewport={{ once: true }}
         transition={{ delay: 0.7 + (index * 0.1), duration: 0.6 }}
       >
-        <div className="text-2xl lg:text-3xl mb-2">{stat.icon}</div>
+        <div className="flex justify-center mb-2">
+          <stat.icon className="w-6 h-6 lg:w-7 lg:h-7 text-flex-primary" />
+        </div>
         <div className="font-display text-2xl lg:text-3xl font-bold gradient-text mb-1">
           {stat.number}
         </div>
@@ -157,19 +160,18 @@ const EnhancedCTA = ({ isClient, isMobile }: { isClient: boolean, isMobile: bool
         }} />
       </div>
 
-      {/* Floating Icons */}
+      {/* Subtle floating dots */}
       <div className="absolute inset-0 overflow-hidden">
-        {['🏋️', '💪', '🎯', '⚡', '🔥'].map((emoji, index) => (
+        {Array.from({ length: 5 }).map((_, index) => (
           <motion.div
             key={index}
-            className="absolute text-2xl opacity-10"
+            className="absolute w-2 h-2 rounded-full bg-flex-primary/10"
             style={{
               left: `${20 + (index * 15)}%`,
               top: `${15 + (index * 10)}%`,
             }}
             animate={isClient ? {
               y: [-10, 10, -10],
-              rotate: [0, 5, -5, 0],
               opacity: [0.05, 0.15, 0.05]
             } : {}}
             transition={{
@@ -177,9 +179,7 @@ const EnhancedCTA = ({ isClient, isMobile }: { isClient: boolean, isMobile: bool
               repeat: Infinity,
               delay: index * 0.5
             }}
-          >
-            {emoji}
-          </motion.div>
+          />
         ))}
       </div>
 
@@ -205,7 +205,7 @@ const EnhancedCTA = ({ isClient, isMobile }: { isClient: boolean, isMobile: bool
         } : {}}
         transition={{ duration: 4, repeat: Infinity }}
       >
-        🏢 MAIS UNIDADES EM BREVE
+        MAIS UNIDADES EM BREVE
       </motion.h3>
       
       <div className="text-lg lg:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -223,11 +223,11 @@ const EnhancedCTA = ({ isClient, isMobile }: { isClient: boolean, isMobile: bool
       >
         
         <div className="flex items-center">
-          <span className="text-green-500 mr-1">✓</span>
+          <Check className="w-4 h-4 text-green-500 mr-1 inline" />
           Equipamentos de última geração
         </div>
         <div className="flex items-center">
-          <span className="text-green-500 mr-1">✓</span>
+          <Check className="w-4 h-4 text-green-500 mr-1 inline" />
           Professores especializados
         </div>
       </motion.div>
@@ -573,30 +573,27 @@ export default function UnitsShowcase() {
             />
           </motion.div>
 
-          {/* Enhanced floating location pins */}
+          {/* Subtle floating geometric elements */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {Array.from({ length: unitsData.length + 2 }).map((_, index) => (
+            {Array.from({ length: 4 }).map((_, index) => (
               <motion.div
                 key={index}
-                className="absolute text-4xl opacity-10 filter drop-shadow-lg"
+                className="absolute w-3 h-3 rounded-full bg-gradient-to-br from-flex-primary/10 to-flex-secondary/10"
                 style={{
-                  left: `${10 + (index * 18)}%`,
-                  top: `${15 + (index * 12)}%`,
+                  left: `${15 + (index * 20)}%`,
+                  top: `${20 + (index * 15)}%`,
                 }}
                 animate={{
-                  y: [-20, 20, -20],
-                  rotate: [0, 15, -15, 0],
-                  opacity: [0.05, 0.2, 0.05],
-                  scale: [0.8, 1.2, 0.8]
+                  y: [-15, 15, -15],
+                  opacity: [0.05, 0.15, 0.05],
+                  scale: [0.8, 1.1, 0.8]
                 }}
                 transition={{
                   duration: 8 + index * 0.5,
                   repeat: Infinity,
                   delay: index * 1.2
                 }}
-              >
-                📍
-              </motion.div>
+              />
             ))}
           </div>
         </>

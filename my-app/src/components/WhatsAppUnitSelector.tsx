@@ -149,7 +149,7 @@ export default function WhatsAppUnitSelector({
                             </motion.button>
                           ) : (
                             <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                              <span className="text-gray-500 text-xs">⏳</span>
+                              <span className="text-gray-400 text-xs font-medium">--</span>
                             </div>
                           )}
 
@@ -187,7 +187,7 @@ export default function WhatsAppUnitSelector({
               transition={{ delay: 0.4 }}
             >
               <div className="text-xs text-gray-600 mb-0.5">
-                📱 <span className="font-medium">Instagram:</span> @flexfitnesscenter
+                <span className="font-medium">Instagram:</span> @flexfitnesscenter
               </div>
               <div className="text-xs text-gray-400">
                 WhatsApp ou ligação direta

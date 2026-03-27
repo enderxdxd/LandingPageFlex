@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Poppins, Manrope } from 'next/font/google'
+import { Barlow, Barlow_Condensed } from 'next/font/google'
 import './globals.css'
 import Navigation from '@/components/layout/Navigation'
 import Footer from '@/components/layout/Footer'
@@ -8,17 +8,17 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import CookieBanner from '@/components/CookieBanner'
 import { Analytics } from '@vercel/analytics/next'
 
-const manrope = Manrope({ 
+const barlow = Barlow({
   subsets: ['latin'],
-  variable: '--font-manrope',
-  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-barlow',
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
 })
 
-const poppins = Poppins({ 
+const barlowCondensed = Barlow_Condensed({
   subsets: ['latin'],
-  variable: '--font-poppins',
-  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-barlow-condensed',
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 })
 
@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={`${manrope.variable} ${poppins.variable}`}>
+    <html lang="pt-BR" className={`${barlow.variable} ${barlowCondensed.variable}`}>
       <head>
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-L2DB2KJKF9"></script>
         <script
@@ -59,7 +59,6 @@ export default function RootLayout({
             <Navigation />
             <main>{children}</main>
             <Footer />
-            {/* Cookie Banner - aparece automaticamente quando necessário */}
             <CookieBanner />
           </AnimationProvider>
         </ErrorBoundary>

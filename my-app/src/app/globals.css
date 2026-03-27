@@ -5,14 +5,14 @@
 
 @layer base {
   :root {
-    --color-primary: #1E40AF;     /* Azul principal */
-    --color-secondary: #3B82F6;   /* Azul médio */
-    --color-accent: #60A5FA;      /* Azul claro */
-    --color-white: #FFFFFF;       /* Branco */
-    --color-dark: #0F172A;        /* Azul muito escuro */
-    --color-navy: #1E293B;        /* Azul navy */
-    --color-slate: #475569;       /* Azul acinzentado */
-    --color-light: #F8FAFC;       /* Branco off */
+    --color-primary: #1E40AF;
+    --color-secondary: #3B82F6;
+    --color-accent: #60A5FA;
+    --color-white: #FFFFFF;
+    --color-dark: #0F172A;
+    --color-navy: #1E293B;
+    --color-slate: #475569;
+    --color-light: #F8FAFC;
     --navbar-height: 90px;
   }
 
@@ -28,41 +28,44 @@
   }
 
   body {
-    font-family: var(--font-montserrat);
+    font-family: var(--font-barlow), 'Barlow', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-white);
     color: var(--color-dark);
     overflow-x: hidden;
     font-weight: 400;
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-playfair);
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
   }
 
   .font-display {
-    font-family: var(--font-oswald);
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
 
   .font-elegant {
-    font-family: var(--font-playfair);
+    font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
     font-weight: 500;
   }
 
   .font-body {
-    font-family: var(--font-montserrat);
+    font-family: var(--font-barlow), 'Barlow', system-ui, sans-serif;
     font-weight: 400;
   }
 
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -71,7 +74,7 @@
 
   ::-webkit-scrollbar-thumb {
     background: var(--color-primary);
-    border-radius: 4px;
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
@@ -96,7 +99,6 @@
     @apply backdrop-blur-lg bg-white/10 border border-white/20;
   }
 
-  /* Sistema de scroll simplificado */
   .scroll-section {
     position: relative;
     width: 100%;
@@ -104,16 +106,15 @@
 
   .animate-on-scroll {
     opacity: 0;
-    transform: translateY(60px) scale(0.95);
-    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(40px);
+    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .animate-on-scroll.animate {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 
-  /* Cores do sistema atualizadas */
   .flex-primary {
     color: var(--color-primary);
   }
@@ -135,7 +136,6 @@
     background-color: #F1F5F9;
   }
 
-  /* Hero section específico */
   .hero-section {
     position: relative;
     z-index: 1;
@@ -147,12 +147,10 @@
     transition: all 0.3s ease-out;
   }
 
-  /* Performance optimizations */
   .animate-element {
     will-change: transform, opacity;
   }
 
-  /* Swiper customização */
   .units-swiper .swiper-pagination {
     bottom: 0 !important;
   }
@@ -166,12 +164,11 @@
     opacity: 1 !important;
   }
 
-  /* Mobile responsivo */
   @media (max-width: 767px) {
     .scroll-section {
       padding: 2rem 0;
     }
-    
+
     .hero-section {
       min-height: 100vh;
       padding: 2rem 0;

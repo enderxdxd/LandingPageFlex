@@ -88,7 +88,7 @@ export default function Footer() {
             </a>
             <span className="text-gray-600">•</span>
             <p className="font-body text-xs text-gray-400 font-light italic">
-              Desenvolvido com 💪 para transformar vidas através do fitness
+              Desenvolvido para transformar vidas atraves do fitness
             </p>
           </div>
         </motion.div>
