@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { HiX, HiCog, HiShieldCheck, HiInformationCircle, HiChevronDown, HiEye } from 'react-icons/hi'
 import { FaCookieBite, FaChartBar, FaAd, FaUsers } from 'react-icons/fa'
+import { Cookie } from 'lucide-react'
 
 interface CookiePreferences {
   necessary: boolean
@@ -301,8 +302,8 @@ export default function CookieBanner() {
                 // Simple view
                 <div className="p-6">
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-flex-dark mb-3">
-                      🍪 Nós utilizamos cookies
+                    <h3 className="text-lg font-semibold text-flex-dark mb-3 flex items-center gap-2">
+                      <Cookie className="w-5 h-5" /> Nós utilizamos cookies
                     </h3>
                     <p className="text-flex-gray leading-relaxed">
                       Utilizamos cookies e tecnologias similares para melhorar sua experiência em nosso site, 

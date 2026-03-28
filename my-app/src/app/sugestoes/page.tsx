@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { HiLightBulb, HiCamera, HiCheck, HiExclamationCircle, HiChevronDown, HiX } from 'react-icons/hi'
+import { Lightbulb } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
 
 // CustomSelect Component (mesmo do anterior)
@@ -555,7 +556,7 @@ export default function Sugestoes() {
               <div className="flex items-start gap-3">
                 <HiLightBulb className="text-yellow-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-yellow-500 font-medium text-sm mb-1">💡 Dica</h4>
+                  <h4 className="text-yellow-500 font-medium text-sm mb-1 flex items-center gap-1"><Lightbulb className="w-4 h-4" /> Dica</h4>
                   <p className="text-flex-light/70 text-sm">
                     Seja específico em sua sugestão. Quanto mais detalhes, melhor poderemos analisá-la!
                   </p>

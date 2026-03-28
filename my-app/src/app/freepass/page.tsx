@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { HiGift, HiCheck, HiExclamationCircle, HiChevronDown } from 'react-icons/hi'
+import { AlertTriangle, Gift, FileText } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
 
 // CustomSelect Component (reutilizado da página de sugestões)
@@ -219,7 +220,7 @@ export default function AulaExperimental() {
           </p>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
             <p className="text-yellow-800 text-sm">
-              ⚠️ <strong>Importante:</strong> Cada CPF tem direito a apenas uma aula experimental.
+              <span className="inline-flex items-center gap-1"><AlertTriangle className="w-4 h-4" /> <strong>Importante:</strong> Cada CPF tem direito a apenas uma aula experimental.</span>
             </p>
           </div>
           <div className="space-y-3">
@@ -270,7 +271,7 @@ export default function AulaExperimental() {
             </p>
             <div className="mt-4 bg-yellow-500/20 border border-yellow-500/40 rounded-lg p-3 inline-block">
               <p className="text-yellow-300 text-sm font-medium">
-                ⚠️ Limitado a uma aula experimental por CPF
+                <span className="inline-flex items-center gap-1"><AlertTriangle className="w-4 h-4" /> Limitado a uma aula experimental por CPF</span>
               </p>
             </div>
           </div>
@@ -396,14 +397,14 @@ export default function AulaExperimental() {
               <div className="flex items-start gap-3">
                 <HiGift className="text-yellow-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-yellow-500 font-medium text-sm mb-1">🎁 Sua Aula Experimental Inclui</h4>
+                  <h4 className="text-yellow-500 font-medium text-sm mb-1 flex items-center gap-1"><Gift className="w-4 h-4" /> Sua Aula Experimental Inclui</h4>
                   <ul className="text-flex-light/70 text-sm space-y-1">
                     <li>• Visita guiada pela academia</li>
                     <li>• Treino experimental gratuito</li>
                     <li>• Orientação com nossos profissionais</li>
                   </ul>
                   <p className="text-yellow-400 text-xs mt-2 font-medium">
-                    ⚠️ Limitado a uma aula por CPF
+                    <span className="inline-flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Limitado a uma aula por CPF</span>
                   </p>
                 </div>
               </div>
@@ -417,7 +418,7 @@ export default function AulaExperimental() {
                   window.location.href = '/privacy-policy'
                 }}
               >
-                📄 Termos de Política e Privacidade
+                <span className="inline-flex items-center gap-1"><FileText className="w-4 h-4" /> Termos de Política e Privacidade</span>
               </button>
             </div>
           </motion.form>

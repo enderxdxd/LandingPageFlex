@@ -1,17 +1,15 @@
-// components/Navigation.tsx
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion'
-import { HiMenuAlt4, HiChevronDown, HiClock, HiDocumentText } from 'react-icons/hi'
-import { HiMapPin } from 'react-icons/hi2'
-import { ClipboardList, Lightbulb, Users, Ticket } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { HiChevronDown, HiClock, HiDocumentText } from 'react-icons/hi'
+import { HiMapPin, HiBars3, HiXMark } from 'react-icons/hi2'
+import { ClipboardList, Lightbulb, Users, Ticket, ChevronRight } from 'lucide-react'
 import MobileMenu from './MobileMenu'
 import { useIsMobile } from '@/components/ClientOnly'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
-import { useMobileOptimization } from '@/hooks/useMobileOptimization'
 
 // Dados das unidades
 const unidadesData = [
@@ -19,228 +17,94 @@ const unidadesData = [
     name: 'Alphaville',
     href: '/unidades/alphaville',
     image: '/images/units/alphaville/alphaville1.jpeg',
-    address: 'Av. Alphaville Flamboyant - S/N - Quadra 05 - Lote 05 e 06 - Res. Alphaville Flamboyant, Goiânia - GO',
-    description: 'Unidade premium com vista panorâmica'
+    address: 'Res. Alphaville Flamboyant, Goiania - GO',
   },
   {
     name: 'Buena Vista',
     href: '/unidades/buena-vista',
     image: '/images/units/buenavista/hero.jpeg',
-    address: 'Shopping Buena Vista - Av. T-4, 466 - St. Bueno, Goiânia - GO, 74230-030, Brazil',
-    description: 'Unidade com vista panorâmica da cidade'
+    address: 'Shopping Buena Vista - St. Bueno, Goiania - GO',
   },
   {
     name: 'Marista',
     href: '/unidades/marista',
     image: '/images/units/marista/hero.jpeg',
-    address: 'Av. Portugal, 744 - St. Marista, Goiânia - GO, 74150-030, Brazil',
-    description: 'Unidade Ultra Moderna, Situada no ASSAÍ'
+    address: 'Av. Portugal, 744 - St. Marista, Goiania - GO',
   },
   {
     name: 'Palmas',
     href: '/unidades/palmas',
     image: '/images/units/palmas/hero-projeto.jpg',
-    address: 'Q. 206 Sul Avenida Ns 4, 469 - Arse, Palmas - TO',
-    description: 'Em breve - Primeira Flex em Palmas'
+    address: 'Q. 206 Sul Avenida Ns 4 - Palmas, TO',
+    badge: 'Em breve',
   }
 ]
 
-// Dados dos horários (mesmas unidades, mas com links diferentes)
+// Dados dos horarios
 const horariosData = [
-  {
-    name: 'Alphaville',
-    href: '/horarios/alphaville',
-    unitId: 'alphaville',
-    image: '/images/units/alphaville/alphaville1.jpeg',
-    description: 'Horários de funcionamento e aulas'
-  },
-  {
-    name: 'Buena Vista',
-    href: '/horarios/buena-vista',
-    unitId: 'buena-vista',
-    image: '/images/units/buenavista/hero.jpeg',
-    description: 'Horários de funcionamento e aulas'
-  },
-  {
-    name: 'Marista',
-    href: '/horarios/marista',
-    unitId: 'marista',
-    image: '/images/units/marista/hero.jpeg',
-    description: 'Horários de funcionamento e aulas'
-  },
-  {
-    name: 'Palmas',
-    href: '/horarios/palmas',
-    unitId: 'palmas',
-    image: '/images/units/palmas/hero-projeto.jpg',
-    description: 'Horários de funcionamento e aulas'
-  }
+  { name: 'Alphaville', href: '/horarios/alphaville', image: '/images/units/alphaville/alphaville1.jpeg' },
+  { name: 'Buena Vista', href: '/horarios/buena-vista', image: '/images/units/buenavista/hero.jpeg' },
+  { name: 'Marista', href: '/horarios/marista', image: '/images/units/marista/hero.jpeg' },
+  { name: 'Palmas', href: '/horarios/palmas', image: '/images/units/palmas/hero-projeto.jpg' },
 ]
 
-// Dados dos formulários
+// Dados dos formularios
 const formulariosData = [
-  {
-    name: 'Procedimentos',
-    href: '/procedimentos',
-    icon: ClipboardList,
-    description: 'Consulte nossos procedimentos e normas'
-  },
-  {
-    name: 'Sugestoes',
-    href: '/sugestoes',
-    icon: Lightbulb,
-    description: 'Envie suas sugestoes e feedback'
-  },
-  {
-    name: 'Trabalhe Aqui',
-    href: '/trabalhe-aqui',
-    icon: Users,
-    description: 'Faca parte da nossa equipe'
-  },
-  {
-    name: 'Aula Experimental',
-    href: '/freepass',
-    icon: Ticket,
-    description: 'Agende sua aula experimental gratuita'
-  }
+  { name: 'Procedimentos', href: '/procedimentos', icon: ClipboardList, desc: 'Normas e procedimentos' },
+  { name: 'Sugestoes', href: '/sugestoes', icon: Lightbulb, desc: 'Envie seu feedback' },
+  { name: 'Trabalhe Aqui', href: '/trabalhe-aqui', icon: Users, desc: 'Faca parte da equipe' },
+  { name: 'Aula Experimental', href: '/freepass', icon: Ticket, desc: 'Agende uma aula gratis' },
 ]
 
-// Componente do Dropdown Unidades
-function UnidadesDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolled: boolean, hasMounted: boolean, shouldAnimate: boolean }) {
+// ---- Dropdown generico ----
+function NavDropdown({
+  label,
+  isScrolled,
+  children,
+}: {
+  label: string
+  isScrolled: boolean
+  children: React.ReactNode
+}) {
   const [isOpen, setIsOpen] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const open = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setIsOpen(true)
+  }
+  const close = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150)
+  }
 
   return (
-    <div 
-      className="relative group"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
-      <motion.div
-        className={`relative flex items-center gap-1 cursor-pointer ${
-          hasMounted && isScrolled
-            ? 'text-flex-dark hover:text-flex-primary' 
-            : 'text-white hover:text-flex-primary'
-        } transition-colors duration-300 font-sans font-normal`}
+    <div className="relative" onMouseEnter={open} onMouseLeave={close}>
+      <button
+        type="button"
+        className={`flex items-center gap-1 text-[15px] font-medium tracking-wide transition-colors duration-200 ${
+          isScrolled
+            ? 'text-flex-dark hover:text-flex-primary'
+            : 'text-white/90 hover:text-white'
+        }`}
       >
-        <motion.span
-          whileHover={{ y: -2 }}
-          className="relative z-10"
-        >
-          Unidades
-        </motion.span>
-        
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <HiChevronDown className="text-sm" />
-        </motion.div>
-        
-        {hasMounted && (
-          <>
-            <motion.div
-              className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-              transition={{ duration: 0.2 }}
-            />
-            <motion.div
-              className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-              initial={{ width: 0 }}
-              animate={{ width: isOpen ? "100%" : "0%" }}
-              transition={{ duration: 0.3 }}
-            />
-          </>
-        )}
-      </motion.div>
+        {label}
+        <HiChevronDown
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white/95 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50"
           >
-            <div className="p-4 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 border-b border-gray-100">
-              <h3 className="font-semibold text-flex-dark text-sm">Nossas Unidades</h3>
-              <p className="text-flex-gray text-xs">Escolha a mais próxima de você</p>
+            <div className="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden min-w-[300px]">
+              {children}
             </div>
-
-            <div className="p-2">
-              {unidadesData.map((unidade, index) => (
-                <motion.div
-                  key={unidade.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.2 }}
-                >
-                  <Link
-                    href={unidade.href}
-                    className="group/item flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-flex-primary/5 hover:to-flex-secondary/5 transition-all duration-200"
-                  >
-                    <motion.div 
-                      className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <Image
-                        src={unidade.image}
-                        alt={unidade.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-br from-flex-primary/20 to-flex-secondary/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
-                    </motion.div>
-
-                    <div className="flex-1 min-w-0">
-                      <motion.h4 
-                        className="font-semibold text-flex-dark text-sm group-hover/item:text-flex-primary transition-colors duration-200"
-                        whileHover={{ x: 2 }}
-                      >
-                        {unidade.name}
-                      </motion.h4>
-                      <div className="flex items-center gap-1 text-flex-gray text-xs mb-1">
-                        <HiMapPin className="w-3 h-3" />
-                        <span className="truncate">{unidade.address}</span>
-                      </div>
-                      <p className="text-flex-gray text-xs truncate">{unidade.description}</p>
-                    </div>
-
-                    <motion.div
-                      className="text-flex-gray group-hover/item:text-flex-primary transition-colors duration-200"
-                      whileHover={{ x: 2 }}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </motion.div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="p-3 bg-gray-50/50 border-t border-gray-100"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Link
-                href="/unidades"
-                className="group/footer flex items-center justify-center gap-2 text-flex-primary hover:text-flex-secondary font-medium text-sm transition-colors duration-200"
-              >
-                <span>Ver todas as unidades</span>
-                <motion.svg 
-                  className="w-4 h-4"
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  whileHover={{ x: 2 }}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </motion.svg>
-              </Link>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -248,792 +112,235 @@ function UnidadesDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolle
   )
 }
 
-// Componente do Dropdown Horários
-function HorariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolled: boolean, hasMounted: boolean, shouldAnimate: boolean }) {
-  const [isOpen, setIsOpen] = useState(false)
-
+// ---- Dropdown Unidades ----
+function UnidadesDropdown({ isScrolled }: { isScrolled: boolean }) {
   return (
-    <div 
-      className="relative group"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
-      <motion.div
-        className={`relative flex items-center gap-1 cursor-pointer ${
-          hasMounted && isScrolled
-            ? 'text-flex-dark hover:text-flex-primary' 
-            : 'text-white hover:text-flex-primary'
-        } transition-colors duration-300 font-sans font-normal`}
-      >
-        <motion.span
-          whileHover={{ y: -2 }}
-          className="relative z-10"
-        >
-          Horários
-        </motion.span>
-        
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <HiChevronDown className="text-sm" />
-        </motion.div>
-        
-        {hasMounted && (
-          <>
-            <motion.div
-              className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-              transition={{ duration: 0.2 }}
-            />
-            <motion.div
-              className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-              initial={{ width: 0 }}
-              animate={{ width: isOpen ? "100%" : "0%" }}
-              transition={{ duration: 0.3 }}
-            />
-          </>
-        )}
-      </motion.div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white/95 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+    <NavDropdown label="Unidades" isScrolled={isScrolled}>
+      <div className="px-4 pt-4 pb-2">
+        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Nossas Unidades</p>
+      </div>
+      <div className="py-1">
+        {unidadesData.map((u) => (
+          <Link
+            key={u.name}
+            href={u.href}
+            className="flex items-center gap-3 px-4 py-2.5 hover:bg-flex-light transition-colors duration-150"
           >
-            <div className="p-4 bg-gradient-to-r from-orange-500/10 to-amber-500/10 border-b border-gray-100">
+            <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+              <Image src={u.image} alt={u.name} width={40} height={40} className="w-full h-full object-cover" />
+            </div>
+            <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <HiClock className="text-orange-500 text-lg" />
-                <div>
-                  <h3 className="font-semibold text-flex-dark text-sm">Horários de Funcionamento</h3>
-                  <p className="text-flex-gray text-xs">Consulte os horários por unidade</p>
-                </div>
+                <span className="text-sm font-semibold text-flex-dark">{u.name}</span>
+                {u.badge && (
+                  <span className="text-[10px] font-semibold bg-flex-primary/10 text-flex-primary px-1.5 py-0.5 rounded">
+                    {u.badge}
+                  </span>
+                )}
               </div>
+              <p className="text-xs text-flex-slate truncate">{u.address}</p>
             </div>
-
-            <div className="p-2">
-              {horariosData.map((horario, index) => (
-                <motion.div
-                  key={horario.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.2 }}
-                >
-                  <Link
-                    href={horario.href}
-                    className="group/item flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-orange-500/5 hover:to-amber-500/5 transition-all duration-200"
-                  >
-                    <motion.div 
-                      className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <Image
-                        src={horario.image}
-                        alt={horario.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200" />
-                      
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <HiClock className="text-white text-lg drop-shadow-lg opacity-80" />
-                      </div>
-                    </motion.div>
-
-                    <div className="flex-1 min-w-0">
-                      <motion.h4 
-                        className="font-semibold text-flex-dark text-sm group-hover/item:text-orange-600 transition-colors duration-200"
-                        whileHover={{ x: 2 }}
-                      >
-                        {horario.name}
-                      </motion.h4>
-                      <p className="text-flex-gray text-xs truncate">{horario.description}</p>
-                      <div className="flex items-center gap-1 text-orange-600 text-xs mt-1">
-                        <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
-                        <span>Horários atualizados</span>
-                      </div>
-                    </div>
-
-                    <motion.div
-                      className="text-flex-gray group-hover/item:text-orange-600 transition-colors duration-200"
-                      whileHover={{ x: 2 }}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </motion.div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            <ChevronRight className="w-4 h-4 text-gray-300" />
+          </Link>
+        ))}
+      </div>
+      <div className="border-t border-gray-100 px-4 py-3">
+        <Link href="/unidades" className="text-sm font-medium text-flex-primary hover:text-flex-secondary transition-colors duration-150">
+          Ver todas as unidades
+        </Link>
+      </div>
+    </NavDropdown>
   )
 }
 
-// Componente do Dropdown Formulários
-function FormulariosDropdown({ isScrolled, hasMounted, shouldAnimate }: { isScrolled: boolean, hasMounted: boolean, shouldAnimate: boolean }) {
-  const [isOpen, setIsOpen] = useState(false)
-
+// ---- Dropdown Horarios ----
+function HorariosDropdown({ isScrolled }: { isScrolled: boolean }) {
   return (
-    <div 
-      className="relative group"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
-      <motion.div
-        className={`relative flex items-center gap-1 cursor-pointer ${
-          hasMounted && isScrolled
-            ? 'text-flex-dark hover:text-flex-primary' 
-            : 'text-white hover:text-flex-primary'
-        } transition-colors duration-300 font-sans font-normal`}
-      >
-        <motion.span
-          whileHover={{ y: -2 }}
-          className="relative z-10"
-        >
-          Formulários
-        </motion.span>
-        
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <HiChevronDown className="text-sm" />
-        </motion.div>
-        
-        {hasMounted && (
-          <>
-            <motion.div
-              className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-              transition={{ duration: 0.2 }}
-            />
-            <motion.div
-              className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-              initial={{ width: 0 }}
-              animate={{ width: isOpen ? "100%" : "0%" }}
-              transition={{ duration: 0.3 }}
-            />
-          </>
-        )}
-      </motion.div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white/95 backdrop-blur-lg border border-gray-200/50 rounded-2xl shadow-2xl overflow-hidden z-50"
+    <NavDropdown label="Horarios" isScrolled={isScrolled}>
+      <div className="px-4 pt-4 pb-2 flex items-center gap-2">
+        <HiClock className="w-4 h-4 text-flex-slate" />
+        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Horarios por Unidade</p>
+      </div>
+      <div className="py-1">
+        {horariosData.map((h) => (
+          <Link
+            key={h.name}
+            href={h.href}
+            className="flex items-center gap-3 px-4 py-2.5 hover:bg-flex-light transition-colors duration-150"
           >
-            <div className="p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <HiDocumentText className="text-green-500 text-lg" />
-                <div>
-                  <h3 className="font-semibold text-flex-dark text-sm">Formulários e Documentos</h3>
-                  <p className="text-flex-gray text-xs">Acesse nossos formulários e normas</p>
-                </div>
-              </div>
+            <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+              <Image src={h.image} alt={h.name} width={40} height={40} className="w-full h-full object-cover" />
             </div>
-
-            <div className="p-2">
-              {formulariosData.map((formulario, index) => (
-                <motion.div
-                  key={formulario.name}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.2 }}
-                >
-                  <Link
-                    href={formulario.href}
-                    className="group/item flex items-center gap-3 p-3 rounded-xl hover:bg-gradient-to-r hover:from-green-500/5 hover:to-emerald-500/5 transition-all duration-200"
-                  >
-                    <motion.div 
-                      className="relative w-12 h-12 rounded-lg bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center flex-shrink-0"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      {<formulario.icon className="w-5 h-5 text-green-600" />}
-                      <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 rounded-lg" />
-                    </motion.div>
-
-                    <div className="flex-1 min-w-0">
-                      <motion.h4 
-                        className="font-semibold text-flex-dark text-sm group-hover/item:text-green-600 transition-colors duration-200"
-                        whileHover={{ x: 2 }}
-                      >
-                        {formulario.name}
-                      </motion.h4>
-                      <p className="text-flex-gray text-xs truncate">{formulario.description}</p>
-                      <div className="flex items-center gap-1 text-green-600 text-xs mt-1">
-                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                        <span>Disponível</span>
-                      </div>
-                    </div>
-
-                    <motion.div
-                      className="text-flex-gray group-hover/item:text-green-600 transition-colors duration-200"
-                      whileHover={{ x: 2 }}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </motion.div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div 
-              className="p-3 bg-gray-50/50 border-t border-gray-100"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="text-center text-xs text-gray-500">
-                Acesse nossos documentos e formulários online
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            <span className="text-sm font-semibold text-flex-dark flex-1">{h.name}</span>
+            <ChevronRight className="w-4 h-4 text-gray-300" />
+          </Link>
+        ))}
+      </div>
+    </NavDropdown>
   )
 }
 
-// Componente separado que usa pathname de forma segura
+// ---- Dropdown Formularios ----
+function FormulariosDropdown({ isScrolled }: { isScrolled: boolean }) {
+  return (
+    <NavDropdown label="Formularios" isScrolled={isScrolled}>
+      <div className="px-4 pt-4 pb-2 flex items-center gap-2">
+        <HiDocumentText className="w-4 h-4 text-flex-slate" />
+        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Formularios</p>
+      </div>
+      <div className="py-1">
+        {formulariosData.map((f) => (
+          <Link
+            key={f.name}
+            href={f.href}
+            className="flex items-center gap-3 px-4 py-2.5 hover:bg-flex-light transition-colors duration-150"
+          >
+            <div className="w-10 h-10 rounded-lg bg-flex-light flex items-center justify-center flex-shrink-0">
+              <f.icon className="w-5 h-5 text-flex-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="text-sm font-semibold text-flex-dark block">{f.name}</span>
+              <p className="text-xs text-flex-slate">{f.desc}</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-300" />
+          </Link>
+        ))}
+      </div>
+    </NavDropdown>
+  )
+}
+
+// ---- Componente principal ----
 function NavigationContent() {
-  const isMobile = useIsMobile();
-  const { prefersReducedMotion, config } = useMobileOptimization({
-    reduceAnimations: true,
-    optimizePerformance: true
-  });
-  const [isTablet, setIsTablet] = useState(false);
+  const isMobile = useIsMobile()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [pathname, setPathname] = useState('/')
-  const [hasMounted, setHasMounted] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false)
   const [isWhatsAppSelectorOpen, setIsWhatsAppSelectorOpen] = useState(false)
 
-  // Desabilitar animações no mobile
-  const shouldAnimate = !isMobile && !config.animations.disabled
-
   useEffect(() => {
-    setHasMounted(true);
-    if (typeof window !== 'undefined') {
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
-      setPathname(window.location.pathname);
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (typeof window !== 'undefined') {
-        setIsScrolled(window.scrollY > 50)
-      }
-    }
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    const handleResize = () => {
-      if (typeof window !== 'undefined') {
-        setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
-      }
-    }
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', handleScroll)
-      window.addEventListener('mousemove', handleMouseMove)
-      window.addEventListener('resize', handleResize)
-      
-      return () => {
-        window.removeEventListener('scroll', handleScroll)
-        window.removeEventListener('mousemove', handleMouseMove)
-        window.removeEventListener('resize', handleResize)
-      }
-    }
+    setHasMounted(true)
   }, [])
 
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Skeleton enquanto nao monta
   if (!hasMounted) {
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent shadow-lg py-4 border-b border-gray-200/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 py-4">
         <div className="section-padding flex items-center justify-between">
-          <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
-          <div className="lg:hidden">
-            <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
-          </div>
-          <div className="hidden lg:flex items-center space-x-8">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="w-16 h-4 bg-gray-200 rounded animate-pulse" />
+          <div className="h-10 w-28 bg-gray-200/50 rounded" />
+          <div className="hidden lg:flex items-center gap-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="w-16 h-4 bg-gray-200/50 rounded" />
             ))}
-            <div className="w-24 h-8 bg-gray-200 rounded-full animate-pulse" />
           </div>
         </div>
       </nav>
     )
   }
 
-  // Renderizar versão sem animações para mobile
-  if (isMobile || !shouldAnimate) {
-    return (
-      <>
-        <nav
-          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-            isScrolled
-              ? 'bg-white/95 shadow-lg py-3 border-b border-gray-200/50'
-              : 'bg-transparent py-4'
-          }`}
-        >
-          <div className="section-padding flex items-center justify-between relative z-10">
-            <Link href="/" className="relative z-10">
-              <div className="relative">
-                <Image 
-                  src="/images/units/alphaville/flex-logo-navbar.png"
-                  alt="FLEX FITNESS"
-                  width={120}
-                  height={40}
-                  className="h-10 w-auto object-contain"
-                  priority
-                />
-              </div>
-            </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(true)}
-              className={`lg:hidden text-2xl relative p-2 rounded-full transition-all duration-300 ${
-                isScrolled ? 'text-flex-dark bg-white/80' : 'text-white bg-white/10'
-              }`}
-            >
-              <HiMenuAlt4 />
-            </button>
-
-            {/* Desktop Navigation - Simplified */}
-            <div className="hidden lg:flex items-center space-x-6">
-              <Link
-                href="/"
-                className={`${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                Home
-              </Link>
-
-              <Link
-                href="/unidades"
-                className={`${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                Unidades
-              </Link>
-
-              <Link
-                href="/horarios"
-                className={`${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                Horários
-              </Link>
-
-              <Link
-                href="/freepass"
-                className={`${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                Formulários
-              </Link>
-
-              <Link
-                href="/eventos"
-                className={`${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                Eventos
-              </Link>
-              
-              <button
-                className="gradient-bg text-white px-6 py-2 rounded-full font-medium transition-all duration-300 hover:shadow-lg"
-                type="button"
-                onClick={() => setIsWhatsAppSelectorOpen(true)}
-              >
-                Entre em Contato
-              </button>
-            </div>
-          </div>
-        </nav>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <MobileMenu onClose={() => setIsMobileMenuOpen(false)} />
-        )}
-        
-        <WhatsAppUnitSelector isOpen={isWhatsAppSelectorOpen} onClose={() => setIsWhatsAppSelectorOpen(false)} />
-      </>
-    )
-  }
-
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isMobile
-            ? isScrolled
-              ? 'bg-white/90 py-4 border-b border-gray-200/50'
-              : 'bg-transparent py-6'
-            : isScrolled
-              ? 'bg-white/90 backdrop-blur-lg shadow-lg py-4 border-b border-gray-200/50'
-              : 'bg-transparent backdrop-blur-md py-6'
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-white/95 backdrop-blur-md shadow-sm py-3'
+            : 'bg-gradient-to-b from-black/30 to-transparent py-5'
         }`}
       >
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {isScrolled && (
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+        <div className="section-padding flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="relative z-10 flex-shrink-0">
+            <Image
+              src="/images/units/alphaville/flex-logo-navbar.png"
+              alt="FLEX FITNESS"
+              width={120}
+              height={40}
+              className="h-9 w-auto object-contain"
+              priority
             />
-          )}
-          
-          {!isTablet && !isMobile && Array.from({ length: 3 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className={`absolute w-1 h-1 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
-              style={{
-                left: `${20 + i * 30}%`,
-                top: '50%',
-              }}
-              animate={{
-                y: [-10, 10, -10],
-                x: [0, mousePosition.x * 0.01, 0],
-                opacity: [0.1, 0.3, 0.1]
-              }}
-              transition={{
-                duration: 3 + i,
-                repeat: Infinity,
-                delay: i * 0.5
-              }}
-            />
-          ))}
-        </div>
-
-        <div className="section-padding flex items-center justify-between relative z-10">
-          <Link href="/" className="relative z-10">
-            <motion.div
-              whileHover={{ 
-                scale: 1.05,
-                filter: isScrolled
-                  ? "drop-shadow(0 0 20px rgba(30, 64, 175, 0.3))"
-                  : "drop-shadow(0 0 20px rgba(255, 255, 255, 0.5))"
-              }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="relative group"
-            >
-              <Image 
-                src="/images/units/alphaville/flex-logo-navbar.png"
-                alt="FLEX FITNESS"
-                width={120}
-                height={40}
-                className="h-10 w-auto object-contain"
-                priority
-              />
-              
-              <motion.div
-                className="absolute -inset-2 bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20 rounded-lg opacity-0 group-hover:opacity-100 blur-sm"
-                transition={{ duration: 0.3 }}
-              />
-              <motion.div
-                className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                initial={{ width: 0 }}
-                whileHover={{ width: "100%" }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {/* Home */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0, duration: 0.5 }}
+          {/* Desktop nav */}
+          <div className="hidden lg:flex items-center gap-7">
+            <Link
+              href="/"
+              className={`text-[15px] font-medium tracking-wide transition-colors duration-200 ${
+                isScrolled
+                  ? 'text-flex-dark hover:text-flex-primary'
+                  : 'text-white/90 hover:text-white'
+              }`}
             >
-              <Link
-                href="/"
-                className={`relative group ${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                <motion.span
-                  whileHover={{ y: -2 }}
-                  className="relative z-10"
-                >
-                  Home
-                </motion.span>
-                
-                <motion.div
-                  className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-                  transition={{ duration: 0.2 }}
-                />
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
-              </Link>
-            </motion.div>
+              Home
+            </Link>
 
-            {/* Dropdown Unidades */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.5 }}
-            >
-              <UnidadesDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
-            </motion.div>
+            <UnidadesDropdown isScrolled={isScrolled} />
+            <HorariosDropdown isScrolled={isScrolled} />
+            <FormulariosDropdown isScrolled={isScrolled} />
 
-            {/* Dropdown Horários */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
+            <Link
+              href="/eventos"
+              className={`text-[15px] font-medium tracking-wide transition-colors duration-200 ${
+                isScrolled
+                  ? 'text-flex-dark hover:text-flex-primary'
+                  : 'text-white/90 hover:text-white'
+              }`}
             >
-              <HorariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
-            </motion.div>
+              Eventos
+            </Link>
 
-            {/* Dropdown formularios */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-            >
-              <FormulariosDropdown isScrolled={isScrolled} hasMounted={hasMounted} shouldAnimate={shouldAnimate} />
-            </motion.div>
-
-            {/* Eventos */}
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
-              <Link
-                href="/eventos"
-                className={`relative group ${
-                  isScrolled
-                    ? 'text-flex-dark hover:text-flex-primary' 
-                    : 'text-white hover:text-flex-primary'
-                } transition-colors duration-300 font-sans font-normal`}
-              >
-                <motion.span
-                  whileHover={{ y: -2 }}
-                  className="relative z-10"
-                >
-                  Eventos
-                </motion.span>
-                
-                <motion.div
-                  className="absolute -inset-2 bg-gradient-to-r from-flex-primary/10 to-flex-secondary/10 rounded-lg opacity-0 group-hover:opacity-100"
-                  transition={{ duration: 0.2 }}
-                />
-                <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary to-flex-secondary"
-                  initial={{ width: 0 }}
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
-              </Link>
-            </motion.div>
-            
-            {/* CTA Button */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 10px 30px rgba(30, 64, 175, 0.3)",
-                y: -2
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="group relative gradient-bg text-white px-6 py-2 rounded-full font-medium transition-all duration-300 overflow-hidden"
+            <button
               type="button"
               onClick={() => setIsWhatsAppSelectorOpen(true)}
+              className={`ml-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                isScrolled
+                  ? 'bg-flex-primary text-white hover:bg-flex-blue-700 shadow-sm'
+                  : 'bg-white/15 text-white border border-white/25 hover:bg-white/25 backdrop-blur-sm'
+              }`}
             >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
-                transition={{ duration: 0.6 }}
-              />
-              <motion.div
-                className="absolute inset-0 border-2 border-white/30 rounded-full"
-                animate={{
-                  scale: [1, 1.1, 1],
-                  opacity: [0.5, 0.8, 0.5]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <span className="relative z-10">Entre em Contato</span>
-            </motion.button>
+              Entre em Contato
+            </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <motion.button
+          {/* Mobile hamburger */}
+          <button
             type="button"
-            whileTap={{ scale: 0.9, rotate: 90 }}
-            whileHover={{ 
-              scale: 1.1,
-              boxShadow: isScrolled
-                ? "0 5px 15px rgba(0,0,0,0.2)"
-                : "0 5px 15px rgba(255,255,255,0.3)"
-            }}
-            transition={{ duration: 0.2 }}
             onClick={() => setIsMobileMenuOpen(true)}
-            className={`lg:hidden text-2xl relative p-2 rounded-full transition-all duration-300 ${
-              isScrolled ? 'text-flex-dark bg-white/80' : 'text-white bg-white/10'
+            className={`lg:hidden p-2 rounded-lg transition-colors duration-200 ${
+              isScrolled
+                ? 'text-flex-dark hover:bg-gray-100'
+                : 'text-white hover:bg-white/10'
             }`}
           >
-            <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-flex-primary/20 to-flex-secondary/20"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.8, 0.5]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <HiMenuAlt4 className="relative z-10" />
-          </motion.button>
+            <HiBars3 className="w-6 h-6" />
+          </button>
         </div>
-
-        {/* Animated border */}
-        {isScrolled && (
-          <motion.div
-            className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-flex-primary via-flex-secondary to-flex-primary"
-            initial={{ width: 0 }}
-            animate={{ width: "100%" }}
-            transition={{ duration: 1 }}
-          />
-        )}
-      </motion.nav>
+      </nav>
 
       {/* Mobile Menu */}
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence>
         {isMobileMenuOpen && (
           <MobileMenu onClose={() => setIsMobileMenuOpen(false)} />
         )}
       </AnimatePresence>
 
-      {/* Side Navigation Dots */}
-      {pathname === '/' && typeof window !== 'undefined' && window.innerWidth > 1024 && (
-        <motion.div 
-          className="fixed right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:block"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          <div className="flex flex-col space-y-4">
-            {['hero', 'concept', 'units', 'features', 'cta'].map((section, index) => (
-              <motion.a
-                key={section}
-                href={`#${section}`}
-                whileHover={{ 
-                  scale: 1.5,
-                  boxShadow: index % 2 === 0 
-                    ? "0 0 20px rgba(30, 64, 175, 0.6)"
-                    : "0 0 20px rgba(59, 130, 246, 0.6)"
-                }}
-                whileTap={{ scale: 0.8 }}
-                className={`relative w-3 h-3 rounded-full transition-all duration-300 group ${
-                  index % 2 === 0 
-                    ? 'bg-flex-primary hover:bg-flex-secondary' 
-                    : 'bg-flex-secondary hover:bg-flex-primary'
-                }`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <motion.div
-                  className={`absolute inset-0 rounded-full border-2 ${
-                    index % 2 === 0 ? 'border-flex-primary' : 'border-flex-secondary'
-                  } opacity-0 group-hover:opacity-100`}
-                  animate={{
-                    scale: [1, 1.5, 1],
-                    opacity: [0, 0.8, 0]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-                
-                <motion.div
-                  className="absolute right-6 top-1/2 -translate-y-1/2 bg-flex-dark text-white px-3 py-1 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap"
-                  initial={{ x: -10 }}
-                  whileHover={{ x: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
-                </motion.div>
-              </motion.a>
-            ))}
-          </div>
-          
-          <motion.div
-            className="absolute top-0 bottom-0 left-1/2 w-0.5 bg-gradient-to-b from-flex-primary via-flex-secondary to-flex-primary opacity-30 -translate-x-1/2 -z-10"
-            initial={{ height: 0 }}
-            animate={{ height: "100%" }}
-            transition={{ delay: 1.5, duration: 1 }}
-          />
-        </motion.div>
-      )}
-      
       <WhatsAppUnitSelector isOpen={isWhatsAppSelectorOpen} onClose={() => setIsWhatsAppSelectorOpen(false)} />
     </>
   )
 }
 
-// Componente principal com fallback
 export default function Navigation() {
   return (
-    <Suspense 
+    <Suspense
       fallback={
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-transparent shadow-lg py-4 border-b border-gray-200/50">
+        <nav className="fixed top-0 left-0 right-0 z-50 py-4">
           <div className="section-padding flex items-center justify-between">
-            <div className="h-10 w-32 bg-gray-200 rounded animate-pulse" />
-            <div className="lg:hidden">
-              <div className="w-8 h-8 bg-gray-200 rounded animate-pulse" />
-            </div>
-            <div className="hidden lg:flex items-center space-x-8">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="w-16 h-4 bg-gray-200 rounded animate-pulse" />
-              ))}
-              <div className="w-24 h-8 bg-gray-200 rounded-full animate-pulse" />
-            </div>
+            <div className="h-10 w-28 bg-gray-200/50 rounded" />
           </div>
         </nav>
       }

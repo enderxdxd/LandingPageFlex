@@ -4,6 +4,7 @@
 import { motion } from 'framer-motion'
 import { HiScale, HiShieldCheck, HiDocumentText, HiExclamation } from 'react-icons/hi'
 import { FaGavel, FaHandshake, FaUserShield } from 'react-icons/fa'
+import { Cookie } from 'lucide-react'
 import CookieSettingsButton from '@/components/CookieSettingsButton'
 
 export default function TermsOfUsePage() {
@@ -94,32 +95,6 @@ export default function TermsOfUsePage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-20">
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-flex-dark to-flex-navy relative overflow-hidden">
-        <div className="absolute inset-0">
-          {/* Floating legal icons */}
-          {Array.from({ length: 8 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute text-white/10 text-4xl"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [-20, 20, -20],
-                rotate: [0, 180, 360],
-                opacity: [0.05, 0.15, 0.05]
-              }}
-              transition={{
-                duration: 8 + i,
-                repeat: Infinity,
-                delay: i * 0.5
-              }}
-            >
-              {i % 4 === 0 ? '⚖️' : i % 4 === 1 ? '📋' : i % 4 === 2 ? '🛡️' : '📜'}
-            </motion.div>
-          ))}
-        </div>
-
         <div className="section-padding relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -207,12 +182,11 @@ export default function TermsOfUsePage() {
                 >
                   <div className="p-8">
                     <div className="flex items-start gap-4 mb-4">
-                      <motion.div
-                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      <div
                         className="w-12 h-12 bg-gradient-to-br from-flex-primary/10 to-flex-secondary/10 rounded-xl flex items-center justify-center flex-shrink-0"
                       >
                         <section.icon className="text-2xl text-flex-primary" />
-                      </motion.div>
+                      </div>
                       <div className="flex-1">
                         <h3 className="text-xl font-display font-bold text-flex-dark mb-2">
                           {section.title}
@@ -250,8 +224,7 @@ export default function TermsOfUsePage() {
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      whileHover={{ y: -5 }}
-                      className="bg-white rounded-xl p-6 shadow-lg"
+                      className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-200"
                     >
                       <h3 className="font-display text-lg font-bold text-flex-dark mb-4">
                         {term.title}
@@ -321,20 +294,16 @@ export default function TermsOfUsePage() {
                   Nossa equipe está pronta para esclarecer qualquer questão
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     className="bg-white text-flex-primary px-6 py-3 rounded-full font-medium hover:shadow-lg transition-all"
                   >
                     Falar no WhatsApp
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  </button>
+                  <button
                     className="border-2 border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-flex-primary transition-all"
                   >
                     Visitar Unidade
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -350,21 +319,19 @@ export default function TermsOfUsePage() {
                   Documentos Relacionados
                 </h3>
                 <div className="flex flex-wrap justify-center gap-4">
-                  <motion.a
+                  <a
                     href="/privacy-policy"
-                    whileHover={{ scale: 1.05 }}
                     className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow hover:shadow-md transition-all text-flex-primary"
                   >
                     <HiShieldCheck />
                     Política de Privacidade
-                  </motion.a>
-                  <motion.a
+                  </a>
+                  <a
                     href="/politica-cookies"
-                    whileHover={{ scale: 1.05 }}
                     className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow hover:shadow-md transition-all text-flex-primary"
                   >
-                    🍪 Política de Cookies
-                  </motion.a>
+                    <Cookie className="w-4 h-4" /> Política de Cookies
+                  </a>
                 </div>
               </div>
             </motion.div>

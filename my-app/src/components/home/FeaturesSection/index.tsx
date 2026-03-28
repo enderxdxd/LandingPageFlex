@@ -84,16 +84,7 @@ export default function FeaturesSection() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="animate-on-scroll"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08, duration: 0.5 }}
-            >
-              <FeatureCard {...feature} />
-            </motion.div>
+            <FeatureCard key={index} {...feature} />
           ))}
         </div>
 

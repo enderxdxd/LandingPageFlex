@@ -2,47 +2,55 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { HiX, HiChevronDown } from 'react-icons/hi'
-import { useState } from 'react'
+import Image from 'next/image'
+import { HiChevronDown } from 'react-icons/hi'
+import { HiXMark } from 'react-icons/hi2'
+import { useState, useEffect } from 'react'
 
 interface MobileMenuProps {
   onClose: () => void
 }
 
+const sections = [
+  {
+    title: 'Unidades',
+    links: [
+      { href: '/unidades/alphaville', label: 'Alphaville' },
+      { href: '/unidades/buena-vista', label: 'Buena Vista' },
+      { href: '/unidades/marista', label: 'Marista' },
+      { href: '/unidades/palmas', label: 'Palmas' },
+    ],
+  },
+  {
+    title: 'Horarios',
+    links: [
+      { href: '/horarios/alphaville', label: 'Alphaville' },
+      { href: '/horarios/buena-vista', label: 'Buena Vista' },
+      { href: '/horarios/marista', label: 'Marista' },
+      { href: '/horarios/palmas', label: 'Palmas' },
+    ],
+  },
+  {
+    title: 'Formularios',
+    links: [
+      { href: '/procedimentos', label: 'Procedimentos' },
+      { href: '/sugestoes', label: 'Sugestoes' },
+      { href: '/trabalhe-aqui', label: 'Trabalhe Aqui' },
+      { href: '/freepass', label: 'Aula Experimental' },
+    ],
+  },
+]
+
 export default function MobileMenu({ onClose }: MobileMenuProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
 
-  const menuVariants = {
-    initial: { x: '100%' },
-    animate: { x: 0 },
-    exit: { x: '100%' }
-  }
-  
-  const mainLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/eventos', label: 'Eventos' },
-    { href: '#contato', label: 'Contato' }
-  ]
-
-  const unidadeLinks = [
-    { href: '/unidades/alphaville', label: 'Alphaville' },
-    { href: '/unidades/buena-vista', label: 'Buena Vista' },
-    { href: '/unidades/marista', label: 'Marista' },
-    { href: '/unidades/palmas', label: 'Palmas (Em breve)' }
-  ]
-
-  const horarioLinks = [
-    { href: '/horarios/alphaville', label: 'Horários Alphaville' },
-    { href: '/horarios/buena-vista', label: 'Horários Buena Vista' },
-    { href: '/horarios/marista', label: 'Horários Marista' },
-    { href: '/horarios/palmas', label: 'Horários Palmas' }
-  ]
-
-  const formularioLinks = [
-    { href: '/procedimentos', label: 'Procedimentos' },
-    { href: '/sugestoes', label: 'Sugestões' },
-    { href: '/trabalhe-aqui', label: 'Trabalhe Aqui' }
-  ]
+  // Lock body scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
 
   const toggleSection = (section: string) => {
     setExpandedSection(expandedSection === section ? null : section)
@@ -50,199 +58,116 @@ export default function MobileMenu({ onClose }: MobileMenuProps) {
 
   return (
     <motion.div
-      variants={menuVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      transition={{ type: 'tween', duration: 0.3 }}
-      className="fixed inset-0 bg-white z-50 overflow-y-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50"
     >
-      <div className="flex flex-col h-full p-8">
-        <div className="flex justify-between items-center mb-12">
-          <div className="font-display text-3xl gradient-text">FLEX FITNESS</div>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={onClose}
-            className="text-flex-dark text-3xl"
-          >
-            <HiX />
-          </motion.button>
-        </div>
-   
-        <nav className="flex-1 flex flex-col justify-center space-y-6">
-          {/* Links principais */}
-          {mainLinks.map((link, index) => (
-            <motion.div
-              key={link.href}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+
+      {/* Panel */}
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'tween', duration: 0.3, ease: 'easeOut' }}
+        className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white shadow-2xl"
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+            <Image
+              src="/images/units/alphaville/flex-logo-navbar.png"
+              alt="FLEX FITNESS"
+              width={100}
+              height={32}
+              className="h-8 w-auto object-contain"
+            />
+            <button
+              onClick={onClose}
+              className="p-2 -mr-2 rounded-lg text-flex-dark hover:bg-gray-100 transition-colors"
             >
+              <HiXMark className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Nav */}
+          <nav className="flex-1 overflow-y-auto py-4">
+            {/* Direct links */}
+            <div className="px-6 space-y-1">
               <Link
-                href={link.href}
+                href="/"
                 onClick={onClose}
-                className="text-4xl font-display text-flex-dark hover:text-flex-red transition-colors"
+                className="block py-3 text-lg font-display text-flex-dark hover:text-flex-primary transition-colors"
               >
-                {link.label}
+                Home
               </Link>
-            </motion.div>
-          ))}
-   
-          {/* Seção Unidades */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="border-t border-gray-200 pt-6"
-          >
-            <button
-              onClick={() => toggleSection('unidades')}
-              className="flex items-center justify-between w-full text-3xl font-display text-flex-dark hover:text-flex-red transition-colors py-2"
-            >
-              <span>Unidades</span>
-              <motion.div
-                animate={{ rotate: expandedSection === 'unidades' ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
+              <Link
+                href="/eventos"
+                onClick={onClose}
+                className="block py-3 text-lg font-display text-flex-dark hover:text-flex-primary transition-colors"
               >
-                <HiChevronDown />
-              </motion.div>
-            </button>
-            
-            {expandedSection === 'unidades' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="pl-4 space-y-3 mt-4">
-                  {unidadeLinks.map((link, index) => (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
+                Eventos
+              </Link>
+            </div>
+
+            <div className="mx-6 my-3 border-t border-gray-100" />
+
+            {/* Expandable sections */}
+            {sections.map((section) => (
+              <div key={section.title}>
+                <button
+                  onClick={() => toggleSection(section.title)}
+                  className="flex items-center justify-between w-full px-6 py-3 text-lg font-display text-flex-dark hover:text-flex-primary transition-colors"
+                >
+                  <span>{section.title}</span>
+                  <HiChevronDown
+                    className={`w-5 h-5 text-flex-slate transition-transform duration-200 ${
+                      expandedSection === section.title ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+
+                <motion.div
+                  initial={false}
+                  animate={{
+                    height: expandedSection === section.title ? 'auto' : 0,
+                    opacity: expandedSection === section.title ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-6 pb-2">
+                    {section.links.map((link) => (
                       <Link
+                        key={link.href}
                         href={link.href}
                         onClick={onClose}
-                        className="block text-xl font-display text-flex-gray hover:text-flex-red transition-colors py-1"
+                        className="block py-2.5 pl-4 text-base text-flex-slate hover:text-flex-primary transition-colors border-l-2 border-gray-100 hover:border-flex-primary"
                       >
                         {link.label}
                       </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-   
-          {/* Seção Horários */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <button
-              onClick={() => toggleSection('horarios')}
-              className="flex items-center justify-between w-full text-3xl font-display text-flex-dark hover:text-flex-red transition-colors py-2"
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            ))}
+          </nav>
+
+          {/* CTA */}
+          <div className="px-6 py-5 border-t border-gray-100">
+            <Link
+              href="/freepass"
+              onClick={onClose}
+              className="block w-full text-center bg-flex-primary text-white py-3.5 rounded-lg font-semibold text-sm hover:bg-flex-blue-700 transition-colors"
             >
-              <span>Horários</span>
-              <motion.div
-                animate={{ rotate: expandedSection === 'horarios' ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <HiChevronDown />
-              </motion.div>
-            </button>
-            
-            {expandedSection === 'horarios' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="pl-4 space-y-3 mt-4">
-                  {horarioLinks.map((link, index) => (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={onClose}
-                        className="block text-xl font-display text-flex-gray hover:text-flex-red transition-colors py-1"
-                      >
-                        {link.label}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-   
-          {/* Seção Formulários */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <button
-              onClick={() => toggleSection('formularios')}
-              className="flex items-center justify-between w-full text-3xl font-display text-flex-dark hover:text-flex-red transition-colors py-2"
-            >
-              <span>Formulários</span>
-              <motion.div
-                animate={{ rotate: expandedSection === 'formularios' ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <HiChevronDown />
-              </motion.div>
-            </button>
-            
-            {expandedSection === 'formularios' && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="pl-4 space-y-3 mt-4">
-                  {formularioLinks.map((link, index) => (
-                    <motion.div
-                      key={link.href}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={onClose}
-                        className="block text-xl font-display text-flex-gray hover:text-flex-red transition-colors py-1"
-                      >
-                        {link.label}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        </nav>
-   
-        <motion.button
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="gradient-bg text-white py-4 rounded-full font-medium w-full"
-        >
-          Agendar Visita
-        </motion.button>
-      </div>
+              Agende sua Aula Experimental
+            </Link>
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
-   )
- }
+  )
+}

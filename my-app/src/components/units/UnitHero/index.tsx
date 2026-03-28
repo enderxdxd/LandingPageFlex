@@ -4,19 +4,17 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Unit } from '@/lib/constants/units-data'
 import VideoBackground from '@/components/shared/VideoBackground'
-import { HiLocationMarker, HiPhone, HiClock, HiOfficeBuilding } from 'react-icons/hi'
+import { HiLocationMarker, HiPhone } from 'react-icons/hi'
 import { FaWhatsapp, FaParking, FaWheelchair } from 'react-icons/fa'
 import { MdPool } from 'react-icons/md'
 import { GiWeightLiftingUp } from 'react-icons/gi'
-import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { ChevronDown } from 'lucide-react'
 
 interface UnitHeroProps {
   unit: Unit
 }
 
 export default function UnitHero({ unit }: UnitHeroProps) {
-  const { isMobile } = useMobileOptimization();
-
   return (
     <section className="relative h-screen flex items-end overflow-hidden">
       {/* Background */}
@@ -33,181 +31,136 @@ export default function UnitHero({ unit }: UnitHeroProps) {
           />
         </div>
       )}
-      
-      {/* Animated overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-flex-dark via-flex-dark/70 to-transparent" />
-      
-      {/* Floating elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: isMobile ? 3 : 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className={`absolute w-2 h-2 ${i % 2 === 0 ? 'bg-flex-primary' : 'bg-flex-secondary'} rounded-full opacity-20`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [-20, 20, -20],
-              opacity: [0.1, 0.3, 0.1],
-              scale: [0.5, 1, 0.5]
-            }}
-            transition={{
-              duration: 8 + i * 0.5,
-              repeat: Infinity,
-              delay: i * 0.2
-            }}
-          />
-        ))}
-      </div>
-      
-      <div className="relative z-10 section-padding w-full pb-12">
+
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 pb-16">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {/* Title and badges */}
-          <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6">
-            <motion.h1 
-              className="font-display text-6xl md:text-8xl gradient-text"
-              whileHover={{ scale: 1.02 }}
-            >
+          <div className="flex flex-col lg:flex-row lg:items-end gap-4 mb-6">
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white font-bold tracking-tight">
               {unit.name}
-            </motion.h1>
-            
-            <div className="flex flex-wrap gap-3">
+            </h1>
+
+            <div className="flex flex-wrap gap-2 lg:mb-3">
               {unit.comingSoon && (
-                <motion.span
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-flex-accent text-flex-dark px-4 py-2 rounded-full font-medium text-sm"
-                >
-                  EM BREVE
-                </motion.span>
+                <span className="bg-amber-500 text-black px-4 py-1.5 rounded-full font-semibold text-xs uppercase tracking-wider">
+                  Em Breve
+                </span>
               )}
-              
+
               {unit.hasCrossfit && (
-                <motion.span
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-flex-primary text-white px-4 py-2 rounded-full font-medium text-sm flex items-center gap-2"
-                >
-                  <GiWeightLiftingUp />
-                  CROSSFIT
-                </motion.span>
+                <span className="bg-flex-primary text-white px-4 py-1.5 rounded-full font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <GiWeightLiftingUp className="text-sm" />
+                  CrossFit
+                </span>
               )}
-              
+
               {unit.hasPool && (
-                <motion.span
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-flex-secondary text-white px-4 py-2 rounded-full font-medium text-sm flex items-center gap-2"
-                >
-                  <MdPool />
-                  PISCINA
-                </motion.span>
+                <span className="bg-cyan-600 text-white px-4 py-1.5 rounded-full font-semibold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                  <MdPool className="text-sm" />
+                  Piscina
+                </span>
               )}
             </div>
           </div>
-          
-          <motion.p 
-            className="text-xl text-flex-light/80 mb-8 max-w-4xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
+
+          <motion.p
+            className="text-base md:text-lg text-white/70 mb-8 max-w-3xl leading-relaxed"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
           >
             {unit.description}
           </motion.p>
-          
+
           {/* Info grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <motion.div
-              whileHover={{ scale: 1.02, y: -5 }}
-              className="glass-effect p-4 rounded-xl flex items-center gap-3 backdrop-blur-md"
-            >
-              <HiLocationMarker className="text-2xl text-flex-primary flex-shrink-0" />
-              <div>
-                <p className="text-sm text-flex-light/60">Endereço</p>
-                <p className="text-flex-light text-sm">{unit.address}</p>
+          <motion.div
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 flex items-center gap-3">
+              <HiLocationMarker className="text-xl text-flex-secondary flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-xs text-white/50 font-medium uppercase tracking-wider">Endereco</p>
+                <p className="text-white/90 text-sm truncate">{unit.address}</p>
               </div>
-            </motion.div>
-            
-            <motion.div
-              whileHover={{ scale: 1.02, y: -5 }}
-              className="glass-effect p-4 rounded-xl flex items-center gap-3 backdrop-blur-md"
-            >
-              <HiPhone className="text-2xl text-flex-primary flex-shrink-0" />
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 flex items-center gap-3">
+              <HiPhone className="text-xl text-flex-secondary flex-shrink-0" />
               <div>
-                <p className="text-sm text-flex-light/60">Telefone</p>
-                <p className="text-flex-light">{unit.phone}</p>
+                <p className="text-xs text-white/50 font-medium uppercase tracking-wider">Telefone</p>
+                <p className="text-white/90 text-sm">{unit.phone}</p>
               </div>
-            </motion.div>
-            
-            <motion.a
+            </div>
+
+            <a
               href={`https://wa.me/55${unit.whatsapp.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.02, y: -5 }}
-              className="glass-effect p-4 rounded-xl flex items-center gap-3 cursor-pointer backdrop-blur-md group"
+              className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 flex items-center gap-3 hover:bg-white/15 transition-colors duration-200 group"
             >
-              <FaWhatsapp className="text-2xl text-green-500 flex-shrink-0 group-hover:scale-110 transition-transform" />
+              <FaWhatsapp className="text-xl text-green-400 flex-shrink-0 group-hover:scale-110 transition-transform duration-200" />
               <div>
-                <p className="text-sm text-flex-light/60">WhatsApp</p>
-                <p className="text-flex-light">{unit.whatsapp}</p>
+                <p className="text-xs text-white/50 font-medium uppercase tracking-wider">WhatsApp</p>
+                <p className="text-white/90 text-sm">{unit.whatsapp}</p>
               </div>
-            </motion.a>
-            
-            
-          </div>
+            </a>
+          </motion.div>
 
-          {/* Additional info */}
-          <motion.div 
-            className="mt-6 flex flex-wrap gap-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
+          {/* Tags */}
+          <motion.div
+            className="mt-4 flex flex-wrap gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="glass-effect px-4 py-2 rounded-full flex items-center gap-2 text-sm"
-            >
-              <FaParking className="text-flex-accent" />
-              <span className="text-flex-light">{unit.parking}</span>
-            </motion.div>
-            
-            {unit.accessibility && (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="glass-effect px-4 py-2 rounded-full flex items-center gap-2 text-sm"
-              >
-                <FaWheelchair className="text-flex-secondary" />
-                <span className="text-flex-light">Acessível</span>
-              </motion.div>
+            {unit.area && unit.area !== 'm' && (
+              <span className="bg-white/8 border border-white/10 px-3 py-1.5 rounded-full text-white/70 text-xs font-medium">
+                {unit.area}
+              </span>
             )}
-            
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="glass-effect px-4 py-2 rounded-full flex items-center gap-2 text-sm"
-            >
-              <HiLocationMarker className="text-flex-primary" />
-              <span className="text-flex-light">{unit.landmark}</span>
-            </motion.div>
+
+            <span className="bg-white/8 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-white/70 text-xs font-medium">
+              <FaParking className="text-white/50" />
+              {unit.parking}
+            </span>
+
+            {unit.accessibility && (
+              <span className="bg-white/8 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-white/70 text-xs font-medium">
+                <FaWheelchair className="text-white/50" />
+                Acessivel
+              </span>
+            )}
+
+            {unit.landmark && (
+              <span className="bg-white/8 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-white/70 text-xs font-medium">
+                <HiLocationMarker className="text-white/50" />
+                {unit.landmark}
+              </span>
+            )}
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center">
-          <motion.div
-            className="w-1 h-3 bg-white rounded-full mt-2"
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </div>
-      </motion.div>
+      {/* Subtle scroll indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <ChevronDown className="text-white/25 w-5 h-5" />
+        </motion.div>
+      </div>
     </section>
   )
 }

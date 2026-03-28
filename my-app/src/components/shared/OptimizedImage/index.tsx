@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useMobileOptimization } from '@/hooks/useMobileOptimization'
+import { Camera } from 'lucide-react'
 
 interface OptimizedImageProps {
   src: string

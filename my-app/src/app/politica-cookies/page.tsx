@@ -4,6 +4,7 @@
 import { motion } from 'framer-motion'
 import { HiCog, HiShieldCheck, HiEye, HiChartBar } from 'react-icons/hi'
 import { FaCookieBite, FaAd, FaUsers, FaLock } from 'react-icons/fa'
+import { Wrench, Globe, ClipboardList } from 'lucide-react'
 import CookieSettingsButton from '@/components/CookieSettingsButton'
 import { useCookieManager } from '@/hooks/useCookieManager'
 
@@ -156,32 +157,6 @@ export default function CookiePolicyPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-20">
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-flex-dark to-flex-navy relative overflow-hidden">
-        <div className="absolute inset-0">
-          {/* Floating cookie icons */}
-          {Array.from({ length: 12 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute text-white/10 text-4xl"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                y: [-20, 20, -20],
-                rotate: [0, 360],
-                opacity: [0.05, 0.15, 0.05]
-              }}
-              transition={{
-                duration: 10 + i,
-                repeat: Infinity,
-                delay: i * 0.5
-              }}
-            >
-              🍪
-            </motion.div>
-          ))}
-        </div>
-
         <div className="section-padding relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -286,12 +261,11 @@ export default function CookiePolicyPage() {
                     <div className="p-8">
                       <div className="flex items-start justify-between mb-6">
                         <div className="flex items-start gap-4">
-                          <motion.div
-                            whileHover={{ scale: 1.1, rotate: 5 }}
+                          <div
                             className={`w-12 h-12 bg-gradient-to-br ${getColorClasses(category.color)} rounded-xl flex items-center justify-center border`}
                           >
                             <category.icon className="text-2xl" />
-                          </motion.div>
+                          </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
                               <h3 className="text-xl font-display font-bold text-flex-dark">
@@ -362,13 +336,9 @@ export default function CookiePolicyPage() {
             >
               <div className="bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5 rounded-2xl p-8 border border-flex-primary/10">
                 <div className="text-center mb-8">
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="w-16 h-16 bg-gradient-to-br from-flex-primary to-flex-secondary rounded-full flex items-center justify-center mx-auto mb-4"
-                  >
+                  <div className="w-16 h-16 bg-gradient-to-br from-flex-primary to-flex-secondary rounded-full flex items-center justify-center mx-auto mb-4">
                     <HiCog className="text-white text-2xl" />
-                  </motion.div>
+                  </div>
                   
                   <h2 className="text-3xl font-display font-bold gradient-text mb-4">
                     Gerencie Seus Cookies
@@ -381,24 +351,22 @@ export default function CookiePolicyPage() {
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="bg-white rounded-xl p-6 shadow-lg">
                     <h3 className="font-display text-lg font-bold text-flex-dark mb-4">
-                      🛠️ Configurar Cookies
+                      <span className="inline-flex items-center gap-2"><Wrench className="w-5 h-5" /> Configurar Cookies</span>
                     </h3>
                     <p className="text-flex-gray mb-4 text-sm">
                       Personalize quais tipos de cookies você deseja aceitar em nosso website.
                     </p>
-                    <motion.button
+                    <button
                       onClick={resetConsent}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="w-full bg-flex-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-flex-secondary transition-all"
+                      className="w-full bg-flex-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-flex-secondary transition-colors duration-200"
                     >
                       Abrir Configurações
-                    </motion.button>
+                    </button>
                   </div>
 
                   <div className="bg-white rounded-xl p-6 shadow-lg">
                     <h3 className="font-display text-lg font-bold text-flex-dark mb-4">
-                      🌐 Configurações do Navegador
+                      <span className="inline-flex items-center gap-2"><Globe className="w-5 h-5" /> Configurações do Navegador</span>
                     </h3>
                     <p className="text-flex-gray mb-4 text-sm">
                       Você também pode gerenciar cookies diretamente nas configurações do seu navegador.
@@ -439,15 +407,14 @@ export default function CookiePolicyPage() {
                     Utilizamos o Google Analytics para analisar o uso do nosso website. 
                     As informações coletadas são usadas para melhorar nossos serviços.
                   </p>
-                  <motion.a
+                  <a
                     href="https://policies.google.com/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
                     className="inline-flex items-center gap-2 text-flex-primary hover:text-flex-secondary transition-colors text-sm"
                   >
                     Ver Política do Google →
-                  </motion.a>
+                  </a>
                 </div>
 
                 <div className="space-y-4">
@@ -456,15 +423,14 @@ export default function CookiePolicyPage() {
                     O Facebook Pixel nos ajuda a medir a eficácia de nossas campanhas 
                     publicitárias e personalizar anúncios.
                   </p>
-                  <motion.a
+                  <a
                     href="https://www.facebook.com/privacy/policy"
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
                     className="inline-flex items-center gap-2 text-flex-primary hover:text-flex-secondary transition-colors text-sm"
                   >
                     Ver Política do Facebook →
-                  </motion.a>
+                  </a>
                 </div>
               </div>
             </motion.div>
@@ -527,13 +493,9 @@ export default function CookiePolicyPage() {
               className="mt-16 text-center"
             >
               <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-8 text-white">
-                <motion.div
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"
-                >
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FaCookieBite className="text-2xl" />
-                </motion.div>
+                </div>
                 
                 <h2 className="font-display text-2xl font-bold mb-4">
                   Dúvidas sobre Cookies?
@@ -542,20 +504,16 @@ export default function CookiePolicyPage() {
                   Nossa equipe está pronta para esclarecer qualquer questão sobre nossa política de cookies
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  <button
                     className="bg-white text-orange-500 px-6 py-3 rounded-full font-medium hover:shadow-lg transition-all"
                   >
                     Falar no WhatsApp
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                  </button>
+                  <button
                     className="border-2 border-white text-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-orange-500 transition-all"
                   >
                     Enviar E-mail
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -571,21 +529,19 @@ export default function CookiePolicyPage() {
                   Documentos Relacionados
                 </h3>
                 <div className="flex flex-wrap justify-center gap-4">
-                  <motion.a
+                  <a
                     href="/privacy-policy"
-                    whileHover={{ scale: 1.05 }}
                     className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow hover:shadow-md transition-all text-flex-primary"
                   >
                     <HiShieldCheck />
                     Política de Privacidade
-                  </motion.a>
-                  <motion.a
+                  </a>
+                  <a
                     href="/termos-de-uso"
-                    whileHover={{ scale: 1.05 }}
                     className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow hover:shadow-md transition-all text-flex-primary"
                   >
-                    📋 Termos de Uso
-                  </motion.a>
+                    <ClipboardList className="w-4 h-4" /> Termos de Uso
+                  </a>
                 </div>
               </div>
             </motion.div>

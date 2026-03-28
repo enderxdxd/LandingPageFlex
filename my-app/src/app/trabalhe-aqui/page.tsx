@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { HiBriefcase, HiDocumentText, HiCheck, HiExclamationCircle, HiChevronDown, HiX } from 'react-icons/hi'
+import { Dumbbell, Rocket, Handshake, Target, Briefcase } from 'lucide-react'
 import { AnimatePresence } from 'framer-motion'
 
 // CustomSelect Component
@@ -339,19 +340,19 @@ export default function TrabalheAqui() {
               <h3 className="font-semibold text-flex-light mb-3">Por que trabalhar na Flex?</h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm text-flex-light/80">
                 <div className="flex items-center gap-2">
-                  <span className="text-purple-400">💪</span>
+                  <span className="text-purple-400"><Dumbbell className="w-4 h-4" /></span>
                   <span>Ambiente dinâmico e motivador</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-pink-400">🚀</span>
+                  <span className="text-pink-400"><Rocket className="w-4 h-4" /></span>
                   <span>Crescimento profissional</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-purple-400">🤝</span>
+                  <span className="text-purple-400"><Handshake className="w-4 h-4" /></span>
                   <span>Equipe colaborativa</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-pink-400">🎯</span>
+                  <span className="text-pink-400"><Target className="w-4 h-4" /></span>
                   <span>Missão inspiradora</span>
                 </div>
               </div>
@@ -554,7 +555,7 @@ export default function TrabalheAqui() {
               <div className="flex items-start gap-3">
                 <HiBriefcase className="text-purple-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="text-purple-400 font-medium text-sm mb-1">💼 Processo Seletivo</h4>
+                  <h4 className="text-purple-400 font-medium text-sm mb-1 flex items-center gap-1"><Briefcase className="w-4 h-4" /> Processo Seletivo</h4>
                   <p className="text-flex-light/70 text-sm">
                     Após análise do currículo, candidatos selecionados serão contatados para entrevista.
                   </p>

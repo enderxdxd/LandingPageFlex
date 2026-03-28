@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 import { Barlow, Barlow_Condensed } from 'next/font/google'
 import './globals.css'
-import Navigation from '@/components/layout/Navigation'
-import Footer from '@/components/layout/Footer'
 import AnimationProvider from '@/components/providers/AnimationProvider'
 import ErrorBoundary from '@/components/ErrorBoundary'
-import CookieBanner from '@/components/CookieBanner'
+import LayoutWrapper from '@/components/layout/LayoutWrapper'
 import { Analytics } from '@vercel/analytics/next'
 
 const barlow = Barlow({
@@ -56,10 +54,7 @@ export default function RootLayout({
       <body className="bg-flex-white text-flex-dark overflow-x-hidden">
         <ErrorBoundary>
           <AnimationProvider>
-            <Navigation />
-            <main>{children}</main>
-            <Footer />
-            <CookieBanner />
+            <LayoutWrapper>{children}</LayoutWrapper>
           </AnimationProvider>
         </ErrorBoundary>
         <Analytics />

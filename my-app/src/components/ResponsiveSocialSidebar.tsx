@@ -140,16 +140,6 @@ export default function ResponsiveSocialSidebar() {
               boxShadow: '0 6px 20px rgba(37, 99, 235, 0.3)'
             }}
           >
-            {/* Pulse effect */}
-            <motion.div
-              className="absolute inset-0 rounded-full bg-white/20"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0, 0.3]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            
             {isExpanded ? (
               <HiX className="text-xl relative z-10" />
             ) : (
