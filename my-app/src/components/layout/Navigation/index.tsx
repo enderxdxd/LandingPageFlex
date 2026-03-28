@@ -36,7 +36,7 @@ const unidadesData = [
     href: '/unidades/palmas',
     image: '/images/units/palmas/hero-projeto.jpg',
     address: 'Q. 206 Sul Avenida Ns 4 - Palmas, TO',
-    badge: 'Em breve',
+    badge: '',
   }
 ]
 
@@ -144,11 +144,7 @@ function UnidadesDropdown({ isScrolled }: { isScrolled: boolean }) {
           </Link>
         ))}
       </div>
-      <div className="border-t border-gray-100 px-4 py-3">
-        <Link href="/unidades" className="text-sm font-medium text-flex-primary hover:text-flex-secondary transition-colors duration-150">
-          Ver todas as unidades
-        </Link>
-      </div>
+      
     </NavDropdown>
   )
 }
