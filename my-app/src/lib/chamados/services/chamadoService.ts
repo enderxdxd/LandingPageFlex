@@ -81,7 +81,7 @@ export async function criarChamado(
     local: dados.local,
     prioridade: dados.prioridade,
     status: 'aberto',
-    departamentoId,
+    ...(departamentoId ? { departamentoId } : {}),
     anexos,
     sla: {
       ...sla,

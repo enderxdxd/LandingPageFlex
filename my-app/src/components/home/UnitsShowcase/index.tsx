@@ -6,7 +6,6 @@ import { unitsData } from '@/lib/constants/units-data'
 import { UnitCard } from './UnitCard'
 import { useIsMobile } from '@/components/ClientOnly'
 import dynamic from 'next/dynamic'
-import { Building2, Users, Award } from 'lucide-react'
 
 const MobileSwiper = dynamic(() => import('@/components/MobileSwiper'), {
   ssr: false,
@@ -42,7 +41,7 @@ export default function UnitsShowcase() {
     <section
       id="units"
       ref={sectionRef}
-      className="scroll-section min-h-screen bg-gradient-to-b from-gray-50 to-white py-20 relative overflow-hidden"
+      className="scroll-section min-h-screen bg-gray-50 py-20 relative overflow-hidden"
       role="region"
       aria-labelledby="units-title"
     >
@@ -59,34 +58,12 @@ export default function UnitsShowcase() {
           </motion.h2>
 
           <motion.p
-            className="text-lg text-gray-500 max-w-3xl mx-auto mb-10"
+            className="text-lg text-gray-500 max-w-3xl mx-auto"
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             Escolha a unidade mais proxima e comece sua transformacao
           </motion.p>
-
-          {/* Stats */}
-          <motion.div
-            className="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-4"
-            {...fadeUp}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {[
-              { number: '4', label: 'Unidades', icon: Building2 },
-              { number: '5k+', label: 'Alunos', icon: Users },
-              { number: '30+', label: 'Anos', icon: Award }
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className="text-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm"
-              >
-                <stat.icon className="w-5 h-5 text-flex-primary mx-auto mb-1.5" />
-                <div className="font-display text-2xl font-bold text-flex-dark">{stat.number}</div>
-                <div className="text-xs text-gray-500">{stat.label}</div>
-              </div>
-            ))}
-          </motion.div>
         </div>
 
         {/* Cards */}

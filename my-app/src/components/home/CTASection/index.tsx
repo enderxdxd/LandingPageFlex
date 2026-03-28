@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useState, useRef } from 'react'
 import ContactForm from './ContactForm'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
-import { Dumbbell, GraduationCap, MapPin, MessageCircle, Users, Star, Trophy } from 'lucide-react'
+import { Dumbbell, GraduationCap, MapPin, MessageCircle } from 'lucide-react'
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
@@ -88,32 +88,6 @@ export default function CTASection() {
               </div>
               <h3 className="font-display text-lg mb-1">{item.title}</h3>
               <p className="text-white/50 text-sm">{item.desc}</p>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Stats */}
-        <motion.div
-          className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mb-16"
-          {...fadeUp}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          {[
-            { value: '5.000+', label: 'Alunos Ativos', icon: Users },
-            { value: '98%', label: 'Satisfacao', icon: Star },
-            { value: '30+', label: 'Anos de Excelencia', icon: Trophy }
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="text-center p-4 rounded-xl bg-white/5 border border-white/10"
-            >
-              <div className="flex justify-center mb-2">
-                <stat.icon className="w-5 h-5 text-flex-accent" />
-              </div>
-              <div className="text-2xl md:text-3xl font-display font-bold gradient-text mb-1">
-                {stat.value}
-              </div>
-              <div className="text-white/50 text-xs">{stat.label}</div>
             </div>
           ))}
         </motion.div>

@@ -69,7 +69,7 @@ export default function FeaturesSection() {
             className="font-display text-4xl md:text-6xl lg:text-7xl mb-4"
             {...fadeUp}
           >
-            POR QUE ESCOLHER A{' '}
+            A EXPERIENCIA{' '}
             <span className="gradient-text">FLEX</span>
           </motion.h2>
 

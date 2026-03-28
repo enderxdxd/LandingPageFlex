@@ -139,8 +139,14 @@ export default function HomePage() {
       <main ref={mainRef} className="relative">
         <HeroSection />
         <ConceptSection/>
+        {/* Transition: dark → light */}
+        <div className="h-24 lg:h-32 bg-gradient-to-b from-[#0F172A] to-gray-50" />
         <UnitsShowcase />
+        {/* Transition: gray → white */}
+        <div className="h-16 bg-gradient-to-b from-gray-50 to-white" />
         <FeaturesSection />
+        {/* Transition: light → dark */}
+        <div className="h-24 lg:h-32 bg-gradient-to-b from-white to-[#0F172A]" />
         <CTASection />
       </main>
       
