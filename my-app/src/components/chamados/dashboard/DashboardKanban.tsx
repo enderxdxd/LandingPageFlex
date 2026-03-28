@@ -54,7 +54,7 @@ function KanbanCard({ chamado }: { chamado: Chamado }) {
         <ChamadoPrioridadeBadge prioridade={chamado.prioridade} />
         <span className="text-xs text-gray-400 font-mono ml-auto">{chamado.protocolo}</span>
       </div>
-      <p className="text-sm font-medium text-gray-900 line-clamp-2">{chamado.titulo}</p>
+      <p className="text-sm font-medium text-gray-900 line-clamp-2">{chamado.titulo || chamado.descricao?.substring(0, 80)}</p>
       {chamado.atribuidoPara && (
         <p className="text-xs text-gray-500 mt-2">{chamado.atribuidoPara.nome.split(' ')[0]}</p>
       )}
@@ -143,7 +143,7 @@ export default function DashboardKanban({ chamados, usuario, onUpdate }: Dashboa
         {activeChamado && (
           <div className="bg-white rounded-lg border-2 border-blue-300 p-3 shadow-lg w-72">
             <ChamadoPrioridadeBadge prioridade={activeChamado.prioridade} />
-            <p className="text-sm font-medium text-gray-900 mt-2">{activeChamado.titulo}</p>
+            <p className="text-sm font-medium text-gray-900 mt-2">{activeChamado.titulo || activeChamado.descricao?.substring(0, 80)}</p>
           </div>
         )}
       </DragOverlay>

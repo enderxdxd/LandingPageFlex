@@ -7,7 +7,7 @@ export type CategoriaType = 'ti' | 'manutencao' | 'limpeza' | 'administrativo'
 export type PrioridadeType = 'baixa' | 'media' | 'alta' | 'critica'
 export type StatusType = 'aberto' | 'em_andamento' | 'aguardando' | 'resolvido' | 'fechado' | 'cancelado'
 export type RoleType = 'solicitante' | 'tecnico' | 'admin' | 'gestor'
-export type HistoricoTipo = 'criacao' | 'comentario' | 'mudanca_status' | 'atribuicao' | 'mudanca_prioridade' | 'anexo' | 'avaliacao'
+export type HistoricoTipo = 'criacao' | 'comentario' | 'mudanca_status' | 'atribuicao' | 'mudanca_prioridade' | 'categorizacao' | 'anexo' | 'avaliacao'
 export type NotificacaoTipo = 'novo_chamado' | 'atribuido' | 'comentario' | 'status_alterado' | 'sla_proximo' | 'sla_estourado' | 'resolvido'
 
 // ==================== INTERFACES ====================
@@ -34,11 +34,11 @@ export interface Chamado {
 
   // Chamado
   unidade: UnidadeType
-  categoria: CategoriaType
-  subcategoria: string
-  titulo: string
+  categoria?: CategoriaType
+  subcategoria?: string
+  titulo?: string
   descricao: string
-  local: string
+  local?: string
 
   // Classificação
   prioridade: PrioridadeType
@@ -159,9 +159,6 @@ export interface ChamadoConfig {
 
 export interface NovoChamadoFormData {
   unidade: UnidadeType | ''
-  categoria: CategoriaType | ''
-  subcategoria: string
-  titulo: string
   descricao: string
   local: string
   prioridade: PrioridadeType
@@ -196,11 +193,12 @@ export interface DashboardStats {
 export interface ChamadoResumo {
   id: string
   protocolo: string
-  titulo: string
+  titulo?: string
+  descricao?: string
   status: StatusType
   prioridade: PrioridadeType
   unidade: UnidadeType
-  categoria: CategoriaType
+  categoria?: CategoriaType
   criadoEm: Timestamp
   slaEstourado: boolean
 }

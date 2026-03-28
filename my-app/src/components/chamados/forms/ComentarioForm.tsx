@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Send, Paperclip, X, Loader2 } from 'lucide-react'
+import { Send, Paperclip, X, Loader2, ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { ChamadoUsuario } from '@/lib/chamados/types'
 import { adicionarComentario } from '@/lib/chamados/services/comentarioService'
@@ -38,26 +38,52 @@ export default function ComentarioForm({ chamadoId, usuario, onSuccess }: Coment
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-4">
-      <textarea
-        rows={3}
-        value={texto}
-        onChange={(e) => setTexto(e.target.value)}
-        placeholder="Adicione um comentário..."
-        className="w-full text-sm text-gray-900 placeholder-gray-400 border-0 focus:outline-none resize-none"
-      />
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden">
+      <div className="p-4 pb-0">
+        <div className="flex items-start gap-3">
+          {/* Avatar */}
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+            <span className="text-xs font-bold text-white">
+              {usuario.nome.charAt(0).toUpperCase()}
+            </span>
+          </div>
 
+          {/* Input */}
+          <div className="flex-1 min-w-0">
+            <textarea
+              rows={2}
+              value={texto}
+              onChange={(e) => setTexto(e.target.value)}
+              placeholder="Escreva um comentário..."
+              className="w-full text-sm text-gray-900 placeholder-gray-400 border-0 focus:outline-none resize-none leading-relaxed bg-transparent"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Attachment preview */}
       {anexo && (
-        <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2 mb-3">
-          <span className="text-xs text-gray-600 flex-1 truncate">{anexo.name}</span>
-          <button type="button" onClick={() => setAnexo(null)}>
-            <X className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" />
+        <div className="mx-4 mb-2 flex items-center gap-2.5 bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">
+          <div className="w-7 h-7 rounded-md bg-blue-50 flex items-center justify-center shrink-0">
+            {anexo.type.startsWith('image/') ? (
+              <ImageIcon className="w-3.5 h-3.5 text-blue-500" />
+            ) : (
+              <Paperclip className="w-3.5 h-3.5 text-gray-500" />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-gray-700 truncate">{anexo.name}</p>
+            <p className="text-[10px] text-gray-400">{(anexo.size / 1024).toFixed(0)} KB</p>
+          </div>
+          <button type="button" onClick={() => setAnexo(null)} className="p-1 rounded-md hover:bg-gray-200 transition-colors">
+            <X className="w-3.5 h-3.5 text-gray-400" />
           </button>
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div>
+      {/* Actions bar */}
+      <div className="flex items-center justify-between px-4 py-3 bg-gray-50/50 border-t border-gray-100">
+        <div className="flex items-center gap-1">
           <input
             ref={fileRef}
             type="file"
@@ -68,7 +94,8 @@ export default function ComentarioForm({ chamadoId, usuario, onSuccess }: Coment
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Anexar arquivo"
           >
             <Paperclip className="w-4 h-4" />
           </button>
@@ -77,7 +104,7 @@ export default function ComentarioForm({ chamadoId, usuario, onSuccess }: Coment
         <button
           type="submit"
           disabled={!texto.trim() || loading}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm hover:shadow"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
           Enviar

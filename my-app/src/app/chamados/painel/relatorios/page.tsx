@@ -38,11 +38,11 @@ export default function RelatoriosPage() {
   const exportCSV = () => {
     const data = chamados.map(c => ({
       Protocolo: c.protocolo,
-      Titulo: c.titulo,
+      Titulo: c.titulo || c.descricao?.substring(0, 80) || '-',
       Status: STATUS_CONFIG[c.status]?.label,
       Prioridade: c.prioridade,
       Unidade: UNIDADES[c.unidade]?.label,
-      Categoria: CATEGORIAS[c.categoria]?.label,
+      Categoria: c.categoria ? CATEGORIAS[c.categoria]?.label : 'Nao categorizado',
       Solicitante: c.solicitante.nome,
       Tecnico: c.atribuidoPara?.nome || '-',
       CriadoEm: c.criadoEm?.toDate().toLocaleDateString('pt-BR'),

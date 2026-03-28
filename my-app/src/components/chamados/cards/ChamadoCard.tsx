@@ -31,14 +31,20 @@ export default function ChamadoCard({ chamado, basePath = '/chamados/meus' }: Ch
           <span className="text-xs text-gray-400 font-mono shrink-0">{chamado.protocolo}</span>
         </div>
 
-        <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-1">{chamado.titulo}</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2">
+          {chamado.titulo || chamado.descricao?.substring(0, 80)}
+        </h3>
 
         <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
           <span className="flex items-center gap-1">
             <MapPin className="w-3.5 h-3.5" />
             {UNIDADES[chamado.unidade]?.label}
           </span>
-          <span>{CATEGORIAS[chamado.categoria]?.label}</span>
+          {chamado.categoria ? (
+            <span>{CATEGORIAS[chamado.categoria]?.label}</span>
+          ) : (
+            <span className="text-amber-600">Nao categorizado</span>
+          )}
         </div>
 
         <div className="flex items-center justify-between">

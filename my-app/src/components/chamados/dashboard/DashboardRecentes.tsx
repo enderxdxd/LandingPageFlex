@@ -36,9 +36,9 @@ export default function DashboardRecentes({ chamados }: DashboardRecentesProps) 
                 <ChamadoStatusBadge status={chamado.status} />
                 <ChamadoPrioridadeBadge prioridade={chamado.prioridade} />
               </div>
-              <p className="text-sm font-medium text-gray-900 truncate">{chamado.titulo}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{chamado.titulo || chamado.descricao?.substring(0, 80)}</p>
               <p className="text-xs text-gray-500 mt-0.5">
-                {UNIDADES[chamado.unidade]?.label} | {CATEGORIAS[chamado.categoria]?.label}
+                {UNIDADES[chamado.unidade]?.label}{chamado.categoria ? ` | ${CATEGORIAS[chamado.categoria]?.label}` : ''}
               </p>
             </div>
 

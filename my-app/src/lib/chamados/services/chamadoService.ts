@@ -21,6 +21,7 @@ import { Chamado, StatusType, PrioridadeType, UnidadeType, CategoriaType, Anexo,
 import { gerarProtocolo } from '../utils/protocolo'
 import { calcularPrazosSLA } from '../utils/sla'
 import { buscarDepartamentoPorCategoriaUnidade, buscarEmailsDepartamento } from './departamentoService'
+import { UNIDADES, CATEGORIAS } from '../constants'
 
 const COLLECTION = 'chamados'
 const PAGE_SIZE = 20
@@ -50,21 +51,10 @@ export async function criarChamado(
     })
   }
 
-  // Buscar departamento responsavel
-  let departamentoId: string | undefined
-  let departamentoNome: string | undefined
-  try {
-    const dep = await buscarDepartamentoPorCategoriaUnidade(
-      dados.categoria as CategoriaType,
-      dados.unidade as UnidadeType
-    )
-    if (dep) {
-      departamentoId = dep.id
-      departamentoNome = dep.nome
-    }
-  } catch {
-    // Departamento nao encontrado - segue sem
-  }
+  // Auto-gerar titulo a partir da descricao
+  const titulo = dados.descricao.length > 60
+    ? dados.descricao.substring(0, 60).trim() + '...'
+    : dados.descricao.trim()
 
   const chamado: Omit<Chamado, 'id'> = {
     protocolo,
@@ -74,14 +64,11 @@ export async function criarChamado(
       setor: '',
     },
     unidade: dados.unidade as UnidadeType,
-    categoria: dados.categoria as CategoriaType,
-    subcategoria: dados.subcategoria,
-    titulo: dados.titulo,
+    titulo,
     descricao: dados.descricao,
-    local: dados.local,
+    ...(dados.local ? { local: dados.local } : {}),
     prioridade: dados.prioridade,
     status: 'aberto',
-    ...(departamentoId ? { departamentoId } : {}),
     anexos,
     sla: {
       ...sla,
@@ -96,7 +83,7 @@ export async function criarChamado(
   // Criar registro no histórico
   await addDoc(collection(db, COLLECTION, docRef.id, 'historico'), {
     tipo: 'criacao',
-    descricao: `Chamado ${protocolo} criado${departamentoNome ? ` - Departamento: ${departamentoNome}` : ''}`,
+    descricao: `Chamado ${protocolo} criado`,
     autor: {
       uid: usuario.uid,
       nome: usuario.nome,
@@ -105,26 +92,106 @@ export async function criarChamado(
     criadoEm: agora,
   })
 
-  // Notificar membros do departamento por email (e WhatsApp se habilitado)
+  // Notificar emails da unidade
+  try {
+    const { EMAILS_POR_UNIDADE } = await import('../constants')
+    const emailsUnidade = EMAILS_POR_UNIDADE[dados.unidade] || []
+    const emailsGeral = EMAILS_POR_UNIDADE['geral'] || []
+    const todosEmails = Array.from(new Set([...emailsUnidade, ...emailsGeral]))
+
+    if (todosEmails.length > 0) {
+      await fetch('/api/chamados/notificar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tipo: 'novo_admin',
+          chamadoId: docRef.id,
+          protocolo,
+          titulo,
+          prioridade: dados.prioridade,
+          unidade: UNIDADES[dados.unidade as UnidadeType]?.label || dados.unidade,
+          categoria: 'Não categorizado',
+          destinatarios: todosEmails.map(email => ({ email, nome: email.split('@')[0] })),
+        }),
+      })
+    }
+  } catch {
+    // Erro na notificacao nao deve bloquear criacao do chamado
+  }
+
+  return docRef.id
+}
+
+/**
+ * Categoriza um chamado (admin/gestor/tecnico)
+ */
+export async function categorizarChamado(
+  chamadoId: string,
+  categoria: CategoriaType,
+  subcategoria: string,
+  usuario: ChamadoUsuario
+): Promise<void> {
+  const chamadoRef = doc(db, COLLECTION, chamadoId)
+  const chamadoSnap = await getDoc(chamadoRef)
+  if (!chamadoSnap.exists()) throw new Error('Chamado não encontrado')
+
+  const chamado = chamadoSnap.data() as Chamado
+  const agora = Timestamp.now()
+
+  // Buscar departamento responsavel pela nova categoria
+  let departamentoId: string | undefined
+  let departamentoNome: string | undefined
+  try {
+    const dep = await buscarDepartamentoPorCategoriaUnidade(
+      categoria,
+      chamado.unidade
+    )
+    if (dep) {
+      departamentoId = dep.id
+      departamentoNome = dep.nome
+    }
+  } catch {
+    // Departamento nao encontrado
+  }
+
+  await updateDoc(chamadoRef, {
+    categoria,
+    subcategoria,
+    ...(departamentoId ? { departamentoId } : {}),
+    atualizadoEm: agora,
+  })
+
+  await addDoc(collection(db, COLLECTION, chamadoId, 'historico'), {
+    tipo: 'categorizacao',
+    descricao: `Categorizado como ${CATEGORIAS[categoria]?.label || categoria} - ${subcategoria}${departamentoNome ? ` (Dept: ${departamentoNome})` : ''}`,
+    autor: {
+      uid: usuario.uid,
+      nome: usuario.nome,
+      role: usuario.role === 'admin' ? 'admin' : usuario.role === 'tecnico' ? 'tecnico' : 'solicitante',
+    },
+    dados: {
+      para: `${categoria} - ${subcategoria}`,
+    },
+    criadoEm: agora,
+  })
+
+  // Notificar departamento se encontrado
   if (departamentoId) {
     try {
       const membros = await buscarEmailsDepartamento(departamentoId)
       if (membros.length > 0) {
-        const dep = await buscarDepartamentoPorCategoriaUnidade(
-          dados.categoria as CategoriaType,
-          dados.unidade as UnidadeType
-        )
+        const dep = await buscarDepartamentoPorCategoriaUnidade(categoria, chamado.unidade)
         await fetch('/api/chamados/notificar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tipo: 'novo_departamento',
-            chamadoId: docRef.id,
-            protocolo,
-            titulo: dados.titulo,
-            prioridade: dados.prioridade,
-            unidade: dados.unidade,
-            categoria: dados.categoria,
+            chamadoId,
+            protocolo: chamado.protocolo,
+            titulo: chamado.titulo || chamado.descricao.substring(0, 60),
+            prioridade: chamado.prioridade,
+            unidade: UNIDADES[chamado.unidade]?.label || chamado.unidade,
+            categoria: CATEGORIAS[categoria]?.label || categoria,
             departamento: departamentoNome,
             destinatarios: membros,
             enviarWhatsApp: dep?.notificarWhatsApp ?? false,
@@ -132,11 +199,9 @@ export async function criarChamado(
         })
       }
     } catch {
-      // Erro na notificacao nao deve bloquear criacao do chamado
+      // Erro na notificacao nao bloqueia
     }
   }
-
-  return docRef.id
 }
 
 /**
