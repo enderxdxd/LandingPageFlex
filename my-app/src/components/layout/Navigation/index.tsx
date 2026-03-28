@@ -279,16 +279,7 @@ function NavigationContent() {
             <HorariosDropdown isScrolled={isScrolled} />
             <FormulariosDropdown isScrolled={isScrolled} />
 
-            <Link
-              href="/eventos"
-              className={`text-[15px] font-medium tracking-wide transition-colors duration-200 ${
-                isScrolled
-                  ? 'text-flex-dark hover:text-flex-primary'
-                  : 'text-white/90 hover:text-white'
-              }`}
-            >
-              Eventos
-            </Link>
+            
 
             <button
               type="button"
