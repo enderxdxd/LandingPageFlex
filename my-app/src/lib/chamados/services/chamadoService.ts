@@ -18,6 +18,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from '@/lib/firebase'
 import { Chamado, StatusType, PrioridadeType, UnidadeType, CategoriaType, Anexo, NovoChamadoFormData, ChamadoUsuario } from '../types'
+import { criarNotificacao } from './notificacaoService'
 import { gerarProtocolo } from '../utils/protocolo'
 import { calcularPrazosSLA } from '../utils/sla'
 import { buscarDepartamentoPorCategoriaUnidade, buscarEmailsDepartamento } from './departamentoService'
@@ -95,6 +96,22 @@ export async function criarChamado(
     } : {}),
     criadoEm: agora,
   })
+
+  // Notificacao in-app para usuario direcionado
+  if (dados.direcionadoPara) {
+    try {
+      await criarNotificacao({
+        usuarioId: dados.direcionadoPara.uid,
+        chamadoId: docRef.id,
+        protocolo,
+        tipo: 'atribuido',
+        titulo: `Novo chamado ${protocolo} direcionado para voce`,
+        mensagem: `${usuario.nome} abriu o chamado "${titulo}" e direcionou para voce`,
+      })
+    } catch {
+      // Erro na notificacao in-app nao bloqueia
+    }
+  }
 
   // Notificar usuario direcionado por email
   if (dados.direcionadoPara) {
@@ -321,6 +338,42 @@ export async function atualizarStatus(
     criadoEm: agora,
   })
 
+  // Notificacao in-app para o solicitante
+  try {
+    const { STATUS_CONFIG } = await import('../constants')
+    const statusLabel = STATUS_CONFIG[novoStatus]?.label || novoStatus
+
+    // Buscar uid do solicitante pelo email
+    const solSnap = await getDocs(query(collection(db, 'chamados_usuarios'), where('email', '==', chamado.solicitante.email)))
+    if (!solSnap.empty) {
+      const solicitanteUid = solSnap.docs[0].id
+      if (solicitanteUid !== usuario.uid) {
+        await criarNotificacao({
+          usuarioId: solicitanteUid,
+          chamadoId,
+          protocolo: chamado.protocolo,
+          tipo: novoStatus === 'resolvido' ? 'resolvido' : 'status_alterado',
+          titulo: `Chamado ${chamado.protocolo} - Status atualizado`,
+          mensagem: `O status do seu chamado foi alterado para "${statusLabel}"`,
+        })
+      }
+    }
+
+    // Notificar tecnico atribuido (se nao for ele mesmo quem mudou)
+    if (chamado.atribuidoPara && chamado.atribuidoPara.uid !== usuario.uid) {
+      await criarNotificacao({
+        usuarioId: chamado.atribuidoPara.uid,
+        chamadoId,
+        protocolo: chamado.protocolo,
+        tipo: 'status_alterado',
+        titulo: `Chamado ${chamado.protocolo} - Status atualizado`,
+        mensagem: `O status foi alterado para "${statusLabel}" por ${usuario.nome}`,
+      })
+    }
+  } catch {
+    // Erro na notificacao in-app nao bloqueia
+  }
+
   // Notificar solicitante por email sobre mudanca de status
   try {
     const { STATUS_CONFIG } = await import('../constants')
@@ -376,6 +429,24 @@ export async function atribuirTecnico(
     },
     criadoEm: agora,
   })
+
+  // Notificacao in-app para o tecnico atribuido
+  try {
+    const chamadoSnap = await getDoc(chamadoRef)
+    const chamado = chamadoSnap.data() as Chamado
+    if (tecnico.uid !== usuario.uid) {
+      await criarNotificacao({
+        usuarioId: tecnico.uid,
+        chamadoId,
+        protocolo: chamado.protocolo,
+        tipo: 'atribuido',
+        titulo: `Chamado ${chamado.protocolo} atribuido a voce`,
+        mensagem: `${usuario.nome} atribuiu o chamado "${chamado.titulo || chamado.descricao?.substring(0, 60)}" para voce`,
+      })
+    }
+  } catch {
+    // Erro na notificacao in-app nao bloqueia
+  }
 }
 
 /**
@@ -561,6 +632,38 @@ export async function redirecionarChamado(
     },
     criadoEm: agora,
   })
+
+  // Notificacao in-app para novo responsavel
+  try {
+    if (novoResponsavel.uid !== usuario.uid) {
+      await criarNotificacao({
+        usuarioId: novoResponsavel.uid,
+        chamadoId,
+        protocolo: chamado.protocolo,
+        tipo: 'atribuido',
+        titulo: `Chamado ${chamado.protocolo} direcionado para voce`,
+        mensagem: `${usuario.nome} redirecionou o chamado "${chamado.titulo || chamado.descricao?.substring(0, 60)}" para voce`,
+      })
+    }
+
+    // Notificar solicitante sobre o redirecionamento
+    const solSnap = await getDocs(query(collection(db, 'chamados_usuarios'), where('email', '==', chamado.solicitante.email)))
+    if (!solSnap.empty) {
+      const solicitanteUid = solSnap.docs[0].id
+      if (solicitanteUid !== usuario.uid) {
+        await criarNotificacao({
+          usuarioId: solicitanteUid,
+          chamadoId,
+          protocolo: chamado.protocolo,
+          tipo: 'status_alterado',
+          titulo: `Chamado ${chamado.protocolo} - Redirecionado`,
+          mensagem: `Seu chamado foi redirecionado para ${novoResponsavel.nome}`,
+        })
+      }
+    }
+  } catch {
+    // Erro na notificacao in-app nao bloqueia
+  }
 
   // Notificar novo responsavel por email
   try {

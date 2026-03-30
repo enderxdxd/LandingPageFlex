@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { adminAuth } from '@/lib/firebaseAdmin'
+import { verificarAdmin } from '@/lib/apiAuth'
 
 export async function POST(req: NextRequest) {
+  const authResult = await verificarAdmin(req)
+  if (authResult instanceof NextResponse) return authResult
+
   try {
     const { email, senha, nome } = await req.json()
 

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Save, Users, Clock, Building2, Loader2, Plus, Trash2, UserPlus, UserMinus, MessageCircle, Pencil, X } from 'lucide-react'
 import { doc, setDoc, collection, getDocs, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { db, auth } from '@/lib/firebase'
 import { useChamadosAuth } from '@/lib/chamados/hooks/useAuth'
 import { useNotificacoes } from '@/lib/chamados/hooks/useNotificacoes'
 import { podeGerenciarConfiguracoes } from '@/lib/chamados/utils/permissions'
@@ -99,6 +99,14 @@ export default function ConfiguracoesPage() {
     setUsuarios(snap.docs.map(d => ({ ...d.data(), uid: d.id } as ChamadoUsuario)))
   }
 
+  const getAuthHeaders = async () => {
+    const token = await auth.currentUser?.getIdToken()
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    }
+  }
+
   const criarUsuario = async () => {
     if (!novoNome || !novoEmail || !novoSenha) {
       toast.error('Preencha nome, email e senha')
@@ -107,9 +115,10 @@ export default function ConfiguracoesPage() {
     setSaving(true)
     try {
       // Criar usuario via Admin SDK (API route) para nao trocar a sessao do admin
+      const headers = await getAuthHeaders()
       const res = await fetch('/api/chamados/usuarios/criar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ email: novoEmail, senha: novoSenha, nome: novoNome }),
       })
       const data = await res.json()
@@ -154,9 +163,10 @@ export default function ConfiguracoesPage() {
     setSaving(true)
     try {
       // Excluir do Firebase Authentication via API route (Admin SDK)
+      const headers = await getAuthHeaders()
       const res = await fetch('/api/chamados/usuarios/excluir', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ uid }),
       })
       const data = await res.json()
@@ -210,9 +220,10 @@ export default function ConfiguracoesPage() {
           setSaving(false)
           return
         }
+        const headers = await getAuthHeaders()
         const res = await fetch('/api/chamados/usuarios/alterar-senha', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ uid: editingUid, novaSenha: editSenha.trim() }),
         })
         const data = await res.json()

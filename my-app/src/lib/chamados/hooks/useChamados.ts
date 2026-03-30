@@ -1,9 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { DocumentSnapshot } from 'firebase/firestore'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { collection, query, where, orderBy, limit, startAfter, getDocs, onSnapshot, DocumentSnapshot } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 import { Chamado, ChamadoFilters, StatusType, CategoriaType, PrioridadeType, UnidadeType } from '../types'
-import { listarChamados } from '../services/chamadoService'
+
+const PAGE_SIZE = 20
+const COLLECTION = 'chamados'
 
 interface UseChamadosReturn {
   chamados: Chamado[]
@@ -33,49 +36,85 @@ export function useChamados(
     unidade: 'todos',
     ...filtrosIniciais,
   })
+  const unsubRef = useRef<(() => void) | null>(null)
 
-  const carregar = useCallback(async (resetar: boolean = true) => {
+  const buildConstraints = useCallback(() => {
+    const constraints: ReturnType<typeof where>[] = []
+    if (filtros.status !== 'todos') constraints.push(where('status', '==', filtros.status))
+    if (filtros.categoria !== 'todos') constraints.push(where('categoria', '==', filtros.categoria))
+    if (filtros.prioridade !== 'todos') constraints.push(where('prioridade', '==', filtros.prioridade))
+    if (filtros.unidade !== 'todos') constraints.push(where('unidade', '==', filtros.unidade))
+    if (emailUsuario) constraints.push(where('solicitante.email', '==', emailUsuario))
+    if (tecnicoUid) constraints.push(where('atribuidoPara.uid', '==', tecnicoUid))
+    return constraints
+  }, [filtros, emailUsuario, tecnicoUid])
+
+  // Listener em tempo real para a primeira página
+  useEffect(() => {
+    // Limpar listener anterior
+    if (unsubRef.current) {
+      unsubRef.current()
+      unsubRef.current = null
+    }
+
     setLoading(true)
     setError(null)
-    try {
-      const result = await listarChamados({
-        status: filtros.status !== 'todos' ? filtros.status as StatusType : undefined,
-        categoria: filtros.categoria !== 'todos' ? filtros.categoria as CategoriaType : undefined,
-        prioridade: filtros.prioridade !== 'todos' ? filtros.prioridade as PrioridadeType : undefined,
-        unidade: filtros.unidade !== 'todos' ? filtros.unidade as UnidadeType : undefined,
-        email: emailUsuario,
-        tecnicoUid,
-        ultimoDoc: resetar ? undefined : ultimoDoc || undefined,
-      })
+    setUltimoDoc(null)
 
-      if (resetar) {
-        setChamados(result.chamados)
-      } else {
-        setChamados(prev => [...prev, ...result.chamados])
-      }
-      setUltimoDoc(result.ultimoDoc)
-      setHasMore(result.chamados.length >= 20)
+    const constraints = buildConstraints()
+    const q = query(
+      collection(db, COLLECTION),
+      ...constraints,
+      orderBy('criadoEm', 'desc'),
+      limit(PAGE_SIZE)
+    )
+
+    const unsub = onSnapshot(q, (snapshot) => {
+      const lista = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chamado))
+      setChamados(lista)
+      setUltimoDoc(snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null)
+      setHasMore(snapshot.docs.length >= PAGE_SIZE)
+      setLoading(false)
+    }, (err) => {
+      console.error('Erro ao escutar chamados:', err)
+      setError('Erro ao carregar chamados')
+      setLoading(false)
+    })
+
+    unsubRef.current = unsub
+    return () => unsub()
+  }, [buildConstraints]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Carregar mais usa getDocs (paginação manual)
+  const carregarMais = useCallback(async () => {
+    if (!hasMore || loading || !ultimoDoc) return
+    setLoading(true)
+    try {
+      const constraints = buildConstraints()
+      const q = query(
+        collection(db, COLLECTION),
+        ...constraints,
+        orderBy('criadoEm', 'desc'),
+        startAfter(ultimoDoc),
+        limit(PAGE_SIZE)
+      )
+      const snapshot = await getDocs(q)
+      const novos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chamado))
+      setChamados(prev => [...prev, ...novos])
+      setUltimoDoc(snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null)
+      setHasMore(snapshot.docs.length >= PAGE_SIZE)
     } catch (err) {
-      console.error('Erro ao carregar chamados:', err)
+      console.error('Erro ao carregar mais chamados:', err)
       setError('Erro ao carregar chamados')
     } finally {
       setLoading(false)
     }
-  }, [filtros, emailUsuario, tecnicoUid, ultimoDoc])
-
-  useEffect(() => {
-    carregar(true)
-  }, [filtros, emailUsuario, tecnicoUid]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const carregarMais = useCallback(async () => {
-    if (!hasMore || loading) return
-    await carregar(false)
-  }, [hasMore, loading, carregar])
+  }, [hasMore, loading, ultimoDoc, buildConstraints])
 
   const recarregar = useCallback(async () => {
-    setUltimoDoc(null)
-    await carregar(true)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    // O onSnapshot já mantém atualizado, mas forçar refresh mudando filtros
+    setFiltros(prev => ({ ...prev }))
+  }, [])
 
   return {
     chamados,

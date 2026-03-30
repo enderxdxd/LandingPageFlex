@@ -5,6 +5,7 @@ import {
   doc,
   getDoc,
   query,
+  where,
   orderBy,
   Timestamp,
   onSnapshot,
@@ -13,6 +14,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from '@/lib/firebase'
 import { HistoricoChamado, ChamadoUsuario, Chamado } from '../types'
 import { UNIDADES, CATEGORIAS } from '../constants'
+import { criarNotificacao } from './notificacaoService'
 
 const COLLECTION = 'chamados'
 
@@ -50,14 +52,42 @@ export async function adicionarComentario(
     criadoEm: agora,
   })
 
-  // Notificar a outra parte por email sobre o novo comentario
+  // Notificacoes in-app para comentario
   try {
     const chamadoSnap = await getDoc(doc(db, COLLECTION, chamadoId))
     if (chamadoSnap.exists()) {
       const chamado = chamadoSnap.data() as Chamado
-      // Determinar quem notificar: se quem comentou e o solicitante, notifica o tecnico e vice-versa
-      const destinatarios: { email: string; nome: string }[] = []
+      const resumo = comentario.substring(0, 80) + (comentario.length > 80 ? '...' : '')
 
+      // Notificar solicitante (se nao for ele quem comentou)
+      if (chamado.solicitante.email !== usuario.email) {
+        const solSnap = await getDocs(query(collection(db, 'chamados_usuarios'), where('email', '==', chamado.solicitante.email)))
+        if (!solSnap.empty) {
+          await criarNotificacao({
+            usuarioId: solSnap.docs[0].id,
+            chamadoId,
+            protocolo: chamado.protocolo,
+            tipo: 'comentario',
+            titulo: `Novo comentario no chamado ${chamado.protocolo}`,
+            mensagem: `${usuario.nome}: "${resumo}"`,
+          })
+        }
+      }
+
+      // Notificar tecnico atribuido (se nao for ele quem comentou)
+      if (chamado.atribuidoPara && chamado.atribuidoPara.uid !== usuario.uid) {
+        await criarNotificacao({
+          usuarioId: chamado.atribuidoPara.uid,
+          chamadoId,
+          protocolo: chamado.protocolo,
+          tipo: 'comentario',
+          titulo: `Novo comentario no chamado ${chamado.protocolo}`,
+          mensagem: `${usuario.nome}: "${resumo}"`,
+        })
+      }
+
+      // Notificar por email
+      const destinatarios: { email: string; nome: string }[] = []
       if (chamado.solicitante.email !== usuario.email) {
         destinatarios.push({ email: chamado.solicitante.email, nome: chamado.solicitante.nome })
       }
