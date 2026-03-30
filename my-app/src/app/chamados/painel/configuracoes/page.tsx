@@ -63,6 +63,7 @@ export default function ConfiguracoesPage() {
   const [editTelefone, setEditTelefone] = useState('')
   const [editRole, setEditRole] = useState<RoleType>('solicitante')
   const [editDepartamento, setEditDepartamento] = useState('')
+  const [editSenha, setEditSenha] = useState('')
 
   // Department members view
   const [selectedDepId, setSelectedDepId] = useState<string | null>(null)
@@ -145,6 +146,16 @@ export default function ConfiguracoesPage() {
   const excluirUsuario = async (uid: string) => {
     setSaving(true)
     try {
+      // Excluir do Firebase Authentication via API route (Admin SDK)
+      const res = await fetch('/api/chamados/usuarios/excluir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao excluir do Authentication')
+
+      // Excluir do Firestore
       await deleteDoc(doc(db, 'chamados_usuarios', uid))
       setUsuarios(prev => prev.filter(u => u.uid !== uid))
       toast.success('Usuario excluido')
@@ -162,10 +173,12 @@ export default function ConfiguracoesPage() {
     setEditTelefone(u.telefone || '')
     setEditRole(u.role)
     setEditDepartamento(u.departamentoId || '')
+    setEditSenha('')
   }
 
   const cancelarEdicao = () => {
     setEditingUid(null)
+    setEditSenha('')
   }
 
   const salvarEdicaoUsuario = async () => {
@@ -182,6 +195,23 @@ export default function ConfiguracoesPage() {
         departamentoId: editDepartamento || '',
       }
       await updateDoc(doc(db, 'chamados_usuarios', editingUid), updateData)
+
+      // Alterar senha se preenchida
+      if (editSenha.trim()) {
+        if (editSenha.trim().length < 6) {
+          toast.error('A senha deve ter pelo menos 6 caracteres')
+          setSaving(false)
+          return
+        }
+        const res = await fetch('/api/chamados/usuarios/alterar-senha', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid: editingUid, novaSenha: editSenha.trim() }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Erro ao alterar senha')
+      }
+
       setUsuarios(prev => prev.map(u => u.uid === editingUid ? {
         ...u,
         nome: editNome.trim(),
@@ -189,8 +219,9 @@ export default function ConfiguracoesPage() {
         telefone: editTelefone.trim() || undefined,
         departamentoId: editDepartamento || undefined,
       } as ChamadoUsuario : u))
-      toast.success('Usuario atualizado')
+      toast.success(editSenha.trim() ? 'Usuario e senha atualizados' : 'Usuario atualizado')
       setEditingUid(null)
+      setEditSenha('')
     } catch (err: any) {
       toast.error(err.message || 'Erro ao atualizar usuario')
     } finally {
@@ -397,6 +428,13 @@ export default function ConfiguracoesPage() {
                                   <option key={d.id} value={d.id}>{d.nome}</option>
                                 ))}
                               </select>
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-1 block">Nova senha</label>
+                              <input value={editSenha} onChange={e => setEditSenha(e.target.value)} type="password" placeholder="Deixe vazio para manter" className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300" />
+                              {editSenha && editSenha.length < 6 && (
+                                <p className="text-[11px] text-amber-500 mt-1">Minimo 6 caracteres</p>
+                              )}
                             </div>
                           </div>
                           <div className="flex gap-2 pt-1">
