@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Save, Users, Clock, Building2, Loader2, Plus, Trash2, UserPlus, UserMinus, MessageCircle, Pencil, X } from 'lucide-react'
 import { doc, setDoc, collection, getDocs, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { db, auth } from '@/lib/firebase'
+import { db } from '@/lib/firebase'
 import { useChamadosAuth } from '@/lib/chamados/hooks/useAuth'
 import { useNotificacoes } from '@/lib/chamados/hooks/useNotificacoes'
 import { podeGerenciarConfiguracoes } from '@/lib/chamados/utils/permissions'
@@ -107,9 +106,17 @@ export default function ConfiguracoesPage() {
     }
     setSaving(true)
     try {
-      const cred = await createUserWithEmailAndPassword(auth, novoEmail, novoSenha)
+      // Criar usuario via Admin SDK (API route) para nao trocar a sessao do admin
+      const res = await fetch('/api/chamados/usuarios/criar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: novoEmail, senha: novoSenha, nome: novoNome }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro ao criar usuario')
+
       const userData: Record<string, unknown> = {
-        uid: cred.user.uid,
+        uid: data.uid,
         email: novoEmail,
         nome: novoNome,
         role: novoRole,
@@ -120,7 +127,7 @@ export default function ConfiguracoesPage() {
       if (novoTelefone) userData.telefone = novoTelefone
       if (novoDepartamento) userData.departamentoId = novoDepartamento
 
-      await setDoc(doc(db, 'chamados_usuarios', cred.user.uid), userData)
+      await setDoc(doc(db, 'chamados_usuarios', data.uid), userData)
       toast.success('Usuario criado')
       setNovoNome('')
       setNovoEmail('')
