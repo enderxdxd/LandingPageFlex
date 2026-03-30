@@ -28,8 +28,10 @@ export async function criarDepartamento(dados: {
   notificarWhatsApp: boolean
 }): Promise<string> {
   const agora = Timestamp.now()
+  const { descricao, ...resto } = dados
   const docRef = await addDoc(collection(db, COLLECTION), {
-    ...dados,
+    ...resto,
+    ...(descricao ? { descricao } : {}),
     criadoEm: agora,
     atualizadoEm: agora,
   })
