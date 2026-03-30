@@ -2,6 +2,8 @@ import {
   collection,
   addDoc,
   getDocs,
+  doc,
+  getDoc,
   query,
   orderBy,
   Timestamp,
@@ -9,7 +11,8 @@ import {
 } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from '@/lib/firebase'
-import { HistoricoChamado, ChamadoUsuario } from '../types'
+import { HistoricoChamado, ChamadoUsuario, Chamado } from '../types'
+import { UNIDADES, CATEGORIAS } from '../constants'
 
 const COLLECTION = 'chamados'
 
@@ -46,6 +49,43 @@ export async function adicionarComentario(
     },
     criadoEm: agora,
   })
+
+  // Notificar a outra parte por email sobre o novo comentario
+  try {
+    const chamadoSnap = await getDoc(doc(db, COLLECTION, chamadoId))
+    if (chamadoSnap.exists()) {
+      const chamado = chamadoSnap.data() as Chamado
+      // Determinar quem notificar: se quem comentou e o solicitante, notifica o tecnico e vice-versa
+      const destinatarios: { email: string; nome: string }[] = []
+
+      if (chamado.solicitante.email !== usuario.email) {
+        destinatarios.push({ email: chamado.solicitante.email, nome: chamado.solicitante.nome })
+      }
+      if (chamado.atribuidoPara && chamado.atribuidoPara.email !== usuario.email) {
+        destinatarios.push({ email: chamado.atribuidoPara.email, nome: chamado.atribuidoPara.nome })
+      }
+
+      if (destinatarios.length > 0) {
+        await fetch('/api/chamados/notificar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tipo: 'comentario',
+            chamadoId,
+            protocolo: chamado.protocolo,
+            titulo: chamado.titulo || chamado.descricao?.substring(0, 60),
+            prioridade: chamado.prioridade,
+            unidade: UNIDADES[chamado.unidade]?.label || chamado.unidade,
+            categoria: chamado.categoria ? CATEGORIAS[chamado.categoria]?.label || chamado.categoria : 'Não categorizado',
+            destinatarios,
+            detalhes: `${usuario.nome}: "${comentario.substring(0, 100)}${comentario.length > 100 ? '...' : ''}"`,
+          }),
+        })
+      }
+    }
+  } catch {
+    // Erro na notificacao nao bloqueia o comentario
+  }
 }
 
 /**

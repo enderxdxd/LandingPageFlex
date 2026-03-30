@@ -44,7 +44,7 @@ export function useChamadosAuth(): AuthContextType {
               uid: firebaseUser.uid,
               email: firebaseUser.email || '',
               nome: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Usuário',
-              role: 'admin', // Primeiro usuário = admin (altere depois para 'solicitante' em produção)
+              role: 'solicitante',
               unidades: ['alphaville', 'buena-vista', 'marista', 'palmas'],
               ativo: true,
               criadoEm: Timestamp.now(),

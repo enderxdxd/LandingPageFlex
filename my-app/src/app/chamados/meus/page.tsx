@@ -11,6 +11,7 @@ import ChamadoCard from '@/components/chamados/cards/ChamadoCard'
 import ChamadoFiltersComponent from '@/components/chamados/forms/ChamadoFilters'
 import LoadingState from '@/components/chamados/shared/LoadingState'
 import EmptyState from '@/components/chamados/shared/EmptyState'
+import WelcomeBanner from '@/components/chamados/shared/WelcomeBanner'
 
 export default function MeusChamadosPage() {
   const { usuario, loading: authLoading, logout } = useChamadosAuth()
@@ -37,6 +38,13 @@ export default function MeusChamadosPage() {
       onMarcarTodasLidas={marcarTodasLidas}
     >
       <div className="space-y-6">
+        {/* Welcome Banner for new users */}
+        <WelcomeBanner
+          nomeUsuario={usuario.nome}
+          role={usuario.role}
+          totalChamados={chamados.length}
+        />
+
         {/* Header Actions */}
         <div className="flex items-center justify-between flex-wrap gap-4">
           <ChamadoFiltersComponent filtros={filtros} onChange={setFiltros} />

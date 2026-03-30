@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useChamadosAuth } from '@/lib/chamados/hooks/useAuth'
 import { useNotificacoes } from '@/lib/chamados/hooks/useNotificacoes'
@@ -11,6 +11,7 @@ import ChamadosLayout from '@/components/chamados/layout/ChamadosLayout'
 import DashboardStats from '@/components/chamados/dashboard/DashboardStats'
 import DashboardCharts from '@/components/chamados/dashboard/DashboardCharts'
 import DashboardRecentes from '@/components/chamados/dashboard/DashboardRecentes'
+import DashboardPeriodFilter, { PeriodType, getDateFromPeriod } from '@/components/chamados/dashboard/DashboardPeriodFilter'
 import LoadingState from '@/components/chamados/shared/LoadingState'
 import { CategoriaType } from '@/lib/chamados/types'
 
@@ -19,6 +20,7 @@ export default function PainelPage() {
   const { notificacoes, naoLidas, marcarLida, marcarTodasLidas } = useNotificacoes(usuario?.uid)
   const { chamados } = useChamados()
   const router = useRouter()
+  const [periodo, setPeriodo] = useState<PeriodType>('30d')
 
   const [stats, setStats] = useState<{
     totalAbertos: number
@@ -45,6 +47,19 @@ export default function PainelPage() {
     }
   }, [usuario])
 
+  // Filter chamados by period for the recent list
+  const chamadosFiltrados = useMemo(() => {
+    const dataLimite = getDateFromPeriod(periodo)
+    if (!dataLimite) return chamados
+    return chamados.filter(c => {
+      try {
+        return c.criadoEm && c.criadoEm.toDate() >= dataLimite
+      } catch {
+        return true
+      }
+    })
+  }, [chamados, periodo])
+
   if (authLoading || !usuario) return <LoadingState texto="Carregando..." />
 
   return (
@@ -58,6 +73,11 @@ export default function PainelPage() {
       onMarcarTodasLidas={marcarTodasLidas}
     >
       <div className="space-y-6">
+        {/* Period Filter */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <DashboardPeriodFilter periodo={periodo} onChange={setPeriodo} />
+        </div>
+
         {stats ? (
           <>
             <DashboardStats stats={stats} />
@@ -70,7 +90,7 @@ export default function PainelPage() {
           <LoadingState texto="Carregando estatísticas..." />
         )}
 
-        <DashboardRecentes chamados={chamados} />
+        <DashboardRecentes chamados={chamadosFiltrados} />
       </div>
     </ChamadosLayout>
   )

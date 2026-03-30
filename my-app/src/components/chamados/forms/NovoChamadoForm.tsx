@@ -11,6 +11,7 @@ import {
 import { NovoChamadoFormData, ChamadoUsuario, UnidadeType, PrioridadeType } from '@/lib/chamados/types'
 import { UNIDADES, PRIORIDADE_CONFIG, SLA_PADRAO } from '@/lib/chamados/constants'
 import { criarChamado } from '@/lib/chamados/services/chamadoService'
+import Tooltip from '@/components/chamados/shared/Tooltip'
 
 interface NovoChamadoFormProps {
   usuario: ChamadoUsuario
@@ -87,6 +88,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
           <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-4">
             <MapPin className="w-4 h-4 text-blue-600" />
             Onde esta o problema?
+            <Tooltip text="Selecione a unidade da academia onde o problema foi identificado. Isso ajuda a direcionar para a equipe correta." />
           </label>
           <div className="grid grid-cols-2 gap-2.5">
             {(Object.entries(UNIDADES) as [UnidadeType, { label: string; endereco: string }][]).map(([key, val]) => (
@@ -128,6 +130,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
           <label htmlFor="descricao" className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-1">
             <FileText className="w-4 h-4 text-blue-600" />
             Descreva o problema
+            <Tooltip text="Inclua o que aconteceu, quando comecou e o que ja foi tentado. Quanto mais detalhes, mais rapido a equipe resolve." />
           </label>
           <p className="text-xs text-gray-400 mb-3 ml-6">
             Quanto mais detalhes, mais rapido conseguimos resolver
@@ -165,6 +168,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
               <MapPin className="w-4 h-4 text-gray-400" />
               Local
               <span className="text-xs text-gray-400 font-normal">opcional</span>
+              <Tooltip text="Informe a area especifica: sala, andar, vestiario, piscina, etc. Facilita a localizacao pela equipe tecnica." />
             </label>
             <input
               id="local"
@@ -181,6 +185,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-3">
               <Info className="w-4 h-4 text-gray-400" />
               Urgencia
+              <Tooltip text="Baixa: problema menor sem impacto. Media: afeta o funcionamento mas ha alternativa. Alta: impacto significativo. Critica: risco a seguranca ou parada total." />
             </label>
             <div className="grid grid-cols-2 gap-2">
               {(Object.entries(PRIORIDADE_CONFIG) as [PrioridadeType, typeof PRIORIDADE_CONFIG[PrioridadeType]][]).map(([key, val]) => (

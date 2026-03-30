@@ -294,6 +294,31 @@ export async function atualizarStatus(
     },
     criadoEm: agora,
   })
+
+  // Notificar solicitante por email sobre mudanca de status
+  try {
+    const { STATUS_CONFIG } = await import('../constants')
+    const statusLabel = STATUS_CONFIG[novoStatus]?.label || novoStatus
+    const tipoNotif = novoStatus === 'resolvido' ? 'resolvido' : 'status'
+
+    await fetch('/api/chamados/notificar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tipo: tipoNotif,
+        chamadoId,
+        protocolo: chamado.protocolo,
+        titulo: chamado.titulo || chamado.descricao?.substring(0, 60),
+        prioridade: chamado.prioridade,
+        unidade: UNIDADES[chamado.unidade]?.label || chamado.unidade,
+        categoria: chamado.categoria ? CATEGORIAS[chamado.categoria]?.label || chamado.categoria : 'Não categorizado',
+        destinatarios: [{ email: chamado.solicitante.email, nome: chamado.solicitante.nome }],
+        detalhes: statusLabel,
+      }),
+    })
+  } catch {
+    // Erro na notificacao nao bloqueia mudanca de status
+  }
 }
 
 /**

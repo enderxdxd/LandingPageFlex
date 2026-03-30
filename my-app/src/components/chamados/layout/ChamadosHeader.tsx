@@ -26,7 +26,9 @@ export default function ChamadosHeader({
 }: ChamadosHeaderProps) {
   const [showNotif, setShowNotif] = useState(false)
   const [busca, setBusca] = useState('')
+  const [mobileSearch, setMobileSearch] = useState(false)
   const notifRef = useRef<HTMLDivElement>(null)
+  const mobileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -39,15 +41,59 @@ export default function ChamadosHeader({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  useEffect(() => {
+    if (mobileSearch && mobileInputRef.current) {
+      mobileInputRef.current.focus()
+    }
+  }, [mobileSearch])
+
   return (
     <header className="sticky top-0 bg-white/90 backdrop-blur-lg border-b border-gray-200/80 z-30 px-6 py-3.5">
+      {/* Mobile search bar (expanded) */}
+      {mobileSearch && onBusca && (
+        <div className="sm:hidden flex items-center gap-2 mb-3 bg-gray-50 rounded-xl border border-gray-200 px-3.5 py-2.5">
+          <Search className="w-4 h-4 text-gray-400 shrink-0" />
+          <input
+            ref={mobileInputRef}
+            type="text"
+            placeholder="Buscar protocolo ou título..."
+            value={busca}
+            onChange={(e) => {
+              setBusca(e.target.value)
+              onBusca(e.target.value)
+            }}
+            className="bg-transparent text-sm text-gray-700 placeholder-gray-400 outline-none w-full"
+          />
+          <button
+            onClick={() => {
+              setBusca('')
+              onBusca('')
+              setMobileSearch(false)
+            }}
+            className="p-1 rounded-lg hover:bg-gray-200 transition-colors shrink-0"
+          >
+            <X className="w-4 h-4 text-gray-400" />
+          </button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-4">
         <h1 className="font-display text-lg font-bold text-gray-900 tracking-tight pl-14 lg:pl-0">
           {titulo}
         </h1>
 
         <div className="flex items-center gap-2.5">
-          {/* Search */}
+          {/* Mobile search toggle */}
+          {onBusca && !mobileSearch && (
+            <button
+              onClick={() => setMobileSearch(true)}
+              className="sm:hidden p-2.5 rounded-xl hover:bg-gray-50 transition-colors border border-gray-200/80"
+            >
+              <Search className="w-[18px] h-[18px] text-gray-500" />
+            </button>
+          )}
+
+          {/* Desktop Search */}
           {onBusca && (
             <div className="hidden sm:flex items-center bg-gray-50/80 rounded-xl border border-gray-200/80 px-3.5 py-2 gap-2 w-64 focus-within:border-blue-300 focus-within:ring-2 focus-within:ring-blue-100 focus-within:bg-white transition-all">
               <Search className="w-4 h-4 text-gray-400" />

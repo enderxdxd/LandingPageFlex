@@ -13,6 +13,7 @@ import ChamadosLayout from '@/components/chamados/layout/ChamadosLayout'
 import ChamadoTimeline from '@/components/chamados/detail/ChamadoTimeline'
 import ChamadoInfo from '@/components/chamados/detail/ChamadoInfo'
 import ChamadoAcoes from '@/components/chamados/detail/ChamadoAcoes'
+import ChamadoStatusStepper from '@/components/chamados/detail/ChamadoStatusStepper'
 import ComentarioForm from '@/components/chamados/forms/ComentarioForm'
 import ChamadoStatusBadge from '@/components/chamados/cards/ChamadoStatusBadge'
 import ChamadoPrioridadeBadge from '@/components/chamados/cards/ChamadoPrioridadeBadge'
@@ -126,6 +127,7 @@ export default function ChamadoDetalhePage() {
 
             {/* Sidebar */}
             <div className="space-y-4">
+              <ChamadoStatusStepper status={chamado.status} />
               <ChamadoInfo chamado={chamado} />
               <ChamadoAcoes chamado={chamado} usuario={usuario} />
             </div>
