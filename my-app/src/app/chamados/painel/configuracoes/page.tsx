@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { Save, Users, Clock, Building2, Loader2, Plus, Trash2, UserPlus, UserMinus, MessageCircle } from 'lucide-react'
+import { Save, Users, Clock, Building2, Loader2, Plus, Trash2, UserPlus, UserMinus, MessageCircle, Pencil, X } from 'lucide-react'
 import { doc, setDoc, collection, getDocs, updateDoc, Timestamp } from 'firebase/firestore'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { db, auth } from '@/lib/firebase'
@@ -56,6 +56,13 @@ export default function ConfiguracoesPage() {
   const [depCategorias, setDepCategorias] = useState<CategoriaType[]>([])
   const [depUnidades, setDepUnidades] = useState<UnidadeType[]>(Object.keys(UNIDADES) as UnidadeType[])
   const [depWhatsApp, setDepWhatsApp] = useState(false)
+
+  // Edit user
+  const [editingUid, setEditingUid] = useState<string | null>(null)
+  const [editNome, setEditNome] = useState('')
+  const [editTelefone, setEditTelefone] = useState('')
+  const [editRole, setEditRole] = useState<RoleType>('solicitante')
+  const [editDepartamento, setEditDepartamento] = useState('')
 
   // Department members view
   const [selectedDepId, setSelectedDepId] = useState<string | null>(null)
@@ -131,6 +138,48 @@ export default function ConfiguracoesPage() {
     await updateDoc(doc(db, 'chamados_usuarios', uid), { ativo: !ativo })
     setUsuarios(prev => prev.map(u => u.uid === uid ? { ...u, ativo: !ativo } : u))
     toast.success(ativo ? 'Usuario desativado' : 'Usuario ativado')
+  }
+
+  const iniciarEdicao = (u: ChamadoUsuario) => {
+    setEditingUid(u.uid)
+    setEditNome(u.nome)
+    setEditTelefone(u.telefone || '')
+    setEditRole(u.role)
+    setEditDepartamento(u.departamentoId || '')
+  }
+
+  const cancelarEdicao = () => {
+    setEditingUid(null)
+  }
+
+  const salvarEdicaoUsuario = async () => {
+    if (!editingUid || !editNome.trim()) {
+      toast.error('Nome e obrigatorio')
+      return
+    }
+    setSaving(true)
+    try {
+      const updateData: { [key: string]: string } = {
+        nome: editNome.trim(),
+        role: editRole,
+        telefone: editTelefone.trim() || '',
+        departamentoId: editDepartamento || '',
+      }
+      await updateDoc(doc(db, 'chamados_usuarios', editingUid), updateData)
+      setUsuarios(prev => prev.map(u => u.uid === editingUid ? {
+        ...u,
+        nome: editNome.trim(),
+        role: editRole,
+        telefone: editTelefone.trim() || undefined,
+        departamentoId: editDepartamento || undefined,
+      } as ChamadoUsuario : u))
+      toast.success('Usuario atualizado')
+      setEditingUid(null)
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao atualizar usuario')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const salvarSLA = async () => {
@@ -292,23 +341,88 @@ export default function ConfiguracoesPage() {
                   <LoadingState texto="Carregando usuarios..." />
                 ) : (
                   usuarios.map(u => (
-                    <div key={u.uid} className="flex items-center justify-between px-5 py-3.5">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{u.nome}</p>
-                        <p className="text-xs text-gray-500">
-                          {u.email} | {u.role}
-                          {u.departamentoId && <span className="ml-1 text-blue-600">| {depNome_(u.departamentoId)}</span>}
-                          {u.telefone && <span className="ml-1 text-green-600">| {u.telefone}</span>}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() => toggleAtivo(u.uid, u.ativo)}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                          u.ativo ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-red-50 text-red-700 hover:bg-red-100'
-                        }`}
-                      >
-                        {u.ativo ? 'Ativo' : 'Inativo'}
-                      </button>
+                    <div key={u.uid} className="px-5 py-3.5">
+                      {editingUid === u.uid ? (
+                        /* ---- EDIT MODE ---- */
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Editando usuario</p>
+                            <button onClick={cancelarEdicao} className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            <div>
+                              <label className="text-xs text-gray-500 mb-1 block">Nome</label>
+                              <input value={editNome} onChange={e => setEditNome(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300" />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-1 block">Email</label>
+                              <input value={u.email} disabled className="w-full px-3 py-2 border border-gray-100 rounded-xl text-sm bg-gray-50 text-gray-400 cursor-not-allowed" />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-1 block">Telefone</label>
+                              <input value={editTelefone} onChange={e => setEditTelefone(e.target.value)} placeholder="(opcional)" className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300" />
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-1 block">Cargo</label>
+                              <select value={editRole} onChange={e => setEditRole(e.target.value as RoleType)} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300">
+                                <option value="solicitante">Solicitante</option>
+                                <option value="tecnico">Tecnico</option>
+                                <option value="gestor">Gestor</option>
+                                <option value="admin">Admin</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="text-xs text-gray-500 mb-1 block">Departamento</label>
+                              <select value={editDepartamento} onChange={e => setEditDepartamento(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300">
+                                <option value="">Sem departamento</option>
+                                {departamentos.map(d => (
+                                  <option key={d.id} value={d.id}>{d.nome}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 pt-1">
+                            <button onClick={salvarEdicaoUsuario} disabled={saving} className="flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                              Salvar
+                            </button>
+                            <button onClick={cancelarEdicao} className="px-4 py-2 text-xs font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        /* ---- VIEW MODE ---- */
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{u.nome}</p>
+                            <p className="text-xs text-gray-500">
+                              {u.email} | {u.role}
+                              {u.departamentoId && <span className="ml-1 text-blue-600">| {depNome_(u.departamentoId)}</span>}
+                              {u.telefone && <span className="ml-1 text-green-600">| {u.telefone}</span>}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => iniciarEdicao(u)}
+                              className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Editar usuario"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => toggleAtivo(u.uid, u.ativo)}
+                              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                                u.ativo ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-red-50 text-red-700 hover:bg-red-100'
+                              }`}
+                            >
+                              {u.ativo ? 'Ativo' : 'Inativo'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))
                 )}

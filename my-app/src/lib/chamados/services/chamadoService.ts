@@ -69,6 +69,7 @@ export async function criarChamado(
     ...(dados.local ? { local: dados.local } : {}),
     prioridade: dados.prioridade,
     status: 'aberto',
+    ...(dados.direcionadoPara ? { atribuidoPara: dados.direcionadoPara } : {}),
     anexos,
     sla: {
       ...sla,
@@ -83,14 +84,39 @@ export async function criarChamado(
   // Criar registro no histórico
   await addDoc(collection(db, COLLECTION, docRef.id, 'historico'), {
     tipo: 'criacao',
-    descricao: `Chamado ${protocolo} criado`,
+    descricao: `Chamado ${protocolo} criado${dados.direcionadoPara ? ` e direcionado para ${dados.direcionadoPara.nome}` : ''}`,
     autor: {
       uid: usuario.uid,
       nome: usuario.nome,
       role: usuario.role === 'admin' ? 'admin' : usuario.role === 'tecnico' ? 'tecnico' : 'solicitante',
     },
+    ...(dados.direcionadoPara ? {
+      dados: { para: dados.direcionadoPara.nome },
+    } : {}),
     criadoEm: agora,
   })
+
+  // Notificar usuario direcionado por email
+  if (dados.direcionadoPara) {
+    try {
+      await fetch('/api/chamados/notificar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tipo: 'atribuido',
+          chamadoId: docRef.id,
+          protocolo,
+          titulo,
+          prioridade: dados.prioridade,
+          unidade: UNIDADES[dados.unidade as UnidadeType]?.label || dados.unidade,
+          categoria: 'Não categorizado',
+          destinatarios: [{ email: dados.direcionadoPara.email, nome: dados.direcionadoPara.nome }],
+        }),
+      })
+    } catch {
+      // Erro na notificacao nao bloqueia
+    }
+  }
 
   // Notificar emails da unidade
   try {
@@ -480,5 +506,80 @@ export async function buscarEstatisticas(unidade?: UnidadeType) {
       marista: chamados.filter(c => c.unidade === 'marista').length,
       palmas: chamados.filter(c => c.unidade === 'palmas').length,
     },
+  }
+}
+
+/**
+ * Lista usuarios que podem receber chamados (tecnico, gestor, admin)
+ */
+export async function listarUsuariosAtribuiveis(): Promise<{ uid: string; nome: string; email: string; role: string }[]> {
+  const q = query(
+    collection(db, 'chamados_usuarios'),
+    where('ativo', '==', true)
+  )
+  const snapshot = await getDocs(q)
+  return snapshot.docs
+    .map(d => {
+      const data = d.data()
+      return { uid: d.id, nome: data.nome, email: data.email, role: data.role }
+    })
+    .filter(u => ['tecnico', 'gestor', 'admin'].includes(u.role))
+}
+
+/**
+ * Redireciona um chamado para outro usuario
+ */
+export async function redirecionarChamado(
+  chamadoId: string,
+  novoResponsavel: { uid: string; nome: string; email: string },
+  usuario: ChamadoUsuario
+): Promise<void> {
+  const chamadoRef = doc(db, COLLECTION, chamadoId)
+  const chamadoSnap = await getDoc(chamadoRef)
+  if (!chamadoSnap.exists()) throw new Error('Chamado não encontrado')
+
+  const chamado = chamadoSnap.data() as Chamado
+  const anteriorNome = chamado.atribuidoPara?.nome || 'Ninguém'
+  const agora = Timestamp.now()
+
+  await updateDoc(chamadoRef, {
+    atribuidoPara: novoResponsavel,
+    atualizadoEm: agora,
+  })
+
+  await addDoc(collection(db, COLLECTION, chamadoId, 'historico'), {
+    tipo: 'redirecionamento',
+    descricao: `Chamado redirecionado de ${anteriorNome} para ${novoResponsavel.nome}`,
+    autor: {
+      uid: usuario.uid,
+      nome: usuario.nome,
+      role: usuario.role === 'admin' ? 'admin' : usuario.role === 'tecnico' ? 'tecnico' : 'solicitante',
+    },
+    dados: {
+      de: anteriorNome,
+      para: novoResponsavel.nome,
+    },
+    criadoEm: agora,
+  })
+
+  // Notificar novo responsavel por email
+  try {
+    await fetch('/api/chamados/notificar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tipo: 'atribuido',
+        chamadoId,
+        protocolo: chamado.protocolo,
+        titulo: chamado.titulo || chamado.descricao?.substring(0, 60),
+        prioridade: chamado.prioridade,
+        unidade: UNIDADES[chamado.unidade]?.label || chamado.unidade,
+        categoria: chamado.categoria ? CATEGORIAS[chamado.categoria]?.label || chamado.categoria : 'Não categorizado',
+        destinatarios: [{ email: novoResponsavel.email, nome: novoResponsavel.nome }],
+        detalhes: `Redirecionado por ${usuario.nome}`,
+      }),
+    })
+  } catch {
+    // Erro na notificacao nao bloqueia
   }
 }

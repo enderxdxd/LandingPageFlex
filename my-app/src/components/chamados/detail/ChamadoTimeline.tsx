@@ -17,6 +17,7 @@ const TIPO_CONFIG: Record<HistoricoTipo, { icon: React.ElementType; color: strin
   comentario: { icon: MessageSquare, color: 'text-slate-600', bg: 'bg-slate-50', ring: 'ring-slate-100' },
   mudanca_status: { icon: ArrowRightLeft, color: 'text-amber-600', bg: 'bg-amber-50', ring: 'ring-amber-100' },
   atribuicao: { icon: UserPlus, color: 'text-violet-600', bg: 'bg-violet-50', ring: 'ring-violet-100' },
+  redirecionamento: { icon: ArrowRightLeft, color: 'text-indigo-600', bg: 'bg-indigo-50', ring: 'ring-indigo-100' },
   mudanca_prioridade: { icon: AlertTriangle, color: 'text-orange-600', bg: 'bg-orange-50', ring: 'ring-orange-100' },
   categorizacao: { icon: Tag, color: 'text-teal-600', bg: 'bg-teal-50', ring: 'ring-teal-100' },
   anexo: { icon: Paperclip, color: 'text-emerald-600', bg: 'bg-emerald-50', ring: 'ring-emerald-100' },
@@ -101,6 +102,19 @@ export default function ChamadoTimeline({ historico }: ChamadoTimelineProps) {
                     </span>
                     <ArrowRightLeft className="w-3 h-3 text-gray-300" />
                     <span className="px-2.5 py-1 bg-blue-50 text-blue-600 text-[11px] rounded-md font-semibold">
+                      {item.dados.para}
+                    </span>
+                  </div>
+                )}
+
+                {/* Redirecionamento badges */}
+                {item.tipo === 'redirecionamento' && item.dados?.de && item.dados?.para && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="px-2.5 py-1 bg-gray-100 text-gray-500 text-[11px] rounded-md font-medium">
+                      {item.dados.de}
+                    </span>
+                    <ArrowRightLeft className="w-3 h-3 text-indigo-300" />
+                    <span className="px-2.5 py-1 bg-indigo-50 text-indigo-600 text-[11px] rounded-md font-semibold">
                       {item.dados.para}
                     </span>
                   </div>

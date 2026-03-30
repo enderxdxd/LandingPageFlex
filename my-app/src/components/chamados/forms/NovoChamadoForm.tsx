@@ -1,16 +1,16 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useDropzone } from 'react-dropzone'
 import toast from 'react-hot-toast'
 import {
   MapPin, Upload, X, FileText, Check, Loader2,
-  Image as ImageIcon, Info, Camera, Send,
+  Image as ImageIcon, Info, Camera, Send, UserCircle,
 } from 'lucide-react'
 import { NovoChamadoFormData, ChamadoUsuario, UnidadeType, PrioridadeType } from '@/lib/chamados/types'
 import { UNIDADES, PRIORIDADE_CONFIG, SLA_PADRAO } from '@/lib/chamados/constants'
-import { criarChamado } from '@/lib/chamados/services/chamadoService'
+import { criarChamado, listarUsuariosAtribuiveis } from '@/lib/chamados/services/chamadoService'
 import Tooltip from '@/components/chamados/shared/Tooltip'
 
 interface NovoChamadoFormProps {
@@ -20,6 +20,7 @@ interface NovoChamadoFormProps {
 export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [usuariosAtribuiveis, setUsuariosAtribuiveis] = useState<{ uid: string; nome: string; email: string; role: string }[]>([])
   const [formData, setFormData] = useState<NovoChamadoFormData>({
     unidade: '',
     descricao: '',
@@ -27,6 +28,12 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
     prioridade: 'media',
     anexos: [],
   })
+
+  useEffect(() => {
+    listarUsuariosAtribuiveis()
+      .then(setUsuariosAtribuiveis)
+      .catch(() => {})
+  }, [])
 
   const update = (field: keyof NovoChamadoFormData, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -48,7 +55,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
     update('anexos', formData.anexos.filter((_, i) => i !== index))
   }
 
-  const canSubmit = formData.unidade && formData.descricao.length >= 20
+  const canSubmit = formData.unidade && formData.descricao.trim().length > 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -143,21 +150,6 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
             placeholder="Ex: O ar-condicionado da sala de musculacao nao esta ligando desde ontem de manha. Ja tentamos ligar pelo controle remoto mas nao responde..."
             className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none leading-relaxed"
           />
-          <div className="flex items-center justify-between mt-2">
-            <p className={`text-xs ${
-              formData.descricao.length === 0
-                ? 'text-gray-300'
-                : formData.descricao.length < 20
-                ? 'text-amber-500'
-                : 'text-green-600'
-            }`}>
-              {formData.descricao.length < 20
-                ? `${20 - formData.descricao.length} caracteres restantes`
-                : 'Descricao OK'
-              }
-            </p>
-            <span className="text-xs text-gray-300">{formData.descricao.length}</span>
-          </div>
         </div>
 
         {/* Local + Prioridade - lado a lado em desktop */}
@@ -208,6 +200,58 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
             </div>
           </div>
         </div>
+
+        {/* Direcionar para */}
+        {usuariosAtribuiveis.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-1">
+              <UserCircle className="w-4 h-4 text-gray-400" />
+              Direcionar para
+              <span className="text-xs text-gray-400 font-normal">opcional</span>
+              <Tooltip text="Escolha um responsavel para receber este chamado. Se nao selecionar, o chamado ficara disponivel para toda a equipe." />
+            </label>
+            <p className="text-xs text-gray-400 mb-3 ml-6">
+              Selecione quem deve receber e resolver este chamado
+            </p>
+            <select
+              value={formData.direcionadoPara?.uid || ''}
+              onChange={(e) => {
+                const uid = e.target.value
+                if (!uid) {
+                  update('direcionadoPara', undefined)
+                } else {
+                  const u = usuariosAtribuiveis.find(u => u.uid === uid)
+                  if (u) update('direcionadoPara', { uid: u.uid, nome: u.nome, email: u.email })
+                }
+              }}
+              className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="">Ninguem (equipe geral)</option>
+              {usuariosAtribuiveis
+                .filter(u => u.uid !== usuario.uid)
+                .map(u => (
+                  <option key={u.uid} value={u.uid}>
+                    {u.nome} ({u.role === 'admin' ? 'Administrador' : u.role === 'gestor' ? 'Gestor' : 'Técnico'})
+                  </option>
+                ))}
+            </select>
+            {formData.direcionadoPara && (
+              <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200/60">
+                <UserCircle className="w-4 h-4 text-blue-600 shrink-0" />
+                <p className="text-xs text-blue-700">
+                  O chamado sera direcionado para <strong>{formData.direcionadoPara.nome}</strong> e esta pessoa sera notificada por email.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => update('direcionadoPara', undefined)}
+                  className="ml-auto p-0.5 rounded hover:bg-blue-100 transition-colors shrink-0"
+                >
+                  <X className="w-3.5 h-3.5 text-blue-400" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Anexos */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">

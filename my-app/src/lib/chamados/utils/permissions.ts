@@ -59,6 +59,20 @@ export function podeAtribuirTecnico(usuario: ChamadoUsuario): boolean {
   return usuario.ativo && (usuario.role === 'admin' || usuario.role === 'gestor')
 }
 
+export function podeRedirecionarChamado(usuario: ChamadoUsuario, chamado: Chamado): boolean {
+  if (!usuario.ativo) return false
+  if (['fechado', 'cancelado'].includes(chamado.status)) return false
+
+  // Admin e gestor sempre podem redirecionar
+  if (usuario.role === 'admin') return true
+  if (usuario.role === 'gestor' && usuario.unidades.includes(chamado.unidade)) return true
+
+  // Tecnico atribuido pode redirecionar para outro
+  if (usuario.role === 'tecnico' && chamado.atribuidoPara?.uid === usuario.uid) return true
+
+  return false
+}
+
 export function podeVerDashboard(usuario: ChamadoUsuario): boolean {
   return usuario.ativo && (usuario.role === 'admin' || usuario.role === 'gestor')
 }
