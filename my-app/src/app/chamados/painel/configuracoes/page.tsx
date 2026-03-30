@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Save, Users, Clock, Building2, Loader2, Plus, Trash2, UserPlus, UserMinus, MessageCircle, Pencil, X } from 'lucide-react'
-import { doc, setDoc, collection, getDocs, updateDoc, Timestamp } from 'firebase/firestore'
+import { doc, setDoc, collection, getDocs, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { db, auth } from '@/lib/firebase'
 import { useChamadosAuth } from '@/lib/chamados/hooks/useAuth'
@@ -138,6 +138,22 @@ export default function ConfiguracoesPage() {
     await updateDoc(doc(db, 'chamados_usuarios', uid), { ativo: !ativo })
     setUsuarios(prev => prev.map(u => u.uid === uid ? { ...u, ativo: !ativo } : u))
     toast.success(ativo ? 'Usuario desativado' : 'Usuario ativado')
+  }
+
+  const [confirmDeleteUid, setConfirmDeleteUid] = useState<string | null>(null)
+
+  const excluirUsuario = async (uid: string) => {
+    setSaving(true)
+    try {
+      await deleteDoc(doc(db, 'chamados_usuarios', uid))
+      setUsuarios(prev => prev.filter(u => u.uid !== uid))
+      toast.success('Usuario excluido')
+      setConfirmDeleteUid(null)
+    } catch (err: any) {
+      toast.error(err.message || 'Erro ao excluir usuario')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const iniciarEdicao = (u: ChamadoUsuario) => {
@@ -413,6 +429,13 @@ export default function ConfiguracoesPage() {
                               <Pencil className="w-4 h-4" />
                             </button>
                             <button
+                              onClick={() => setConfirmDeleteUid(u.uid)}
+                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Excluir usuario"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                            <button
                               onClick={() => toggleAtivo(u.uid, u.ativo)}
                               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                                 u.ativo ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-red-50 text-red-700 hover:bg-red-100'
@@ -643,6 +666,41 @@ export default function ConfiguracoesPage() {
           </div>
         )}
       </div>
+
+      {/* Modal Confirmar Exclusao de Usuario */}
+      {confirmDeleteUid && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="px-6 py-5">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                  <Trash2 className="w-5 h-5 text-red-600" />
+                </div>
+                <h3 className="text-base font-semibold text-gray-900">Excluir Usuario</h3>
+              </div>
+              <p className="text-sm text-gray-600">
+                Tem certeza que deseja excluir <strong>{usuarios.find(u => u.uid === confirmDeleteUid)?.nome}</strong>? Esta acao nao pode ser desfeita.
+              </p>
+            </div>
+            <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/30">
+              <button
+                onClick={() => setConfirmDeleteUid(null)}
+                className="px-4 py-2.5 text-sm font-medium text-gray-600 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => excluirUsuario(confirmDeleteUid)}
+                disabled={saving}
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 disabled:opacity-50 transition-colors shadow-sm"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </ChamadosLayout>
   )
 }
