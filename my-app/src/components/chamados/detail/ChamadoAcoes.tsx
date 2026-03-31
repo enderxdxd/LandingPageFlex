@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import { XCircle, CheckCircle, Clock, Play, Pause, Loader2, Tag, Zap, X, ArrowRightLeft, UserCircle } from 'lucide-react'
 import { Chamado, ChamadoUsuario, StatusType, CategoriaType } from '@/lib/chamados/types'
 import { atualizarStatus, categorizarChamado, redirecionarChamado, listarUsuariosAtribuiveis } from '@/lib/chamados/services/chamadoService'
-import { podeCancelarChamado, podeAlterarStatus, podeRedirecionarChamado } from '@/lib/chamados/utils/permissions'
+import { podeCancelarChamado, podeAlterarStatus, podeRedirecionarChamado, podeFecharChamado, podeRecategorizarChamado } from '@/lib/chamados/utils/permissions'
 import { CATEGORIAS, SUBCATEGORIAS } from '@/lib/chamados/constants'
 import ConfirmModal from '@/components/chamados/shared/ConfirmModal'
 
@@ -28,8 +28,9 @@ export default function ChamadoAcoes({ chamado, usuario }: ChamadoAcoesProps) {
 
   const canCancel = podeCancelarChamado(usuario, chamado)
   const canChangeStatus = podeAlterarStatus(usuario, chamado)
-  const canCategorize = canChangeStatus && !chamado.categoria
+  const canCategorize = podeRecategorizarChamado(usuario, chamado)
   const canRedirect = podeRedirecionarChamado(usuario, chamado)
+  const canClose = podeFecharChamado(usuario, chamado)
 
   useEffect(() => {
     if (canRedirect) {
@@ -97,7 +98,7 @@ export default function ChamadoAcoes({ chamado, usuario }: ChamadoAcoesProps) {
     }
   }
 
-  if (!canChangeStatus && !canCancel && !canCategorize && !canRedirect) return null
+  if (!canChangeStatus && !canCancel && !canCategorize && !canRedirect && !canClose) return null
 
   const isFinal = ['fechado', 'cancelado'].includes(chamado.status)
   if (isFinal && !canCategorize) return null
@@ -122,7 +123,7 @@ export default function ChamadoAcoes({ chamado, usuario }: ChamadoAcoesProps) {
                 <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center group-hover:bg-amber-200 transition-colors">
                   <Tag className="w-4 h-4 text-amber-600" />
                 </div>
-                <span>Categorizar Chamado</span>
+                <span>{chamado.categoria ? 'Alterar Categoria' : 'Categorizar Chamado'}</span>
               </button>
             )}
 
@@ -167,16 +168,18 @@ export default function ChamadoAcoes({ chamado, usuario }: ChamadoAcoesProps) {
                   />
                 )}
 
-                {chamado.status === 'resolvido' && (
-                  <ActionButton
-                    onClick={() => alterarStatus('fechado')}
-                    loading={loading}
-                    icon={Clock}
-                    label="Fechar Chamado"
-                    color="gray"
-                  />
-                )}
               </>
+            )}
+
+            {/* Fechar - só quem abriu o chamado (ou admin) */}
+            {canClose && (
+              <ActionButton
+                onClick={() => alterarStatus('fechado')}
+                loading={loading}
+                icon={Clock}
+                label="Fechar Chamado"
+                color="gray"
+              />
             )}
 
             {/* Redirecionar */}
@@ -222,7 +225,7 @@ export default function ChamadoAcoes({ chamado, usuario }: ChamadoAcoesProps) {
                 <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center">
                   <Tag className="w-4.5 h-4.5 text-amber-600" />
                 </div>
-                <h3 className="text-base font-semibold text-gray-900">Categorizar Chamado</h3>
+                <h3 className="text-base font-semibold text-gray-900">{chamado.categoria ? 'Alterar Categoria' : 'Categorizar Chamado'}</h3>
               </div>
               <button
                 onClick={() => setShowCategorizar(false)}

@@ -228,7 +228,6 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
             >
               <option value="">Ninguem (equipe geral)</option>
               {usuariosAtribuiveis
-                .filter(u => u.uid !== usuario.uid)
                 .map(u => (
                   <option key={u.uid} value={u.uid}>
                     {u.nome} ({u.role === 'admin' ? 'Administrador' : u.role === 'gestor' ? 'Gestor' : 'Técnico'})

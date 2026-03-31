@@ -89,6 +89,35 @@ export function podeGerenciarConfiguracoes(usuario: ChamadoUsuario): boolean {
   return usuario.ativo && usuario.role === 'admin'
 }
 
+export function podeFecharChamado(usuario: ChamadoUsuario, chamado: Chamado): boolean {
+  if (!usuario.ativo) return false
+  if (chamado.status !== 'resolvido') return false
+
+  // Só quem abriu o chamado pode fechar (confirmar resolução)
+  if (chamado.solicitante.email === usuario.email) return true
+
+  // Admin como fallback
+  if (usuario.role === 'admin') return true
+
+  return false
+}
+
+export function podeRecategorizarChamado(usuario: ChamadoUsuario, chamado: Chamado): boolean {
+  if (!usuario.ativo) return false
+  if (['fechado', 'cancelado'].includes(chamado.status)) return false
+
+  switch (usuario.role) {
+    case 'admin':
+      return true
+    case 'gestor':
+      return usuario.unidades.includes(chamado.unidade)
+    case 'tecnico':
+      return chamado.atribuidoPara?.uid === usuario.uid
+    default:
+      return false
+  }
+}
+
 export function podeCancelarChamado(usuario: ChamadoUsuario, chamado: Chamado): boolean {
   if (!usuario.ativo) return false
 
