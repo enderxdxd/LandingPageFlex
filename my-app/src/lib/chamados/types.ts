@@ -6,7 +6,7 @@ export type UnidadeType = 'alphaville' | 'buena-vista' | 'marista' | 'palmas'
 export type CategoriaType = 'ti' | 'manutencao' | 'limpeza' | 'administrativo'
 export type PrioridadeType = 'baixa' | 'media' | 'alta' | 'critica'
 export type StatusType = 'aberto' | 'em_andamento' | 'aguardando' | 'resolvido' | 'fechado' | 'cancelado'
-export type RoleType = 'solicitante' | 'tecnico' | 'admin' | 'gestor'
+export type RoleType = 'solicitante' | 'tecnico' | 'designer' | 'admin' | 'gestor'
 export type HistoricoTipo = 'criacao' | 'comentario' | 'mudanca_status' | 'atribuicao' | 'redirecionamento' | 'mudanca_prioridade' | 'categorizacao' | 'anexo' | 'avaliacao'
 export type NotificacaoTipo = 'novo_chamado' | 'atribuido' | 'comentario' | 'status_alterado' | 'sla_proximo' | 'sla_estourado' | 'resolvido'
 

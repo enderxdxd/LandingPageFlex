@@ -14,6 +14,8 @@ import {
   Menu,
   X,
   Ticket,
+  Palette,
+  Columns3,
 } from 'lucide-react'
 import { ChamadoUsuario } from '@/lib/chamados/types'
 import { getNavItems } from '@/lib/chamados/utils/permissions'
@@ -26,6 +28,8 @@ interface ChamadosSidebarProps {
 const ICON_MAP: Record<string, React.ElementType> = {
   '/chamados/novo': Plus,
   '/chamados/meus': List,
+  '/chamados/arte': Palette,
+  '/chamados/arte/admin': Columns3,
   '/chamados/painel': LayoutDashboard,
   '/chamados/painel/relatorios': BarChart3,
   '/chamados/painel/configuracoes': Settings,

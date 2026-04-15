@@ -8,9 +8,9 @@ import CookieBanner from '@/components/CookieBanner'
 
 export default function LayoutWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const isChamados = pathname.startsWith('/chamados')
+  const isAppRoute = pathname.startsWith('/chamados') || pathname.startsWith('/admin') || pathname.startsWith('/arte')
 
-  if (isChamados) {
+  if (isAppRoute) {
     return <>{children}</>
   }
 

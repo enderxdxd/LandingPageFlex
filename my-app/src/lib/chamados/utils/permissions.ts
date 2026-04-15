@@ -136,6 +136,8 @@ export function getNavItems(role: RoleType) {
   const items = [
     { label: 'Novo Chamado', href: '/chamados/novo', roles: ['solicitante', 'tecnico', 'gestor', 'admin'] },
     { label: 'Meus Chamados', href: '/chamados/meus', roles: ['solicitante', 'tecnico', 'gestor', 'admin'] },
+    { label: 'Solicitar Arte', href: '/chamados/arte', roles: ['solicitante', 'tecnico', 'gestor', 'admin'] },
+    { label: 'Painel Arte', href: '/chamados/arte/admin', roles: ['designer', 'gestor', 'admin'] },
     { label: 'Painel', href: '/chamados/painel', roles: ['gestor', 'admin'] },
     { label: 'Relatórios', href: '/chamados/painel/relatorios', roles: ['gestor', 'admin'] },
     { label: 'Configurações', href: '/chamados/painel/configuracoes', roles: ['admin'] },

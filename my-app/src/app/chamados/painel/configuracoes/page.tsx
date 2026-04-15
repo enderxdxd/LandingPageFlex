@@ -381,6 +381,7 @@ export default function ConfiguracoesPage() {
                 <select value={novoRole} onChange={e => setNovoRole(e.target.value as RoleType)} className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300">
                   <option value="solicitante">Solicitante</option>
                   <option value="tecnico">Tecnico</option>
+                  <option value="designer">Designer</option>
                   <option value="gestor">Gestor</option>
                   <option value="admin">Admin</option>
                 </select>
@@ -434,6 +435,7 @@ export default function ConfiguracoesPage() {
                               <select value={editRole} onChange={e => setEditRole(e.target.value as RoleType)} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-300">
                                 <option value="solicitante">Solicitante</option>
                                 <option value="tecnico">Tecnico</option>
+                                <option value="designer">Designer</option>
                                 <option value="gestor">Gestor</option>
                                 <option value="admin">Admin</option>
                               </select>
