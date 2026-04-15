@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { useRef } from 'react'
 import FeatureCard from './FeatureCard'
 import { Sparkles, Zap, Users, ShieldCheck, Clock, MapPin } from 'lucide-react'
+import Link from 'next/link'
+
 const features = [
   {
     icon: Sparkles,
@@ -20,25 +22,25 @@ const features = [
   {
     icon: Users,
     title: 'Aulas Exclusivas',
-    description: 'Modalidades variadas com turmas reduzidas para melhor experiencia',
+    description: 'Modalidades variadas com turmas reduzidas para melhor experiência',
     color: 'primary'
   },
   {
     icon: ShieldCheck,
-    title: 'Seguranca Total',
-    description: 'Protocolos rigorosos de higiene e seguranca em todos os espacos',
+    title: 'Segurança Total',
+    description: 'Protocolos rigorosos de higiene e segurança em todos os espaços',
     color: 'secondary'
   },
   {
     icon: Clock,
-    title: 'Horarios Flexiveis',
-    description: 'Funcionamento estendido para se adequar a sua rotina',
+    title: 'Horários Flexíveis',
+    description: 'Funcionamento estendido para se adequar à sua rotina',
     color: 'primary'
   },
   {
     icon: MapPin,
-    title: 'Localizacoes Prime',
-    description: 'Unidades em pontos estrategicos com facil acesso e estacionamento',
+    title: 'Localizações Prime',
+    description: 'Unidades em pontos estratégicos com fácil acesso e estacionamento',
     color: 'secondary'
   }
 ]
@@ -56,53 +58,69 @@ export default function FeaturesSection() {
   return (
     <section
       ref={sectionRef}
-      className="scroll-section bg-white py-20 lg:py-28 relative overflow-hidden"
+      className="scroll-section bg-white py-24 lg:py-32 relative overflow-hidden"
     >
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-64 h-64 bg-flex-primary/3 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-flex-secondary/3 rounded-full blur-3xl" />
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-flex-primary/[0.03] rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-flex-secondary/[0.03] rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <motion.h2
-            className="font-display text-4xl md:text-6xl lg:text-7xl mb-4"
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Section header */}
+        <div className="text-center mb-16 lg:mb-20">
+          <motion.div
+            className="inline-flex items-center gap-2 bg-flex-primary/5 text-flex-primary px-4 py-2 rounded-full text-sm font-medium mb-6"
             {...fadeUp}
           >
-            A EXPERIENCIA{' '}
+            <Sparkles className="w-4 h-4" />
+            O diferencial Flex
+          </motion.div>
+
+          <motion.h2
+            className="font-display text-4xl md:text-5xl lg:text-6xl mb-5"
+            {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.05 }}
+          >
+            A EXPERIÊNCIA{' '}
             <span className="gradient-text">FLEX</span>
           </motion.h2>
 
           <motion.p
-            className="text-lg text-gray-500 max-w-3xl mx-auto"
+            className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed"
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Oferecemos uma experiencia completa que vai alem do treino tradicional
+            Oferecemos uma experiência completa que vai além do treino tradicional
           </motion.p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* Feature cards grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}
         </div>
 
+        {/* Bottom CTA */}
         <motion.div
-          className="mt-16 text-center"
+          className="mt-20 text-center"
           {...fadeUp}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="inline-block bg-gray-50 rounded-2xl p-8 border border-gray-100">
+          <div className="inline-block bg-gradient-to-br from-gray-50 to-white rounded-3xl p-10 border border-gray-100 shadow-sm">
             <h3 className="font-display text-2xl md:text-3xl gradient-text mb-3">
-              PRONTO PARA COMECAR?
+              PRONTO PARA COMEÇAR?
             </h3>
-            <p className="text-gray-500 mb-6">
-              Descubra como podemos transformar sua rotina de exercicios
+            <p className="text-gray-500 mb-8 max-w-md mx-auto">
+              Descubra como podemos transformar sua rotina de exercícios
             </p>
-            <button className="gradient-bg text-white px-8 py-3 rounded-full font-medium hover:shadow-blue transition-all duration-200 cursor-pointer">
-              Conhecer Unidades
-            </button>
+            <Link
+              href="/freepass"
+              className="inline-block gradient-bg text-white px-10 py-4 rounded-full font-semibold text-base hover:shadow-blue hover:scale-[1.02] transition-all duration-200 cursor-pointer"
+            >
+              Agende sua Aula Experimental
+            </Link>
           </div>
         </motion.div>
       </div>

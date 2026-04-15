@@ -224,7 +224,6 @@ export async function atualizarStatusRequest(
   const docRef = doc(db, COLLECTION, requestId)
   const agora = Timestamp.now()
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updates: Record<string, any> = {
     status: novoStatus,
     updatedAt: agora,

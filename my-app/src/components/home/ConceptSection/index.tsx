@@ -36,8 +36,8 @@ export default function ConceptSection() {
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            30 anos formando a maior rede de academias de Goiania.
-            4 unidades, cada uma com identidade propria.
+            30 anos formando a maior rede de academias de Goiânia.
+            4 unidades, cada uma com identidade própria.
           </motion.p>
         </div>
 
@@ -77,7 +77,7 @@ export default function ConceptSection() {
             <Clock className="w-6 h-6 text-flex-secondary mb-4" />
             <div>
               <div className="font-display text-3xl lg:text-4xl font-bold text-white mb-1">4:30</div>
-              <div className="text-gray-400 text-sm">Abertura mais cedo de Goiania. Treino antes do sol nascer.</div>
+              <div className="text-gray-400 text-sm">Abertura mais cedo de Goiânia. Treino antes do sol nascer.</div>
             </div>
           </motion.div>
 
@@ -90,7 +90,7 @@ export default function ConceptSection() {
             <Dumbbell className="w-6 h-6 text-flex-secondary mb-4" />
             <div>
               <div className="font-display text-2xl lg:text-3xl font-bold text-white mb-1">ELEIKO</div>
-              <div className="text-gray-400 text-sm">Equipamentos padrao olimpico em todas as unidades.</div>
+              <div className="text-gray-400 text-sm">Equipamentos padrão olímpico em todas as unidades.</div>
             </div>
           </motion.div>
 

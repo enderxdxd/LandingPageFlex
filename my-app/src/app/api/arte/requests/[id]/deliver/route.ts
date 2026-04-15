@@ -44,7 +44,6 @@ export async function POST(
       feedback: null,
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: Record<string, any> = {
       deliveries: [...deliveries, newDelivery],
       status: 'em-revisao',

@@ -17,19 +17,19 @@ const unidadesData = [
     name: 'Alphaville',
     href: '/unidades/alphaville',
     image: '/images/units/alphaville/alphaville1.jpeg',
-    address: 'Res. Alphaville Flamboyant, Goiania - GO',
+    address: 'Res. Alphaville Flamboyant, Goiânia - GO',
   },
   {
     name: 'Buena Vista',
     href: '/unidades/buena-vista',
     image: '/images/units/buenavista/hero.jpeg',
-    address: 'Shopping Buena Vista - St. Bueno, Goiania - GO',
+    address: 'Shopping Buena Vista - St. Bueno, Goiânia - GO',
   },
   {
     name: 'Marista',
     href: '/unidades/marista',
     image: '/images/units/marista/hero.jpeg',
-    address: 'Av. Portugal, 744 - St. Marista, Goiania - GO',
+    address: 'Av. Portugal, 744 - St. Marista, Goiânia - GO',
   },
   {
     name: 'Palmas',
@@ -51,9 +51,9 @@ const horariosData = [
 // Dados dos formularios
 const formulariosData = [
   { name: 'Procedimentos', href: '/procedimentos', icon: ClipboardList, desc: 'Normas e procedimentos' },
-  { name: 'Sugestoes', href: '/sugestoes', icon: Lightbulb, desc: 'Envie seu feedback' },
-  { name: 'Trabalhe Aqui', href: '/trabalhe-aqui', icon: Users, desc: 'Faca parte da equipe' },
-  { name: 'Aula Experimental', href: '/freepass', icon: Ticket, desc: 'Agende uma aula gratis' },
+  { name: 'Sugestões', href: '/sugestoes', icon: Lightbulb, desc: 'Envie seu feedback' },
+  { name: 'Trabalhe Aqui', href: '/trabalhe-aqui', icon: Users, desc: 'Faça parte da equipe' },
+  { name: 'Aula Experimental', href: '/freepass', icon: Ticket, desc: 'Agende uma aula grátis' },
 ]
 
 // ---- Dropdown generico ----
@@ -152,10 +152,10 @@ function UnidadesDropdown({ isScrolled }: { isScrolled: boolean }) {
 // ---- Dropdown Horarios ----
 function HorariosDropdown({ isScrolled }: { isScrolled: boolean }) {
   return (
-    <NavDropdown label="Horarios" isScrolled={isScrolled}>
+    <NavDropdown label="Horários" isScrolled={isScrolled}>
       <div className="px-4 pt-4 pb-2 flex items-center gap-2">
         <HiClock className="w-4 h-4 text-flex-slate" />
-        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Horarios por Unidade</p>
+        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Horários por Unidade</p>
       </div>
       <div className="py-1">
         {horariosData.map((h) => (
@@ -179,10 +179,10 @@ function HorariosDropdown({ isScrolled }: { isScrolled: boolean }) {
 // ---- Dropdown Formularios ----
 function FormulariosDropdown({ isScrolled }: { isScrolled: boolean }) {
   return (
-    <NavDropdown label="Formularios" isScrolled={isScrolled}>
+    <NavDropdown label="Formulários" isScrolled={isScrolled}>
       <div className="px-4 pt-4 pb-2 flex items-center gap-2">
         <HiDocumentText className="w-4 h-4 text-flex-slate" />
-        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Formularios</p>
+        <p className="text-xs font-semibold text-flex-slate uppercase tracking-wider">Formulários</p>
       </div>
       <div className="py-1">
         {formulariosData.map((f) => (

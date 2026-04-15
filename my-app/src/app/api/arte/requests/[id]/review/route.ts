@@ -54,7 +54,6 @@ export async function POST(
       feedback: action === 'ajuste-solicitado' ? feedback.trim() : null,
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: Record<string, any> = {
       deliveries,
       updatedAt: FieldValue.serverTimestamp(),

@@ -41,28 +41,34 @@ export default function UnitsShowcase() {
     <section
       id="units"
       ref={sectionRef}
-      className="scroll-section min-h-screen bg-gray-50 py-20 relative overflow-hidden"
+      className="scroll-section bg-gray-50 py-24 lg:py-32 relative overflow-hidden"
       role="region"
       aria-labelledby="units-title"
     >
+      {/* Background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-flex-primary/[0.03] rounded-full blur-3xl" />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Title */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-14 lg:mb-16">
           <motion.h2
             id="units-title"
             className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-5"
             {...fadeUp}
+            transition={{ duration: 0.6, delay: 0.05 }}
           >
-            Nossas{' '}
-            <span className="gradient-text">Unidades</span>
+            NOSSAS{' '}
+            <span className="gradient-text">UNIDADES</span>
           </motion.h2>
 
           <motion.p
-            className="text-lg text-gray-500 max-w-3xl mx-auto"
+            className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed"
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Escolha a unidade mais proxima e comece sua transformacao
+            Escolha a unidade mais próxima e comece sua transformação
           </motion.p>
         </div>
 
@@ -103,30 +109,26 @@ export default function UnitsShowcase() {
           </motion.div>
         )}
 
-        {/* CTA */}
+        {/* Bottom info */}
         <motion.div
-          className="mt-16 text-center"
+          className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-gray-500"
           {...fadeUp}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <div className="inline-block bg-gray-50 rounded-2xl p-8 border border-gray-100">
-            <h3 className="font-display text-2xl md:text-3xl gradient-text mb-3">
-              Mais unidades em breve
-            </h3>
-            <p className="text-gray-500 mb-6 max-w-xl mx-auto">
-              Estamos expandindo para atender voce ainda melhor
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                Equipamentos de ultima geracao
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                Professores especializados
-              </span>
-            </div>
-          </div>
+          <span className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            Equipamentos de última geração
+          </span>
+          <span className="hidden sm:block w-1 h-1 bg-gray-300 rounded-full" />
+          <span className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            Professores especializados
+          </span>
+          <span className="hidden sm:block w-1 h-1 bg-gray-300 rounded-full" />
+          <span className="flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            Estacionamento gratuito
+          </span>
         </motion.div>
       </div>
     </section>

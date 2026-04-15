@@ -46,7 +46,6 @@ export async function PATCH(
       return NextResponse.json({ error: 'Solicitação não encontrada' }, { status: 404 })
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updates: Record<string, any> = {
       updatedAt: FieldValue.serverTimestamp(),
     }

@@ -22,7 +22,7 @@ const sections = [
     ],
   },
   {
-    title: 'Horarios',
+    title: 'Horários',
     links: [
       { href: '/horarios/alphaville', label: 'Alphaville' },
       { href: '/horarios/buena-vista', label: 'Buena Vista' },
@@ -31,10 +31,10 @@ const sections = [
     ],
   },
   {
-    title: 'Formularios',
+    title: 'Formulários',
     links: [
       { href: '/procedimentos', label: 'Procedimentos' },
-      { href: '/sugestoes', label: 'Sugestoes' },
+      { href: '/sugestoes', label: 'Sugestões' },
       { href: '/trabalhe-aqui', label: 'Trabalhe Aqui' },
       { href: '/freepass', label: 'Aula Experimental' },
     ],

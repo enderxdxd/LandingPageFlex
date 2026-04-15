@@ -48,30 +48,30 @@ export default function HeroClean() {
           </motion.div>
 
           <motion.p
-            className="text-lg md:text-xl lg:text-2xl text-white/80 font-light tracking-[0.2em] mb-12"
+            className="text-lg md:text-xl lg:text-2xl text-white/70 font-light tracking-[0.25em] mb-14"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            A EVOLUCAO DO SEU TREINO
+            A EVOLUÇÃO DO SEU TREINO
           </motion.p>
 
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            className="flex flex-col sm:flex-row gap-4 justify-center mb-20"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
             <button
               onClick={scrollToUnits}
-              className="bg-white/15 backdrop-blur-sm border border-white/25 text-white px-8 py-4 rounded-full font-medium text-base hover:bg-white/25 transition-all duration-300 cursor-pointer"
+              className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-10 py-4 rounded-full font-medium text-base hover:bg-white/20 hover:border-white/30 transition-all duration-300 cursor-pointer"
             >
-              Conheca Nossas Unidades
+              Conheça Nossas Unidades
             </button>
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-3 gap-4 md:gap-6 max-w-lg mx-auto"
+            className="grid grid-cols-3 gap-4 md:gap-8 max-w-md mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 0.6 }}
@@ -83,12 +83,12 @@ export default function HeroClean() {
             ].map((stat, index) => (
               <div
                 key={index}
-                className="bg-white/8 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-white/10"
+                className="bg-white/[0.06] backdrop-blur-sm p-5 md:p-6 rounded-2xl border border-white/[0.08]"
               >
-                <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1">
+                <div className="text-3xl md:text-4xl font-display font-bold text-white mb-1">
                   {stat.number}
                 </div>
-                <div className="text-white/60 text-xs md:text-sm font-medium">{stat.label}</div>
+                <div className="text-white/50 text-xs md:text-sm font-medium tracking-wide">{stat.label}</div>
               </div>
             ))}
           </motion.div>
@@ -96,10 +96,10 @@ export default function HeroClean() {
 
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          animate={{ y: [0, 6, 0] }}
+          animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <ChevronDown className="text-white/30 w-5 h-5" />
+          <ChevronDown className="text-white/25 w-6 h-6" />
         </motion.div>
       </div>
     </section>

@@ -42,7 +42,7 @@ export const unitsData: Unit[] = [
     phone: '+55 62 3414-7330',
     whatsapp: '(62) 9537-8033',
     hours: {
-      weekdays: '04:30 - 23:00',
+      weekdays: '04:30 - 22:00',
       saturday: '07:00 - 16:00',
       sunday: '07:00 - 14:00'
     },
@@ -105,7 +105,7 @@ export const unitsData: Unit[] = [
     id: 'buena-vista',
     slug: 'buena-vista',
     name: 'Buena Vista',
-    description: 'Localizada em uma das regiões mais nobres de Goiânia, nossa unidade Bueno Vista oferece um ambiente sofisticado e acolhedor para seus treinos, com vista panorâmica da cidade.',
+    description: 'Localizada em uma das regiões mais nobres de Goiânia, nossa unidade Buena Vista oferece um ambiente sofisticado e acolhedor para seus treinos, com vista panorâmica da cidade.',
     address: 'R. T-61, 191 - St. Bueno, Goiânia - GO, 74223-170, Brasil',
     phone: '(62) 3515-0588',
     whatsapp: '(62) 9244-1708',
