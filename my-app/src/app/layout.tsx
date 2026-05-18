@@ -5,6 +5,7 @@ import AnimationProvider from '@/components/providers/AnimationProvider'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import LayoutWrapper from '@/components/layout/LayoutWrapper'
 import { Analytics } from '@vercel/analytics/next'
+import RDStationScript from '@/components/RDStationScript'
 
 const barlow = Barlow({
   subsets: ['latin'],
@@ -58,7 +59,7 @@ export default function RootLayout({
           </AnimationProvider>
         </ErrorBoundary>
         <Analytics />
-        <script type="text/javascript" async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/eda04c60-bc7f-47a9-8ab5-825b07e5355e-loader.js"></script>
+        <RDStationScript />
       </body>
     </html>
   )
