@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { adminDb } from '@/lib/firebaseAdmin'
 import { Timestamp } from 'firebase-admin/firestore'
 
+export const dynamic = 'force-dynamic'
+
 const COLLECTION = 'designRequests'
 
 /**
