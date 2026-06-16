@@ -6,7 +6,7 @@ import Script from 'next/script'
 export default function RDStationScript() {
   const pathname = usePathname()
 
-  if (pathname.startsWith('/procedimentos')) return null
+  if (!pathname.startsWith('/freepass')) return null
 
   return (
     <Script
