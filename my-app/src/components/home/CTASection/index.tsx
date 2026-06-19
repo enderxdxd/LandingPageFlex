@@ -4,7 +4,14 @@ import { motion } from 'framer-motion'
 import { useState, useRef } from 'react'
 import ContactForm from './ContactForm'
 import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
-import { Dumbbell, GraduationCap, MapPin, MessageCircle, ArrowRight } from 'lucide-react'
+import { Dumbbell, GraduationCap, MapPin, MessageCircle, ArrowRight, Headset } from 'lucide-react'
+
+// Atendimento central / consultor — fala direto com um atendente
+const CONSULTANT_PHONE = '556293833713'
+const CONSULTANT_MESSAGE =
+  'Olá! Vim pelo site da Flex Fitness e tenho interesse em começar a treinar. ' +
+  'Gostaria de falar com um consultor para entender qual seria a melhor opção para mim.'
+const CONSULTANT_WHATSAPP_URL = `https://wa.me/${CONSULTANT_PHONE}?text=${encodeURIComponent(CONSULTANT_MESSAGE)}`
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
@@ -76,6 +83,17 @@ export default function CTASection() {
           >
             Agendar Visita
           </button>
+
+          <a
+            href={CONSULTANT_WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group bg-flex-primary text-white px-8 py-4 rounded-full font-semibold text-base transition-all duration-200 inline-flex items-center justify-center gap-3 shadow-lg hover:bg-flex-secondary hover:shadow-xl hover:scale-[1.02] cursor-pointer"
+          >
+            <Headset className="w-5 h-5" />
+            Falar com Consultor
+            <ArrowRight className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
+          </a>
         </motion.div>
 
         {/* Feature cards */}
