@@ -3,7 +3,11 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { HiX } from 'react-icons/hi'
+import { FaWhatsapp } from 'react-icons/fa'
 import { unitsData } from '@/lib/constants/units-data'
+
+// WhatsApp do consultor / atendimento central
+const CONSULTANT_PHONE = '556293833713'
 
 interface ContactFormProps {
   onClose: () => void
@@ -21,8 +25,23 @@ export default function ContactForm({ onClose }: ContactFormProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
 
   const onSubmit = async (data: FormData) => {
-    console.log('Form data:', data)
-    // Implement form submission logic
+    const unitName = unitsData.find((u) => u.slug === data.unit)?.name || data.unit
+
+    const lines = [
+      'Olá! Tenho interesse na Flex Fitness e gostaria de agendar uma visita.',
+      '',
+      `*Nome:* ${data.name}`,
+      `*E-mail:* ${data.email}`,
+      `*Telefone:* ${data.phone}`,
+      `*Unidade de interesse:* ${unitName}`,
+    ]
+
+    if (data.message?.trim()) {
+      lines.push(`*Mensagem:* ${data.message.trim()}`)
+    }
+
+    const text = encodeURIComponent(lines.join('\n'))
+    window.open(`https://wa.me/${CONSULTANT_PHONE}?text=${text}`, '_blank', 'noopener,noreferrer')
     onClose()
   }
 
@@ -121,9 +140,10 @@ export default function ContactForm({ onClose }: ContactFormProps) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full gradient-bg text-white py-4 rounded-full font-medium hover:shadow-lg transition-all"
+              className="w-full gradient-bg text-white py-4 rounded-full font-medium hover:shadow-lg transition-all inline-flex items-center justify-center gap-2"
             >
-              Enviar Solicitação
+              <FaWhatsapp className="text-lg" />
+              Enviar pelo WhatsApp
             </motion.button>
           </form>
         </motion.div>
