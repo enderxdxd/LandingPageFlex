@@ -410,6 +410,18 @@ export default function AulaExperimental() {
               </div>
             </div>
 
+            <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="text-orange-400 mt-0.5 flex-shrink-0 w-5 h-5" />
+                <div>
+                  <h4 className="text-orange-400 font-medium text-sm mb-1">Menores de 18 anos</h4>
+                  <p className="text-flex-light/70 text-sm">
+                    Menores de idade devem estar acompanhados do pai, mãe ou responsável legal para assinatura da anamnese no dia da aula experimental.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="text-center">
               <button
                 type="button"
