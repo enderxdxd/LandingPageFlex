@@ -9,7 +9,7 @@ import { HiMapPin, HiBars3, HiXMark } from 'react-icons/hi2'
 import { ClipboardList, Lightbulb, Users, Ticket, ChevronRight } from 'lucide-react'
 import MobileMenu from './MobileMenu'
 import { useIsMobile } from '@/components/ClientOnly'
-import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
+import { CONTACT_WHATSAPP_URL } from '@/lib/constants/contact'
 
 // Dados das unidades
 const unidadesData = [
@@ -212,7 +212,6 @@ function NavigationContent() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [hasMounted, setHasMounted] = useState(false)
-  const [isWhatsAppSelectorOpen, setIsWhatsAppSelectorOpen] = useState(false)
 
   useEffect(() => {
     setHasMounted(true)
@@ -281,9 +280,10 @@ function NavigationContent() {
 
             
 
-            <button
-              type="button"
-              onClick={() => setIsWhatsAppSelectorOpen(true)}
+            <a
+              href={CONTACT_WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`ml-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                 isScrolled
                   ? 'bg-flex-primary text-white hover:bg-flex-blue-700 shadow-sm'
@@ -291,7 +291,7 @@ function NavigationContent() {
               }`}
             >
               Entre em Contato
-            </button>
+            </a>
           </div>
 
           {/* Mobile hamburger */}
@@ -315,8 +315,6 @@ function NavigationContent() {
           <MobileMenu onClose={() => setIsMobileMenuOpen(false)} />
         )}
       </AnimatePresence>
-
-      <WhatsAppUnitSelector isOpen={isWhatsAppSelectorOpen} onClose={() => setIsWhatsAppSelectorOpen(false)} />
     </>
   )
 }

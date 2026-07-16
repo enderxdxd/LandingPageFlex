@@ -3,12 +3,11 @@
 import { motion } from 'framer-motion'
 import { useState, useRef } from 'react'
 import ContactForm from './ContactForm'
-import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
+import { CONTACT_WHATSAPP_URL } from '@/lib/constants/contact'
 import { Dumbbell, GraduationCap, MapPin, MessageCircle, ArrowRight } from 'lucide-react'
 
 export default function CTASection() {
   const [showForm, setShowForm] = useState(false)
-  const [showWhatsAppSelector, setShowWhatsAppSelector] = useState(false)
   const sectionRef = useRef(null)
 
   const fadeUp = {
@@ -61,14 +60,16 @@ export default function CTASection() {
           {...fadeUp}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <button
-            onClick={() => setShowWhatsAppSelector(true)}
+          <a
+            href={CONTACT_WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="group bg-white text-green-600 px-8 py-4 rounded-full font-semibold text-base transition-all duration-200 inline-flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-[1.02] cursor-pointer"
           >
             <MessageCircle className="w-5 h-5" />
             Falar no WhatsApp
             <ArrowRight className="w-4 h-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
-          </button>
+          </a>
 
           <button
             onClick={() => setShowForm(true)}
@@ -124,7 +125,6 @@ export default function CTASection() {
       </div>
 
       {showForm && <ContactForm onClose={() => setShowForm(false)} />}
-      <WhatsAppUnitSelector isOpen={showWhatsAppSelector} onClose={() => setShowWhatsAppSelector(false)} />
     </section>
   )
 }

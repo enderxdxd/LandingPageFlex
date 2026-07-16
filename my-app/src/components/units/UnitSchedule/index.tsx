@@ -1,19 +1,17 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 import { Unit } from '@/lib/constants/units-data'
 import { HiClock, HiCalendar } from 'react-icons/hi'
 import { FaSun, FaRegMoon } from 'react-icons/fa'
 import { Clock, Info } from 'lucide-react'
-import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
+import { buildWhatsAppUrl } from '@/lib/constants/contact'
 
 interface UnitScheduleProps {
   unit: Unit
 }
 
 export default function UnitSchedule({ unit }: UnitScheduleProps) {
-  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false)
 
   const scheduleItems = [
     {
@@ -128,18 +126,14 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
             <p className="text-white/60 mb-6">
               Nossa equipe esta pronta para ajudar voce a escolher o melhor horario
             </p>
-            <button
-              onClick={() => setIsWhatsAppOpen(true)}
-              className="bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
+            <a
+              href={buildWhatsAppUrl('Ola! Gostaria de saber mais sobre os horarios de funcionamento.')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
             >
               Falar com Consultor
-            </button>
-
-            <WhatsAppUnitSelector
-              isOpen={isWhatsAppOpen}
-              onClose={() => setIsWhatsAppOpen(false)}
-              message="Ola! Gostaria de saber mais sobre os horarios de funcionamento."
-            />
+            </a>
           </div>
         </motion.div>
       </div>

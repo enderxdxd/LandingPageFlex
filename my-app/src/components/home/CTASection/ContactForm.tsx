@@ -1,8 +1,9 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { HiX } from 'react-icons/hi'
+import { HiX, HiMail, HiCheck, HiExclamationCircle } from 'react-icons/hi'
 import { FaWhatsapp } from 'react-icons/fa'
 import { unitsData } from '@/lib/constants/units-data'
 
@@ -23,8 +24,10 @@ interface FormData {
 
 export default function ContactForm({ onClose }: ContactFormProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle')
 
-  const onSubmit = async (data: FormData) => {
+  // Envia os dados preenchidos pelo WhatsApp do consultor
+  const onSubmitWhatsApp = (data: FormData) => {
     const unitName = unitsData.find((u) => u.slug === data.unit)?.name || data.unit
 
     const lines = [
@@ -43,6 +46,37 @@ export default function ContactForm({ onClose }: ContactFormProps) {
     const text = encodeURIComponent(lines.join('\n'))
     window.open(`https://wa.me/${CONSULTANT_PHONE}?text=${text}`, '_blank', 'noopener,noreferrer')
     onClose()
+  }
+
+  // Envia os dados preenchidos por e-mail (API /api/contact)
+  const onSubmitEmail = async (data: FormData) => {
+    const unitName = unitsData.find((u) => u.slug === data.unit)?.name || data.unit
+    setEmailStatus('sending')
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: data.name,
+          email: data.email,
+          telefone: data.phone,
+          unidade: unitName,
+          codigo_flex: data.unit,
+          mensagem: data.message?.trim() || 'Tenho interesse em agendar uma visita na Flex Fitness.',
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Falha ao enviar')
+      }
+
+      setEmailStatus('success')
+      setTimeout(onClose, 2000)
+    } catch (err) {
+      console.error('Erro ao enviar contato por e-mail:', err)
+      setEmailStatus('error')
+    }
   }
 
   return (
@@ -68,7 +102,7 @@ export default function ContactForm({ onClose }: ContactFormProps) {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmitWhatsApp)} className="space-y-4">
             <div>
               <input
                 {...register('name', { required: 'Nome é obrigatório' })}
@@ -136,15 +170,61 @@ export default function ContactForm({ onClose }: ContactFormProps) {
               />
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              className="w-full gradient-bg text-white py-4 rounded-full font-medium hover:shadow-lg transition-all inline-flex items-center justify-center gap-2"
-            >
-              <FaWhatsapp className="text-lg" />
-              Enviar pelo WhatsApp
-            </motion.button>
+            <div className="space-y-3 pt-1">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={emailStatus === 'sending'}
+                className="w-full bg-green-500 text-white py-4 rounded-full font-medium hover:bg-green-600 hover:shadow-lg transition-all inline-flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                <FaWhatsapp className="text-lg" />
+                Enviar pelo WhatsApp
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={handleSubmit(onSubmitEmail)}
+                disabled={emailStatus === 'sending'}
+                className="w-full gradient-bg text-white py-4 rounded-full font-medium hover:shadow-lg transition-all inline-flex items-center justify-center gap-2 disabled:opacity-60"
+              >
+                {emailStatus === 'sending' ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <HiMail className="text-lg" />
+                    Enviar por E-mail
+                  </>
+                )}
+              </motion.button>
+            </div>
+
+            {emailStatus === 'success' && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 text-green-600 text-sm bg-green-50 p-3 rounded-lg border border-green-200"
+              >
+                <HiCheck className="text-lg flex-shrink-0" />
+                Solicitação enviada! Em breve entraremos em contato.
+              </motion.div>
+            )}
+
+            {emailStatus === 'error' && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-200"
+              >
+                <HiExclamationCircle className="text-lg flex-shrink-0" />
+                Não foi possível enviar por e-mail. Tente novamente ou use o WhatsApp.
+              </motion.div>
+            )}
           </form>
         </motion.div>
       </motion.div>

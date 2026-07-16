@@ -1,13 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 import { Unit } from '@/lib/constants/units-data'
 import { GiWeightLiftingUp, GiMuscleUp } from 'react-icons/gi'
 import { FaFire, FaTrophy, FaUsers } from 'react-icons/fa'
 import { HiLightningBolt } from 'react-icons/hi'
 import { Flame } from 'lucide-react'
-import WhatsAppUnitSelector from '@/components/WhatsAppUnitSelector'
+import { buildWhatsAppUrl } from '@/lib/constants/contact'
 
 interface UnitCrossFitProps {
   unit: Unit
@@ -47,8 +46,6 @@ const crossfitFeatures = [
 ]
 
 export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
-  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false)
-
   return (
     <section className="py-20 bg-flex-navy relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-10">
@@ -110,18 +107,14 @@ export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
               Venha conhecer o CrossFit mais autentico de Alphaville.
               Sua primeira aula e por nossa conta!
             </p>
-            <button
-              onClick={() => setIsWhatsAppOpen(true)}
-              className="bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
+            <a
+              href={buildWhatsAppUrl('Ola! Gostaria de agendar uma aula gratis de CrossFit ou conhecer o espaco.')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
             >
               Agendar Aula Gratis
-            </button>
-
-            <WhatsAppUnitSelector
-              isOpen={isWhatsAppOpen}
-              onClose={() => setIsWhatsAppOpen(false)}
-              message="Ola! Gostaria de agendar uma aula gratis de CrossFit ou conhecer o espaco."
-            />
+            </a>
           </div>
         </motion.div>
       </div>
