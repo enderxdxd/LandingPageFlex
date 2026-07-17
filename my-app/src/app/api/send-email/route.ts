@@ -200,6 +200,89 @@ const templates = {
     </html>
   `,
 
+  'cessao-plano': (data: any) => `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Termo de Cessão de Plano - Flex Fitness</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+      <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
+        <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+          <div style="text-align: center; border-bottom: 3px solid #007bff; padding-bottom: 20px; margin-bottom: 30px;">
+            <h1 style="color: #007bff; font-size: 28px; margin: 0;">💪 FLEX FITNESS</h1>
+            <div style="background: #ffc107; color: #212529; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin: 15px 0;">
+              📋 CONFIRMAÇÃO NECESSÁRIA
+            </div>
+          </div>
+
+          <p style="font-size: 16px; color: #333;">Olá <strong>${data.nome_cliente}</strong>,</p>
+          <p style="color: #666;">Recebemos sua solicitação de <strong>Transferência de Dias</strong>.</p>
+
+          <div style="background: #007bff; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+            <strong>Protocolo: ${data.numero_solicitacao}</strong><br>
+            <small>Data: ${data.data_solicitacao}</small>
+          </div>
+
+          <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin: 20px 0; border-radius: 4px;">
+            <h3 style="color: #856404; margin: 0 0 15px 0;">⚠️ AÇÃO NECESSÁRIA</h3>
+            <p style="color: #856404; margin: 0 0 15px 0; font-size: 16px;">
+              Para prosseguirmos, confirme o <strong>Termo de Cessão de Plano</strong> no link abaixo.
+            </p>
+
+            <div style="text-align: center; margin: 25px 0;">
+              <a href="${data.link_assinatura}" style="background: #28a745; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
+                ✍️ CONFIRMAR DOCUMENTO
+              </a>
+            </div>
+
+            <p style="color: #856404; margin: 15px 0 0 0; font-size: 14px; overflow-wrap: anywhere;">
+              <strong>Link direto:</strong> <a href="${data.link_assinatura}" style="color: #007bff;">${data.link_assinatura}</a>
+            </p>
+          </div>
+
+          <h3 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">📋 Dados da Solicitação</h3>
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: #f8f9fa; border-radius: 8px; overflow: hidden;">
+            <tr>
+              <td style="padding: 12px; background: #007bff; color: white; font-weight: bold;">Unidade</td>
+              <td style="padding: 12px; background: white;">${data.unidade}</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px; background: #007bff; color: white; font-weight: bold;">Procedimento</td>
+              <td style="padding: 12px; background: #f8f9fa;">${data.procedimento}</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px; background: #007bff; color: white; font-weight: bold;">Motivo</td>
+              <td style="padding: 12px; background: white;">${data.motivo}</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px; background: #007bff; color: white; font-weight: bold;">Detalhes</td>
+              <td style="padding: 12px; background: #f8f9fa;">${data.detalhes}</td>
+            </tr>
+          </table>
+
+          <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px;">
+            <h4 style="color: #1976d2; margin: 0 0 10px 0;">📞 Próximos Passos</h4>
+            <ol style="color: #1976d2; margin: 0; padding-left: 20px;">
+              <li>Clique no link acima e confirme o documento</li>
+              <li>Após a confirmação, nossa equipe dará continuidade à transferência</li>
+            </ol>
+          </div>
+
+          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d;">
+            <p><strong>Flex Fitness</strong><br>Transformando vidas através do movimento</p>
+            <p style="font-size: 12px;">Este é um e-mail automático. Guarde este comprovante para seus registros.</p>
+          </div>
+
+        </div>
+      </div>
+    </body>
+    </html>
+  `,
+
   empresa: (data: any) => `
     <!DOCTYPE html>
     <html>
@@ -322,6 +405,7 @@ export async function POST(request: NextRequest) {
         // Preparar dados específicos para este destinatário
         const dadosEspecificos = {
           ...emailData,
+          link_assinatura: dest.link_assinatura || '',
           anexo: dest.anexo || '',
           nome_arquivo: dest.nome_arquivo || ''
         };

@@ -67,6 +67,11 @@ const procedureNames: Record<string, string> = {
   'retencao-credito': 'Retenção de Crédito para Novo Plano'
 }
 
+const signatureLinks = {
+  cancelamento: 'https://app.zapsign.com.br/verificar/doc/7e0e84ef-36ac-432d-b60e-614136502106',
+  'transferencia-dias': 'https://app.zapsign.com.br/verificar/doc/1b8f4550-b9ec-42dd-9a94-02a9c5235fd9'
+} as const
+
 // Mapeia nomes dos motivos
 const reasonNames: Record<string, string> = {
   'mudanca': 'Mudança de Cidade ou Bairro',
@@ -328,13 +333,28 @@ export default function Procedimentos() {
         data_fim: data.dataFim || 'Não se aplica',
         resgate_block: resgateBlock,
         cancelamento_block: cancelBlock,
-        link_assinatura: 'https://app.zapsign.com.br/verificar/doc/7e0e84ef-36ac-432d-b60e-614136502106',
         anexo: anexoBase64,
         nome_arquivo: nomeArquivo
       }
   
       // Definir tipo de email
       const isCancelamento = data.procedimento === 'cancelamento'
+      const isTransferenciaDias = data.procedimento === 'transferencia-dias'
+      const clientTemplate = isCancelamento
+        ? 'cancelamento'
+        : isTransferenciaDias
+          ? 'cessao-plano'
+          : 'comprovante'
+      const clientSubject = isCancelamento
+        ? `📋 Confirmação Necessária - Cancelamento ${numeroSolicitacao} - Flex Fitness`
+        : isTransferenciaDias
+          ? `📋 Confirmação Necessária - Termo de Cessão de Plano ${numeroSolicitacao} - Flex Fitness`
+          : `✅ Comprovante de Solicitação - ${numeroSolicitacao} - Flex Fitness`
+      const clientSignatureLink = isCancelamento
+        ? signatureLinks.cancelamento
+        : isTransferenciaDias
+          ? signatureLinks['transferencia-dias']
+          : ''
       
       // Criar destinatários
       const destinatarios = []
@@ -342,10 +362,9 @@ export default function Procedimentos() {
       // 1. Email para o cliente (SEM anexo)
       destinatarios.push({
         email: data.email,
-        subject: isCancelamento 
-          ? `📋 Confirmação Necessária - Cancelamento ${numeroSolicitacao} - Flex Fitness`
-          : `✅ Comprovante de Solicitação - ${numeroSolicitacao} - Flex Fitness`,
-        template: isCancelamento ? 'cancelamento' : 'comprovante',
+        subject: clientSubject,
+        template: clientTemplate,
+        link_assinatura: clientSignatureLink,
         anexo: '',
         nome_arquivo: ''
       })
@@ -356,6 +375,7 @@ export default function Procedimentos() {
           email: email,
           subject: `🚨 Nova Solicitação - ${procedimentoNome} - ${numeroSolicitacao}`,
           template: 'empresa',
+          link_assinatura: '',
           anexo: anexoBase64,
           nome_arquivo: nomeArquivo
         })
