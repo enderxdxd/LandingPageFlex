@@ -136,10 +136,10 @@ export default function MeusChamadosPage() {
           <LoadingState texto="Carregando chamados..." />
         ) : chamados.length === 0 ? (
           <EmptyState
-            titulo={aba === 'abertos' ? 'Nenhum chamado aberto por voce' : 'Nenhum chamado atribuido a voce'}
+            titulo={aba === 'abertos' ? 'Nenhum chamado aberto por você' : 'Nenhum chamado atribuído a você'}
             descricao={aba === 'abertos'
-              ? 'Voce ainda nao abriu nenhum chamado. Clique no botao acima para abrir um novo.'
-              : 'Nenhum chamado foi direcionado para voce ainda.'}
+              ? 'Você ainda não abriu nenhum chamado. Clique no botão acima para abrir um novo.'
+              : 'Nenhum chamado foi direcionado para você ainda.'}
             acao={aba === 'abertos' ? { label: 'Abrir Chamado', onClick: () => router.push('/chamados/novo') } : undefined}
           />
         ) : (

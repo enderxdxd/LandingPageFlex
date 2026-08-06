@@ -35,7 +35,7 @@ export default function UnitContact({ unit }: UnitContactProps) {
     },
     {
       icon: FaMapMarkerAlt,
-      title: 'Endereco',
+      title: 'Endereço',
       value: unit.address,
       action: `https://maps.google.com/?q=${encodeURIComponent(unit.address)}`,
       color: 'secondary' as const,
@@ -77,8 +77,8 @@ export default function UnitContact({ unit }: UnitContactProps) {
           </h2>
           <p className="text-lg text-white/60 max-w-3xl mx-auto">
             {unit.comingSoon
-              ? 'Seja um dos primeiros a conhecer nossa nova unidade. Cadastre-se para receber informacoes exclusivas sobre a inauguracao!'
-              : 'Agende uma visita e conheca de perto toda nossa estrutura e diferenciais. Nossa equipe esta pronta para receber voce!'
+              ? 'Seja um dos primeiros a conhecer nossa nova unidade. Cadastre-se para receber informações exclusivas sobre a inauguração!'
+              : 'Agende uma visita e conheça de perto toda nossa estrutura e diferenciais. Nossa equipe está pronta para receber você!'
             }
           </p>
         </motion.div>
@@ -149,10 +149,10 @@ export default function UnitContact({ unit }: UnitContactProps) {
           <div className="text-center mb-6">
             <h3 className="font-display text-2xl text-white mb-2 inline-flex items-center gap-2">
               <HiLocationMarker className="text-flex-secondary" />
-              Nossa Localizacao
+              Nossa Localização
             </h3>
             <p className="text-white/60 text-sm">
-              {unit.landmark ? `${unit.landmark} - ` : ''}Facil acesso e estacionamento
+              {unit.landmark ? `${unit.landmark} - ` : ''}Fácil acesso e estacionamento
             </p>
           </div>
 

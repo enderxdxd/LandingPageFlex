@@ -42,7 +42,7 @@ export const unitsData: Unit[] = [
     phone: '+55 62 3414-7330',
     whatsapp: '(62) 9537-8033',
     hours: {
-      weekdays: '04:30 - 22:00',
+      weekdays: '04:30 - 23:00',
       saturday: '07:00 - 16:00',
       sunday: '07:00 - 14:00'
     },
@@ -174,7 +174,7 @@ export const unitsData: Unit[] = [
     whatsapp: '(62) 9383-0661',
     hours: {
       weekdays: '05:00 - 22:00',
-      saturday: '07:00 - 16:00',
+      saturday: '07:00 - 18:00',
       sunday: '07:00 - 14:00'
     },
     features: [

@@ -16,7 +16,7 @@ const crossfitFeatures = [
   {
     icon: GiWeightLiftingUp,
     title: 'Equipamentos ELEIKO',
-    description: 'Equipamentos oficiais Rogue Fitness, padrao mundial de CrossFit',
+    description: 'Equipamentos oficiais Rogue Fitness, padrão mundial de CrossFit',
   },
   {
     icon: FaFire,
@@ -66,7 +66,7 @@ export default function UnitCrossFit({ unit }: UnitCrossFitProps) {
           </div>
           <p className="text-lg text-white/60 max-w-3xl mx-auto">
             Experimente o CrossFit na sua forma mais autentica. Nossa box exclusiva oferece
-            tudo que voce precisa para superar seus limites.
+            tudo que você precisa para superar seus limites.
           </p>
         </motion.div>
 

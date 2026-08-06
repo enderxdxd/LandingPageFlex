@@ -42,7 +42,7 @@ export default function RelatoriosPage() {
       Status: STATUS_CONFIG[c.status]?.label,
       Prioridade: c.prioridade,
       Unidade: UNIDADES[c.unidade]?.label,
-      Categoria: c.categoria ? CATEGORIAS[c.categoria]?.label : 'Nao categorizado',
+      Categoria: c.categoria ? CATEGORIAS[c.categoria]?.label : 'Não categorizado',
       Solicitante: c.solicitante.nome,
       Tecnico: c.atribuidoPara?.nome || '-',
       CriadoEm: c.criadoEm?.toDate().toLocaleDateString('pt-BR'),

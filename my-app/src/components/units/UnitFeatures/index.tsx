@@ -36,7 +36,7 @@ export default function UnitFeatures({ unit }: UnitFeaturesProps) {
             <span className="gradient-text">{unit.name}</span>
           </h2>
           <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-            Infraestrutura completa e servicos premium para sua melhor experiencia de treino
+            Infraestrutura completa e serviços premium para sua melhor experiência de treino
           </p>
         </motion.div>
 

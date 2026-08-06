@@ -147,7 +147,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
             rows={4}
             value={formData.descricao}
             onChange={(e) => update('descricao', e.target.value)}
-            placeholder="Ex: O ar-condicionado da sala de musculacao nao esta ligando desde ontem de manha. Ja tentamos ligar pelo controle remoto mas nao responde..."
+            placeholder="Ex: O ar-condicionado da sala de musculação não está ligando desde ontem de manhã. Já tentamos ligar pelo controle remoto mas não responde..."
             className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none leading-relaxed"
           />
         </div>
@@ -208,7 +208,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
               <UserCircle className="w-4 h-4 text-gray-400" />
               Direcionar para
               <span className="text-xs text-gray-400 font-normal">opcional</span>
-              <Tooltip text="Escolha um responsavel para receber este chamado. Se nao selecionar, o chamado ficara disponivel para toda a equipe." />
+              <Tooltip text="Escolha um responsável para receber este chamado. Se não selecionar, o chamado ficará disponível para toda a equipe." />
             </label>
             <p className="text-xs text-gray-400 mb-3 ml-6">
               Selecione quem deve receber e resolver este chamado
@@ -238,7 +238,7 @@ export default function NovoChamadoForm({ usuario }: NovoChamadoFormProps) {
               <div className="mt-2 flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200/60">
                 <UserCircle className="w-4 h-4 text-blue-600 shrink-0" />
                 <p className="text-xs text-blue-700">
-                  O chamado sera direcionado para <strong>{formData.direcionadoPara.nome}</strong> e esta pessoa sera notificada por email.
+                  O chamado será direcionado para <strong>{formData.direcionadoPara.nome}</strong> e esta pessoa será notificada por email.
                 </p>
                 <button
                   type="button"

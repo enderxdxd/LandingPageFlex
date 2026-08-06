@@ -90,7 +90,7 @@ export default function UnitHero({ unit }: UnitHeroProps) {
             <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10 flex items-center gap-3">
               <HiLocationMarker className="text-xl text-flex-secondary flex-shrink-0" />
               <div className="min-w-0">
-                <p className="text-xs text-white/50 font-medium uppercase tracking-wider">Endereco</p>
+                <p className="text-xs text-white/50 font-medium uppercase tracking-wider">Endereço</p>
                 <p className="text-white/90 text-sm truncate">{unit.address}</p>
               </div>
             </div>

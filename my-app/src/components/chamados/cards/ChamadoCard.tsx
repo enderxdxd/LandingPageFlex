@@ -43,7 +43,7 @@ export default function ChamadoCard({ chamado, basePath = '/chamados/meus' }: Ch
           {chamado.categoria ? (
             <span>{CATEGORIAS[chamado.categoria]?.label}</span>
           ) : (
-            <span className="text-amber-600">Nao categorizado</span>
+            <span className="text-amber-600">Não categorizado</span>
           )}
         </div>
 

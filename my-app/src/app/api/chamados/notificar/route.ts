@@ -102,7 +102,7 @@ function gerarEmailHTML(dados: {
         <!-- Footer -->
         <div style="text-align: center; padding: 16px; color: #94a3b8; font-size: 11px;">
           <p style="margin: 0;">Flex Fitness Center - Sistema de Chamados Internos</p>
-          <p style="margin: 4px 0 0;">Este email foi gerado automaticamente. Nao responda diretamente.</p>
+          <p style="margin: 4px 0 0;">Este email foi gerado automaticamente. Não responda diretamente.</p>
         </div>
       </div>
     </body>
@@ -114,7 +114,7 @@ const ASSUNTO_MAP: Record<string, (protocolo: string, extra?: string) => string>
   novo: (p) => `Chamado ${p} aberto com sucesso`,
   novo_admin: (p, cat) => `Novo chamado ${p} - ${cat}`,
   novo_departamento: (p, dep) => `Novo chamado ${p} - Departamento: ${dep}`,
-  atribuido: (p) => `Chamado ${p} atribuido a voce`,
+  atribuido: (p) => `Chamado ${p} atribuído a você`,
   comentario: (p) => `Novo comentario no chamado ${p}`,
   status: (p, status) => `Chamado ${p} - Status: ${status}`,
   sla_proximo: (p) => `SLA do chamado ${p} proximo do prazo`,
@@ -126,7 +126,7 @@ const MENSAGEM_MAP: Record<string, string> = {
   novo: 'Seu chamado foi aberto com sucesso e ja esta sendo processado.',
   novo_admin: 'Um novo chamado foi aberto e aguarda atribuicao.',
   novo_departamento: 'Um novo chamado foi aberto para o seu departamento.',
-  atribuido: 'Um chamado foi atribuido a voce. Por favor, verifique os detalhes e inicie o atendimento.',
+  atribuido: 'Um chamado foi atribuído a você. Por favor, verifique os detalhes e inicie o atendimento.',
   comentario: 'Um novo comentario foi adicionado ao chamado.',
   status: 'O status do seu chamado foi alterado.',
   sla_proximo: 'O prazo de SLA deste chamado esta proximo de expirar. Por favor, priorize o atendimento.',

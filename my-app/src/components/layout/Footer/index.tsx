@@ -50,7 +50,7 @@ export default function Footer() {
               href="/privacy-policy"
               className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
             >
-              Politica de Privacidade
+              Política de Privacidade
             </Link>
             <span className="text-gray-700">|</span>
             <Link

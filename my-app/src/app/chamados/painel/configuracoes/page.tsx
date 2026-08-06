@@ -200,7 +200,7 @@ export default function ConfiguracoesPage() {
 
   const salvarEdicaoUsuario = async () => {
     if (!editingUid || !editNome.trim()) {
-      toast.error('Nome e obrigatorio')
+      toast.error('Nome é obrigatório')
       return
     }
     setSaving(true)
@@ -290,7 +290,7 @@ export default function ConfiguracoesPage() {
   }
 
   const handleRemoverDepartamento = async (id: string) => {
-    if (!confirm('Remover este departamento? Os membros serao desvinculados.')) return
+    if (!confirm('Remover este departamento? Os membros serão desvinculados.')) return
     try {
       await removerDepartamento(id)
       setDepartamentos(prev => prev.filter(d => d.id !== id))
@@ -737,7 +737,7 @@ export default function ConfiguracoesPage() {
                 <h3 className="text-base font-semibold text-gray-900">Excluir Usuario</h3>
               </div>
               <p className="text-sm text-gray-600">
-                Tem certeza que deseja excluir <strong>{usuarios.find(u => u.uid === confirmDeleteUid)?.nome}</strong>? Esta acao nao pode ser desfeita.
+                Tem certeza que deseja excluir <strong>{usuarios.find(u => u.uid === confirmDeleteUid)?.nome}</strong>? Esta ação não pode ser desfeita.
               </p>
             </div>
             <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/30">

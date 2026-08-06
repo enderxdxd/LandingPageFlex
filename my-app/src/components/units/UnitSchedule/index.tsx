@@ -18,10 +18,10 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
       label: 'Segunda a Sexta',
       hours: unit.hours.weekdays,
       icon: FaSun,
-      description: 'Horario completo para sua rotina'
+      description: 'Horário completo para sua rotina'
     },
     {
-      label: 'Sabado',
+      label: 'Sábado',
       hours: unit.hours.saturday,
       icon: HiCalendar,
       description: 'Treino de fim de semana'
@@ -35,10 +35,10 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
   ]
 
   const getSpecialHours = () => {
-    if (unit.comingSoon) return "Horarios sujeitos a alteracao apos inauguracao"
-    if (unit.name === 'Alphaville') return "CrossFit: Consulte horarios especificos"
-    if (unit.hasPool) return "Area aquatica: 30min antes do fechamento"
-    return "Consulte horarios especiais em feriados"
+    if (unit.comingSoon) return "Horários sujeitos a alteração após inauguração"
+    if (unit.name === 'Alphaville') return "CrossFit: Consulte horários específicos"
+    if (unit.hasPool) return "Área aquática: 30min antes do fechamento"
+    return "Consulte horários especiais em feriados"
   }
 
   return (
@@ -53,10 +53,10 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
         >
           <h2 className="font-display text-4xl md:text-5xl text-white mb-4 flex items-center justify-center gap-3">
             <HiClock className="text-flex-secondary" />
-            Horarios de Funcionamento
+            Horários de Funcionamento
           </h2>
           <p className="text-lg text-white/60 max-w-2xl mx-auto">
-            Horarios pensados para se adaptar perfeitamente a sua rotina
+            Horários pensados para se adaptar perfeitamente à sua rotina
           </p>
         </motion.div>
 
@@ -121,13 +121,13 @@ export default function UnitSchedule({ unit }: UnitScheduleProps) {
         >
           <div className="inline-block bg-white/5 backdrop-blur-sm rounded-2xl p-8 border border-white/10">
             <h3 className="font-display text-2xl text-white mb-3">
-              Venha fazer parte da nossa familia
+              Venha fazer parte da nossa família
             </h3>
             <p className="text-white/60 mb-6">
-              Nossa equipe esta pronta para ajudar voce a escolher o melhor horario
+              Nossa equipe está pronta para ajudar você a escolher o melhor horário
             </p>
             <a
-              href={buildWhatsAppUrl('Ola! Gostaria de saber mais sobre os horarios de funcionamento.')}
+              href={buildWhatsAppUrl('Olá! Gostaria de saber mais sobre os horários de funcionamento.')}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"

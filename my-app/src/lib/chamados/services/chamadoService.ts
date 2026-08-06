@@ -105,8 +105,8 @@ export async function criarChamado(
         chamadoId: docRef.id,
         protocolo,
         tipo: 'atribuido',
-        titulo: `Novo chamado ${protocolo} direcionado para voce`,
-        mensagem: `${usuario.nome} abriu o chamado "${titulo}" e direcionou para voce`,
+        titulo: `Novo chamado ${protocolo} direcionado para você`,
+        mensagem: `${usuario.nome} abriu o chamado "${titulo}" e direcionou para você`,
       })
     } catch {
       // Erro na notificacao in-app nao bloqueia
@@ -440,8 +440,8 @@ export async function atribuirTecnico(
         chamadoId,
         protocolo: chamado.protocolo,
         tipo: 'atribuido',
-        titulo: `Chamado ${chamado.protocolo} atribuido a voce`,
-        mensagem: `${usuario.nome} atribuiu o chamado "${chamado.titulo || chamado.descricao?.substring(0, 60)}" para voce`,
+        titulo: `Chamado ${chamado.protocolo} atribuído a você`,
+        mensagem: `${usuario.nome} atribuiu o chamado "${chamado.titulo || chamado.descricao?.substring(0, 60)}" para você`,
       })
     }
   } catch {
@@ -641,8 +641,8 @@ export async function redirecionarChamado(
         chamadoId,
         protocolo: chamado.protocolo,
         tipo: 'atribuido',
-        titulo: `Chamado ${chamado.protocolo} direcionado para voce`,
-        mensagem: `${usuario.nome} redirecionou o chamado "${chamado.titulo || chamado.descricao?.substring(0, 60)}" para voce`,
+        titulo: `Chamado ${chamado.protocolo} direcionado para você`,
+        mensagem: `${usuario.nome} redirecionou o chamado "${chamado.titulo || chamado.descricao?.substring(0, 60)}" para você`,
       })
     }
 

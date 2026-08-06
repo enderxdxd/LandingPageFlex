@@ -344,7 +344,7 @@ export default function ChamadoAcoes({ chamado, usuario }: ChamadoAcoesProps) {
 
               <div className="bg-amber-50 rounded-xl p-3 border border-amber-100">
                 <p className="text-xs text-amber-700">
-                  O novo responsavel sera notificado por email e tera acesso ao chamado.
+                  O novo responsável será notificado por email e terá acesso ao chamado.
                 </p>
               </div>
             </div>
