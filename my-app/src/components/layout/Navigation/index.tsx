@@ -274,6 +274,17 @@ function NavigationContent() {
               Home
             </Link>
 
+            <Link
+              href="/#modalidades"
+              className={`text-[15px] font-medium tracking-wide transition-colors duration-200 ${
+                isScrolled
+                  ? 'text-flex-dark hover:text-flex-primary'
+                  : 'text-white/90 hover:text-white'
+              }`}
+            >
+              Modalidades
+            </Link>
+
             <UnidadesDropdown isScrolled={isScrolled} />
             <HorariosDropdown isScrolled={isScrolled} />
             <FormulariosDropdown isScrolled={isScrolled} />

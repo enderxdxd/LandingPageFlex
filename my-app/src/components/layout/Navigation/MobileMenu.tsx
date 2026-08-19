@@ -105,6 +105,13 @@ export default function MobileMenu({ onClose }: MobileMenuProps) {
                 Home
               </Link>
               <Link
+                href="/#modalidades"
+                onClick={onClose}
+                className="block py-3 text-lg font-display text-flex-dark hover:text-flex-primary transition-colors"
+              >
+                Modalidades
+              </Link>
+              <Link
                 href="/eventos"
                 onClick={onClose}
                 className="block py-3 text-lg font-display text-flex-dark hover:text-flex-primary transition-colors"

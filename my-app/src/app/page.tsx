@@ -7,6 +7,7 @@ import HeroSection from '@/components/home/HeroSection'
 import ConceptSection from '@/components/home/ConceptSection'
 import UnitsShowcase from '@/components/home/UnitsShowcase'
 import FeaturesSection from '@/components/home/FeaturesSection'
+import ModalidadesSection from '@/components/home/ModalidadesSection'
 import CTASection from '@/components/home/CTASection'
 import ScrollProgress from '@/components/layout/ScrollProgress'
 import ResponsiveSocialSidebar from '@/components/ResponsiveSocialSidebar'
@@ -145,8 +146,11 @@ export default function HomePage() {
         {/* Transition: gray → white */}
         <div className="h-16 bg-gradient-to-b from-gray-50 to-white" />
         <FeaturesSection />
-        {/* Transition: light → dark */}
-        <div className="h-24 lg:h-32 bg-gradient-to-b from-white to-[#0F172A]" />
+        {/* Transition: white → gray */}
+        <div className="h-16 bg-gradient-to-b from-white to-gray-50" />
+        <ModalidadesSection />
+        {/* Transition: gray → dark */}
+        <div className="h-24 lg:h-32 bg-gradient-to-b from-gray-50 to-[#0F172A]" />
         <CTASection />
       </main>
       
