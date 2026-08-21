@@ -200,11 +200,11 @@ export default function AulaExperimental() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy flex items-center justify-center p-4">
+      <div className="form-success-page min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white rounded-2xl p-8 max-w-md w-full text-center"
+          className="form-success-card bg-white rounded-2xl p-8 max-w-md w-full text-center"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -247,19 +247,19 @@ export default function AulaExperimental() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy pt-20">
-      <div className="section-padding py-20">
+    <div className="form-page min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy pt-20">
+      <div className="form-page-inner section-padding py-20">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto"
+          className="form-page-content max-w-2xl mx-auto"
         >
-          <div className="text-center mb-12">
+          <div className="form-page-hero text-center mb-12">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6"
+              className="form-page-icon w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6"
             >
               <HiGift className="text-white text-3xl" />
             </motion.div>
@@ -281,7 +281,7 @@ export default function AulaExperimental() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onSubmit={handleSubmit(onSubmit)}
-            className="glass-effect rounded-2xl p-8 backdrop-blur-lg border border-white/10 space-y-6"
+            className="form-card glass-effect rounded-2xl p-8 backdrop-blur-lg border border-white/10 space-y-6"
           >
             <CustomSelect
               label="Qual unidade:"

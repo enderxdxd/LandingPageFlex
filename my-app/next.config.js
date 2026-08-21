@@ -1,12 +1,10 @@
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   images: {
     domains: ['localhost'],
-    formats: ['image/webp', 'image/avif'],
+    formats: ['image/webp'],
+    deviceSizes: [360, 640, 768, 1024, 1280, 1536, 1920],
+    minimumCacheTTL: 2678400,
   },
-  // Adicione estas configurações para mobile
   swcMinify: true,
   poweredByHeader: false,
   reactStrictMode: true,

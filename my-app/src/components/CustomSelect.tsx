@@ -39,7 +39,7 @@ export default function CustomSelect({
   }
 
   return (
-    <div className="relative">
+    <div className="relative custom-select">
       {label && (
         <label className="block text-sm font-medium text-flex-light mb-2">
           {label} {required && '*'}

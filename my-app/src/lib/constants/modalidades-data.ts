@@ -104,7 +104,7 @@ export const modalidadesData: Modalidade[] = [
     category: 'Lutas',
   },
   {
-    name: 'Jiu Jitsu',
+    name: 'Jiu-Jitsu',
     description:
       'Aula baseada nas técnicas do Jiu-Jitsu, com foco em movimentações, posições, quedas e técnicas de luta no solo.',
     category: 'Lutas',

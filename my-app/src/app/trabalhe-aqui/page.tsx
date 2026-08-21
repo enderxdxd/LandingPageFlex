@@ -266,11 +266,11 @@ export default function TrabalheAqui() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy flex items-center justify-center p-4">
+      <div className="form-success-page min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-white rounded-2xl p-8 max-w-md w-full text-center"
+          className="form-success-card bg-white rounded-2xl p-8 max-w-md w-full text-center"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -308,19 +308,19 @@ export default function TrabalheAqui() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy pt-20">
-      <div className="section-padding py-20">
+    <div className="form-page min-h-screen bg-gradient-to-br from-flex-dark to-flex-navy pt-20">
+      <div className="form-page-inner section-padding py-20">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto"
+          className="form-page-content max-w-2xl mx-auto"
         >
-          <div className="text-center mb-12">
+          <div className="form-page-hero text-center mb-12">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6"
+              className="form-page-icon w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6"
             >
               <HiBriefcase className="text-white text-3xl" />
             </motion.div>
@@ -335,7 +335,7 @@ export default function TrabalheAqui() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="glass-effect rounded-2xl p-6 backdrop-blur-lg border border-white/10 mb-8"
+              className="form-info-card glass-effect rounded-2xl p-6 backdrop-blur-lg border border-white/10 mb-8"
             >
               <h3 className="font-semibold text-flex-light mb-3">Por que trabalhar na Flex?</h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm text-flex-light/80">
@@ -364,7 +364,7 @@ export default function TrabalheAqui() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
             onSubmit={handleSubmit(onSubmit)}
-            className="glass-effect rounded-2xl p-8 backdrop-blur-lg border border-white/10 space-y-6"
+            className="form-card glass-effect rounded-2xl p-8 backdrop-blur-lg border border-white/10 space-y-6"
           >
             <div className="grid md:grid-cols-2 gap-4">
               <div>

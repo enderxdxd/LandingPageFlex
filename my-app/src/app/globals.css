@@ -33,7 +33,6 @@
     -moz-osx-font-smoothing: grayscale;
     background: var(--color-white);
     color: var(--color-dark);
-    overflow-x: hidden;
     font-weight: 400;
     line-height: 1.6;
   }
@@ -173,6 +172,1588 @@
       min-height: 100vh;
       padding: 2rem 0;
     }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Flex Fitness Center — redesign tokens (design_handoff_flex_redesign)
+
+   Scoped to `.nocturne`, the wrapper the redesigned routes render inside
+   (home, /unidades/[slug], /horarios). The legacy light pages keep the token
+   block above untouched.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+  --color-stage: #0b0c14;
+  --color-bg: #161826;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
+
+  --color-accent-100: #eff6ff;
+  --color-accent-200: #dbeafe;
+  --color-accent-300: #bfdbfe;
+  --color-accent-400: #93c5fd;
+  --color-accent-500: #60a5fa;
+  --color-accent-600: #3b82f6;
+  --color-accent-700: #2563eb;
+  --color-accent-800: #1d4ed8;
+  --color-accent-900: #1e3a8a;
+
+  --color-neutral-100: #f2f3f7;
+  --color-neutral-200: #dfe1ea;
+  --color-neutral-300: #c8cbd9;
+  --color-neutral-400: #b2b6ca;
+  --color-neutral-500: #9397ab;
+  --color-neutral-600: #75798c;
+  --color-neutral-700: #595d6c;
+  --color-neutral-800: #3f424d;
+  --color-neutral-900: #292b31;
+
+  --color-open-dot: #22c55e;
+  --color-open-text: #4ade80;
+
+  --font-heading: var(--font-barlow-condensed), 'Barlow Condensed', 'Inter', sans-serif;
+  --font-body: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading-weight: 600;
+
+  --edge: clamp(20px, 5vw, 72px);
+  --band: clamp(72px, 9vw, 136px);
+  --content-max: 1440px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 0 0 1px #3f424d;
+  --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
+
+  --ease-arch: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 180ms;
+  --dur-ui: 350ms;
+  --dur-editorial: 600ms;
+}
+
+/* the overscroll gutter and the scrollbar follow the page ground; set by
+   LayoutWrapper so the light routes are unaffected */
+html[data-theme='nocturne'],
+html[data-theme='nocturne'] body {
+  background: var(--color-bg);
+}
+
+html[data-theme='nocturne'] ::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-800);
+}
+html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-700);
+}
+
+/* `scroll-behavior: smooth` on html is set globally above — the pinned chapters
+   read their own rect every frame, so it stays compatible. */
+
+.nocturne {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.nocturne h1,
+.nocturne h2,
+.nocturne h3,
+.nocturne h4 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.nocturne a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.nocturne ::selection {
+  background: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+}
+
+.nocturne :focus-visible {
+  outline: 2px solid var(--color-accent-600);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* — buttons: primary is an accent OUTLINE, never a fill — */
+.nocturne .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  transition: background var(--dur-micro) var(--ease-arch),
+    color var(--dur-micro) var(--ease-arch),
+    border-color var(--dur-micro) var(--ease-arch),
+    transform var(--dur-micro) var(--ease-arch);
+}
+
+/* o conteúdo sobe 1px no hover e volta no clique — sem bounce, sem escala */
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .btn:hover {
+    transform: translateY(-1px);
+  }
+}
+.nocturne .btn:active {
+  transform: translateY(0);
+}
+.nocturne .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.nocturne .btn-primary {
+  color: var(--color-accent-600);
+  border-color: var(--color-accent-600);
+}
+.nocturne .btn-primary:hover {
+  background: color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+}
+.nocturne .btn-primary:active {
+  background: color-mix(in srgb, var(--color-accent-600) 22%, transparent);
+}
+.nocturne .btn-secondary {
+  border-color: var(--color-divider);
+}
+.nocturne .btn-secondary:hover {
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+}
+.nocturne .btn-secondary:active {
+  background: color-mix(in srgb, var(--color-text) 14%, transparent);
+}
+.nocturne .btn-ghost {
+  color: var(--color-accent-600);
+}
+.nocturne .btn-ghost:hover {
+  background: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+}
+.nocturne .btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+}
+.nocturne .btn-block {
+  width: 100%;
+}
+
+.nocturne .schedule-unit-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 76px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  transition: border-color var(--dur-micro) var(--ease-arch),
+    background var(--dur-micro) var(--ease-arch),
+    transform var(--dur-micro) var(--ease-arch);
+}
+.nocturne .schedule-unit-link strong,
+.nocturne .schedule-unit-link small {
+  display: block;
+}
+.nocturne .schedule-unit-link strong {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.nocturne .schedule-unit-link small {
+  margin-top: 6px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+  font-size: 11px;
+}
+.nocturne .schedule-unit-link > span:last-child {
+  color: var(--color-accent-400);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .schedule-unit-link:hover {
+    border-color: var(--color-accent-600);
+    background: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+    transform: translateY(-2px);
+  }
+}
+
+/* — página da grade de coletivas — */
+.nocturne .schedule-page {
+  min-height: 100vh;
+  padding: calc(66px + clamp(34px, 6vw, 82px)) var(--edge) var(--band);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-neutral-900) 58%, transparent) 0%,
+    var(--color-bg) clamp(220px, 34vh, 460px)
+  );
+}
+.nocturne .schedule-page-inner {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.nocturne .schedule-back {
+  padding-left: 0;
+}
+.nocturne .schedule-unit-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0 clamp(42px, 6vw, 76px);
+  padding-bottom: 3px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nocturne .schedule-unit-tabs::-webkit-scrollbar {
+  display: none;
+}
+.nocturne .schedule-unit-tabs .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.nocturne .schedule-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: clamp(34px, 6vw, 92px);
+  align-items: end;
+  margin-bottom: clamp(38px, 5vw, 66px);
+}
+.nocturne .schedule-hero h1 {
+  max-width: 12ch;
+  margin: 0;
+  font-size: clamp(48px, 8vw, 116px);
+  line-height: 0.86;
+}
+.nocturne .schedule-hero > div:first-child > p:last-child {
+  max-width: 60ch;
+  margin: 24px 0 0;
+  color: color-mix(in srgb, var(--color-text) 62%, transparent);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.nocturne .schedule-hero-meta {
+  display: grid;
+  gap: 18px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-divider);
+}
+.nocturne .schedule-hero-meta > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+}
+.nocturne .schedule-hero-meta span {
+  color: color-mix(in srgb, var(--color-text) 48%, transparent);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.nocturne .schedule-hero-meta strong {
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
+}
+.nocturne .schedule-state {
+  display: grid;
+  justify-items: center;
+  min-height: 320px;
+  padding: clamp(38px, 7vw, 86px) var(--edge);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  text-align: center;
+}
+.nocturne .schedule-state h1,
+.nocturne .schedule-state h2 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 52px);
+}
+.nocturne .schedule-state > p:not(.kicker) {
+  max-width: 52ch;
+  margin: 12px 0 24px;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+}
+.nocturne .schedule-spinner {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 24px;
+  border: 2px solid var(--color-divider);
+  border-top-color: var(--color-accent-600);
+  border-radius: 50%;
+  animation: scheduleSpin 0.8s linear infinite;
+}
+@keyframes scheduleSpin {
+  to { transform: rotate(360deg); }
+}
+.nocturne .schedule-type-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  background: var(--color-divider);
+}
+.nocturne .schedule-type-tabs button {
+  display: grid;
+  gap: 4px;
+  min-height: 70px;
+  padding: 12px 18px;
+  border: 0;
+  background: var(--color-bg);
+  color: color-mix(in srgb, var(--color-text) 58%, transparent);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.nocturne .schedule-type-tabs button[aria-selected='true'] {
+  background: color-mix(in srgb, var(--color-accent-600) 12%, var(--color-bg));
+  color: var(--color-accent-300);
+  box-shadow: inset 0 -2px 0 var(--color-accent-600);
+}
+.nocturne .schedule-type-tabs small {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+}
+.nocturne .schedule-viewer {
+  overflow: hidden;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+.nocturne .schedule-viewer-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: clamp(20px, 3vw, 32px);
+  border-bottom: 1px solid var(--color-divider);
+}
+.nocturne .schedule-viewer-header h2 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 38px);
+}
+.nocturne .schedule-viewer-header p:last-child {
+  margin: 8px 0 0;
+  color: color-mix(in srgb, var(--color-text) 52%, transparent);
+  font-size: 12px;
+}
+.nocturne .schedule-viewer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+}
+.nocturne .schedule-pdf-shell {
+  padding: clamp(10px, 2vw, 22px);
+  background: var(--color-bg);
+}
+.nocturne .schedule-pdf-frame {
+  display: block;
+  width: 100%;
+  height: min(76vh, 900px);
+  min-height: 620px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+.nocturne .schedule-notice {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(28px, 5vw, 72px);
+  margin-top: clamp(34px, 5vw, 64px);
+  padding: clamp(24px, 4vw, 44px) 0;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+}
+.nocturne .schedule-notice h2 {
+  margin: 0;
+  font-size: clamp(26px, 3.2vw, 42px);
+}
+.nocturne .schedule-notice ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: color-mix(in srgb, var(--color-text) 66%, transparent);
+  font-size: 14px;
+}
+.nocturne .schedule-notice li::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  margin: 0 10px 4px 0;
+  background: var(--color-accent-600);
+}
+@media (max-width: 760px) {
+  .nocturne .schedule-hero,
+  .nocturne .schedule-notice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .nocturne .schedule-viewer-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .nocturne .schedule-viewer-actions,
+  .nocturne .schedule-viewer-actions .btn {
+    width: 100%;
+  }
+  .nocturne .schedule-pdf-frame {
+    height: 68vh;
+    min-height: 500px;
+  }
+}
+
+/* — the section seam, and the brightness ramp —
+   Sections are separated by tone, not by rules: the same gradient marks the
+   boundary and lifts the ground one step, so the page brightens as it moves
+   from cinematic to practical. Nine elements carry it. */
+.nocturne .section-seam {
+  --seam-lift: 0%;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-neutral-900) 58%, transparent) 0%,
+    color-mix(in srgb, var(--color-neutral-800) var(--seam-lift), transparent)
+      clamp(200px, 30vh, 420px)
+  );
+}
+.nocturne #rede { --seam-lift: 0%; }
+.nocturne #unidades { --seam-lift: 3%; }
+.nocturne #estrutura { --seam-lift: 8%; }
+.nocturne #modalidades { --seam-lift: 11%; }
+.nocturne #equipamento { --seam-lift: 14%; }
+.nocturne #galeria { --seam-lift: 20%; }
+.nocturne #horarios { --seam-lift: 26%; }
+.nocturne #localizacao { --seam-lift: 30%; }
+
+/* the single bridge between the last pinned chapter and the first section */
+.nocturne .stage-bridge {
+  height: clamp(90px, 16vh, 200px);
+  background: linear-gradient(
+    180deg,
+    var(--color-stage) 0%,
+    color-mix(in srgb, var(--color-stage) 50%, var(--color-bg)) 55%,
+    var(--color-bg) 100%
+  );
+}
+
+.nocturne .kicker {
+  margin: 0 0 18px;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-accent-400);
+}
+
+.nocturne .label-sm {
+  margin: 0 0 6px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 45%, transparent);
+}
+
+.nocturne .mono {
+  font-family: var(--font-mono);
+}
+
+/* ── Menu de formulários ─────────────────────────────────────────────────── */
+.nocturne .nav-forms {
+  position: relative;
+}
+
+.nocturne .nav-forms-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 4px;
+  border: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--color-text) 78%, transparent);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.nocturne .nav-forms-trigger svg,
+.nocturne .mobile-forms-trigger svg {
+  transition: transform var(--dur-micro) var(--ease-arch);
+}
+
+.nocturne .nav-forms-trigger[aria-expanded='true'] svg,
+.nocturne .mobile-forms-trigger[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+.nocturne .nav-forms-trigger:hover,
+.nocturne .nav-forms-trigger:focus-visible,
+.nocturne .nav-forms-trigger[aria-expanded='true'] {
+  color: var(--color-accent-300);
+}
+
+.nocturne .nav-forms-panel {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: min(340px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(18px);
+  animation: panelIn var(--dur-micro) var(--ease-arch) both;
+}
+
+.nocturne .nav-forms-panel::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  right: 0;
+  width: 100%;
+  height: 16px;
+}
+
+.nocturne .nav-forms-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 9px;
+  padding: 2px 5px 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 52%, transparent);
+}
+
+.nocturne .nav-forms-list {
+  display: grid;
+  gap: 3px;
+}
+
+.nocturne .nav-form-link,
+.nocturne .mobile-form-link {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  transition: background var(--dur-micro) var(--ease-arch),
+    transform var(--dur-micro) var(--ease-arch);
+}
+
+.nocturne .nav-form-link:hover,
+.nocturne .nav-form-link:focus-visible {
+  background: color-mix(in srgb, var(--color-accent-600) 13%, transparent);
+  transform: translateX(2px);
+}
+
+.nocturne .nav-form-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-accent-600) 13%, var(--color-stage));
+  color: var(--color-accent-300);
+}
+
+.nocturne .nav-form-link strong,
+.nocturne .mobile-form-link strong {
+  display: block;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.nocturne .nav-form-link small,
+.nocturne .mobile-form-link small {
+  display: block;
+  margin-top: 4px;
+  color: color-mix(in srgb, var(--color-text) 53%, transparent);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.nocturne .nav-form-arrow {
+  color: color-mix(in srgb, var(--color-text) 35%, transparent);
+  font-size: 16px;
+}
+
+.nocturne .mobile-forms {
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.nocturne .mobile-forms-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.nocturne .mobile-forms-list {
+  display: grid;
+  gap: 4px;
+  padding: 4px 0 16px;
+}
+
+.nocturne .mobile-form-link {
+  grid-template-columns: 42px minmax(0, 1fr);
+  padding: 9px 4px;
+}
+
+/* ── Páginas de formulários ──────────────────────────────────────────────── */
+.nocturne .form-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 66px !important;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(59, 130, 246, 0.13), transparent 30%),
+    linear-gradient(145deg, var(--color-stage), var(--color-bg) 54%, var(--color-stage)) !important;
+}
+
+.nocturne .form-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.17;
+  background-image:
+    linear-gradient(var(--color-divider) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-divider) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 76%);
+}
+
+.nocturne .form-page-inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--content-max);
+  padding-top: clamp(64px, 9vw, 124px) !important;
+  padding-bottom: clamp(74px, 10vw, 138px) !important;
+}
+
+.nocturne .form-page-content {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(440px, 1fr);
+  align-items: start;
+  gap: clamp(42px, 8vw, 118px);
+  max-width: 1120px !important;
+}
+
+.nocturne .form-page-hero {
+  position: sticky;
+  top: 112px;
+  margin-bottom: 0 !important;
+  text-align: left !important;
+}
+
+.nocturne .form-page-icon {
+  width: 54px !important;
+  height: 54px !important;
+  margin: 0 0 28px !important;
+  border: 1px solid color-mix(in srgb, var(--color-accent-400) 34%, transparent);
+  border-radius: var(--radius-md) !important;
+  background: color-mix(in srgb, var(--color-accent-600) 14%, var(--color-stage)) !important;
+  color: var(--color-accent-300);
+}
+
+.nocturne .form-page-icon svg {
+  color: currentColor !important;
+  font-size: 25px !important;
+}
+
+.nocturne .form-page-hero h1 {
+  max-width: 10ch;
+  margin: 0 0 18px !important;
+  background: none !important;
+  color: var(--color-text) !important;
+  font-size: clamp(46px, 5.8vw, 76px) !important;
+  line-height: 0.92;
+  -webkit-text-fill-color: currentColor;
+}
+
+.nocturne .form-page-hero > p {
+  max-width: 36ch;
+  margin-inline: 0;
+  color: color-mix(in srgb, var(--color-text) 66%, transparent) !important;
+  font-size: 16px !important;
+  line-height: 1.65;
+}
+
+.nocturne .form-info-card {
+  margin-top: 34px;
+  margin-bottom: 0 !important;
+  padding: 20px !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-lg) !important;
+  background: color-mix(in srgb, var(--color-surface) 74%, transparent) !important;
+  text-align: left;
+  box-shadow: none;
+}
+
+.nocturne .form-card {
+  width: 100%;
+  padding: clamp(22px, 4vw, 42px) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-lg) !important;
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent) !important;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(18px);
+}
+
+.nocturne .form-card label,
+.nocturne .form-card h3,
+.nocturne .form-card h4 {
+  color: var(--color-text) !important;
+}
+
+.nocturne .form-card label {
+  letter-spacing: 0.01em;
+}
+
+.nocturne .form-card input:not([type='file']),
+.nocturne .form-card textarea,
+.nocturne .form-card .custom-select > div > button {
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  background: color-mix(in srgb, var(--color-stage) 72%, transparent) !important;
+  color: var(--color-text) !important;
+  box-shadow: none !important;
+  outline: none;
+  transition: border-color var(--dur-micro) var(--ease-arch),
+    background var(--dur-micro) var(--ease-arch);
+}
+
+.nocturne .form-card input:not([type='file']):focus,
+.nocturne .form-card textarea:focus,
+.nocturne .form-card .custom-select > div > button:focus-visible {
+  border-color: var(--color-accent-500) !important;
+  background: color-mix(in srgb, var(--color-stage) 88%, transparent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 17%, transparent) !important;
+}
+
+.nocturne .form-card input::placeholder,
+.nocturne .form-card textarea::placeholder {
+  color: color-mix(in srgb, var(--color-text) 38%, transparent) !important;
+}
+
+.nocturne .form-card input[type='date'] {
+  color-scheme: dark;
+}
+
+.nocturne .form-card input[type='checkbox'] {
+  accent-color: var(--color-accent-600);
+}
+
+.nocturne .form-card .custom-select > div > button span {
+  color: color-mix(in srgb, var(--color-text) 72%, transparent) !important;
+}
+
+.nocturne .form-card .custom-select > div > div.absolute {
+  overflow: hidden;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  background: color-mix(in srgb, var(--color-surface) 98%, transparent) !important;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.32) !important;
+}
+
+.nocturne .form-card .custom-select > div > div.absolute button {
+  color: var(--color-text) !important;
+  background: transparent !important;
+}
+
+.nocturne .form-card .custom-select > div > div.absolute button:hover,
+.nocturne .form-card .custom-select > div > div.absolute button:focus-visible {
+  background: color-mix(in srgb, var(--color-accent-600) 13%, transparent) !important;
+}
+
+.nocturne .form-card label[for='arquivo'],
+.nocturne .form-card label[for='fotos'] {
+  border-color: var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  background: color-mix(in srgb, var(--color-stage) 45%, transparent);
+}
+
+.nocturne .form-card label[for='arquivo']:hover,
+.nocturne .form-card label[for='fotos']:hover {
+  border-color: var(--color-accent-500) !important;
+}
+
+.nocturne .form-card button[type='submit'] {
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--radius-md) !important;
+  background: var(--color-accent-700) !important;
+  color: white !important;
+  font-size: 15px !important;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.nocturne .form-card button[type='submit']:hover:not(:disabled) {
+  background: var(--color-accent-600) !important;
+}
+
+.nocturne .form-success-page {
+  min-height: calc(100vh - 66px);
+  padding: 110px var(--edge) 64px !important;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(59, 130, 246, 0.14), transparent 34%),
+    var(--color-stage) !important;
+}
+
+.nocturne .form-success-card {
+  padding: clamp(26px, 4vw, 42px) !important;
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg) !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.3);
+}
+
+.nocturne .form-success-card h2,
+.nocturne .form-success-card p {
+  color: var(--color-text) !important;
+}
+
+.nocturne .form-success-card > div:last-child button:first-child {
+  border-radius: var(--radius-md) !important;
+  background: var(--color-accent-700) !important;
+}
+
+.nocturne .form-success-card > div:last-child button:last-child {
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md) !important;
+  background: transparent !important;
+  color: var(--color-text) !important;
+}
+
+@media (max-width: 900px) {
+  .nocturne .form-page-content {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 720px !important;
+  }
+
+  .nocturne .form-page-hero {
+    position: static;
+  }
+
+  .nocturne .form-page-hero h1 {
+    max-width: 13ch;
+  }
+}
+
+@media (max-width: 640px) {
+  .nocturne .form-page-inner {
+    padding-top: 48px !important;
+  }
+
+  .nocturne .form-page-content {
+    gap: 34px;
+  }
+
+  .nocturne .form-page-icon {
+    margin-bottom: 22px !important;
+  }
+
+  .nocturne .form-card {
+    padding: 20px 16px !important;
+  }
+}
+
+.nocturne .h-section {
+  margin: 0;
+  font-size: clamp(34px, 4.6vw, 66px);
+  line-height: 0.96;
+}
+
+/* ── Galeria — touch-native horizontal scroller ────────────────────────────────
+   The gallery is driven by native scrolling, not JS. Two things carry the
+   "there is more" signal on touch:
+
+     1. item widths are set so the NEXT figure is always partially visible —
+        a peek reads better than an "arraste" instruction, and it survives
+        every locale;
+     2. a fade at the trailing edge, so the row visibly runs past the frame.
+
+   Snap is `proximity`, not `mandatory`: it tidies a gesture that already
+   landed near an edge instead of fighting a deliberate long flick.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .gallery-rail {
+  position: relative;
+}
+
+.nocturne .gallery-scroller {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--edge);
+  padding: 0 var(--edge);
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.nocturne .gallery-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.nocturne .gallery-item {
+  flex: 0 0 auto;
+  margin: 0;
+  scroll-snap-align: start;
+}
+
+/* aspect + width per slot — deliberately uneven, so the row reads editorial */
+.nocturne .gallery-item[data-shape='wide'] {
+  width: clamp(280px, 44vw, 680px);
+}
+.nocturne .gallery-item[data-shape='tall'] {
+  width: clamp(240px, 30vw, 440px);
+}
+.nocturne .gallery-item[data-shape='portrait'] {
+  width: clamp(240px, 34vw, 520px);
+}
+
+/* On a phone the clamps above would fill the frame edge to edge. Fixed vw
+   widths keep a deliberate slice of the next figure on screen at 360–640px. */
+@media (max-width: 640px) {
+  .nocturne .gallery-item[data-shape='wide'] {
+    width: 78vw;
+  }
+  .nocturne .gallery-item[data-shape='tall'] {
+    width: 62vw;
+  }
+  .nocturne .gallery-item[data-shape='portrait'] {
+    width: 66vw;
+  }
+
+  .nocturne .unit-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .nocturne .unit-photo-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+.nocturne .gallery-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--color-neutral-900);
+}
+.nocturne .gallery-frame img {
+  transition: transform var(--dur-editorial) var(--ease-arch);
+}
+/* A legenda vive ABAIXO da foto e fica sempre visível — inclusive no toque,
+   onde não existe hover para revelá-la. No desktop, o hover só reforça: a foto
+   avança, a legenda ganha contraste e a seta desliza na direção do link. */
+.nocturne .gallery-item figcaption,
+.nocturne .gallery-item .gallery-caption {
+  transition: color var(--dur-ui) var(--ease-arch);
+}
+.nocturne .gallery-arrow {
+  display: inline-block;
+  transition: transform var(--dur-ui) var(--ease-arch),
+    color var(--dur-ui) var(--ease-arch);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .gallery-item a:hover .gallery-frame img {
+    transform: scale(1.04);
+  }
+  .nocturne .gallery-item a:hover .gallery-caption {
+    color: var(--color-text);
+  }
+  .nocturne .gallery-item a:hover .gallery-arrow {
+    transform: translateX(4px);
+    color: var(--color-accent-400);
+  }
+}
+
+/* the trailing-edge fade: the row visibly continues past the frame */
+.nocturne .gallery-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(32px, 6vw, 72px);
+  pointer-events: none;
+}
+.nocturne .gallery-edge[data-side='end'] {
+  right: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-bg) 82%, transparent) 100%
+  );
+}
+
+/* ── Página de unidade: catálogo de aulas + galeria completa ─────────────── */
+.nocturne .unit-classes-section,
+.nocturne .unit-gallery-section {
+  padding: var(--band) var(--edge);
+}
+
+.nocturne .unit-classes-heading,
+.nocturne .unit-gallery-heading {
+  max-width: var(--content-max);
+  margin: 0 auto clamp(30px, 5vw, 64px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.72fr);
+  align-items: end;
+  gap: clamp(28px, 6vw, 96px);
+}
+
+.nocturne .unit-classes-intro {
+  max-width: 600px;
+}
+
+.nocturne .unit-classes-intro p {
+  margin: 0 0 22px;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+  line-height: 1.65;
+}
+
+.nocturne .unit-class-groups,
+.nocturne .unit-gallery-grid,
+.nocturne .unit-gallery-more {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.nocturne .unit-class-group {
+  border-top: 1px solid var(--color-divider);
+}
+
+.nocturne .unit-class-group:last-child {
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.nocturne .unit-class-group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 0;
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(20px, 2.2vw, 30px);
+  line-height: 1.15;
+}
+
+.nocturne .unit-class-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.nocturne .unit-class-total {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-divider);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 56%, transparent);
+}
+
+.nocturne .unit-class-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 0 24px;
+}
+
+.nocturne .unit-class-card {
+  min-width: 0;
+  padding: clamp(18px, 2.5vw, 28px);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-stage) 74%, transparent);
+}
+
+.nocturne .unit-class-card h3 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+
+.nocturne .unit-class-card h3 sup {
+  margin-left: 3px;
+  color: var(--color-accent-300);
+  font-size: 13px;
+}
+
+.nocturne .unit-class-card p {
+  margin: 0;
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+  font-size: 13px;
+  line-height: 1.58;
+}
+
+.nocturne .unit-classes-note {
+  max-width: var(--content-max);
+  margin: 22px auto 0;
+  padding: 16px 18px;
+  border-left: 2px solid var(--color-accent-400);
+  background: color-mix(in srgb, var(--color-accent-600) 8%, transparent);
+  color: color-mix(in srgb, var(--color-text) 64%, transparent);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.nocturne .unit-classes-note strong {
+  color: var(--color-text);
+}
+
+.nocturne .unit-gallery-heading {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.nocturne .unit-gallery-count {
+  margin: 0 0 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+
+.nocturne .unit-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.nocturne .unit-gallery-photo {
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-neutral-900);
+  cursor: zoom-in;
+}
+
+.nocturne .unit-gallery-photo[data-wide='true'] {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+
+.nocturne .unit-gallery-photo img {
+  transition: transform var(--dur-editorial) var(--ease-arch),
+    opacity var(--dur-micro) var(--ease-arch);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .unit-gallery-photo:hover img,
+  .nocturne .unit-gallery-photo:focus-visible img {
+    transform: scale(1.035);
+  }
+}
+
+.nocturne .unit-gallery-more {
+  display: flex;
+  margin-top: 24px;
+}
+
+.nocturne .unit-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 64px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(58px, 7vw, 84px) clamp(12px, 3vw, 40px) 22px;
+  background: rgba(5, 6, 10, 0.96);
+  backdrop-filter: blur(12px);
+}
+
+.nocturne .unit-lightbox-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.nocturne .unit-lightbox-close,
+.nocturne .unit-lightbox-nav {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-text) 26%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-stage) 80%, transparent);
+  color: var(--color-text);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.nocturne .unit-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  z-index: 1;
+}
+
+.nocturne .unit-lightbox-nav[data-direction='previous'] {
+  justify-self: start;
+}
+
+.nocturne .unit-lightbox-nav[data-direction='next'] {
+  justify-self: end;
+}
+
+.nocturne .unit-lightbox-counter {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--color-text) 66%, transparent);
+}
+
+@media (max-width: 900px) {
+  .nocturne .unit-classes-heading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nocturne .unit-class-grid,
+  .nocturne .unit-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .nocturne .unit-gallery-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .nocturne .unit-gallery-photo[data-wide='true'] {
+    grid-column: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .nocturne .unit-class-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nocturne .unit-lightbox {
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    gap: 5px;
+    padding-inline: 7px;
+  }
+
+  .nocturne .unit-lightbox-close,
+  .nocturne .unit-lightbox-nav {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* ── Modalidades ───────────────────────────────────────────────────────────────
+   Rótulo da categoria à esquerda, aulas à direita, separados por um filete —
+   o mesmo vocabulário de "A rede" e da tabela da Estrutura. Empilha embaixo de
+   860px, onde a coluna do rótulo deixaria de caber ao lado.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .modalidade-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(18px, 2.4vw, 28px);
+  align-items: start;
+  padding: clamp(28px, 3.4vw, 46px) 0;
+  border-top: 1px solid var(--color-divider);
+}
+
+.nocturne .modalidade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: clamp(22px, 2.6vw, 40px);
+}
+
+@media (min-width: 860px) {
+  .nocturne .modalidade-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+    gap: clamp(24px, 3vw, 56px);
+  }
+}
+
+@keyframes photoIn {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Reveal: a assinatura única das seções informativas ────────────────────────
+   opacidade + translateY curto, uma curva só, uma vez por sessão. A distância
+   cai em telas compactas — 14px num monitor lê como intenção, num celular lê
+   como a página tremendo.
+
+   Sem `[data-reveal]` o elemento é simplesmente visível: o atributo só aparece
+   depois que o observador montou, então nada fica escondido se o JS falhar.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne [data-reveal] {
+  transition:
+    opacity var(--dur-editorial) var(--ease-arch),
+    transform var(--dur-editorial) var(--ease-arch);
+}
+.nocturne [data-reveal='out'] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.nocturne [data-reveal='in'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .nocturne [data-reveal='out'] {
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne [data-reveal='out'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Accordion por altura animada ──────────────────────────────────────────────
+   `grid-template-rows: 0fr → 1fr` é a única forma de transicionar até `auto`
+   sem medir a altura em JS. O filho precisa de `min-height: 0` e `overflow:
+   hidden`, senão ele se recusa a encolher abaixo do próprio conteúdo.
+
+   `visibility` entra imediatamente na abertura e só sai DEPOIS do fechamento
+   terminar (transition-delay) — assim o conteúdo colapsado sai da ordem de
+   tabulação sem cortar a animação pela metade.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-ui) var(--ease-arch);
+}
+.nocturne .accordion-panel[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+.nocturne .accordion-panel > * {
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear var(--dur-ui);
+}
+.nocturne .accordion-panel[data-open='true'] > * {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ── Crossfade de painel ───────────────────────────────────────────────────────
+   Os dois painéis ocupam a MESMA célula do grid, então a altura da seção é a do
+   maior dos dois durante a troca e nada pula. O que sai desliza 6px para cima,
+   o que entra sobe 8px — deslocamento curto, na vertical, nunca lateral.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .panel-stack {
+  display: grid;
+}
+.nocturne .panel-stack > * {
+  grid-area: 1 / 1;
+}
+
+.nocturne .panel-in {
+  animation: panelIn 420ms var(--ease-arch) both;
+}
+.nocturne .panel-out {
+  animation: panelOut 420ms var(--ease-arch) both;
+  pointer-events: none;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes panelOut {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* a foto da unidade é um link: o chip diz para onde, sem depender de hover */
+.nocturne .open-unit {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-text) 26%, transparent);
+  background: color-mix(in srgb, var(--color-stage) 72%, transparent);
+  backdrop-filter: blur(8px);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  transition: background var(--dur-micro) var(--ease-arch),
+    border-color var(--dur-micro) var(--ease-arch);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nocturne a:hover > .open-unit,
+  .nocturne a:focus-visible > .open-unit {
+    background: color-mix(in srgb, var(--color-accent-600) 26%, var(--color-stage));
+    border-color: var(--color-accent-400);
+  }
+}
+
+@keyframes exploreLine {
+  0% { transform: scaleY(0); transform-origin: top; }
+  45% { transform: scaleY(1); transform-origin: top; }
+  55% { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* O ponto de status NÃO pulsa continuamente: um pulso permanente lê como
+   alerta ou notificação pendente. Ele dá um único flash quando o estado de
+   fato muda — a informação é a mudança, não a repetição. */
+@keyframes statusFlash {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 currentColor;
+  }
+  40% {
+    transform: scale(1.5);
+    box-shadow: 0 0 0 4px transparent;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ── Link da navegação ─────────────────────────────────────────────────────────
+   Uma barra de 2px que cresce a partir da esquerda, em vez de um retângulo de
+   fundo que acende inteiro. O preenchimento fica bem mais sutil e a barra é
+   que carrega o estado ativo.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .nav-link {
+  position: relative;
+  font-size: 13px;
+  padding: 7px 11px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+  transition: color var(--dur-micro) var(--ease-arch),
+    background var(--dur-micro) var(--ease-arch);
+}
+.nocturne .nav-link::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 2px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-accent-600);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-ui) var(--ease-arch);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .nav-link:hover {
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-text) 4%, transparent);
+  }
+  .nocturne .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+}
+.nocturne .nav-link[aria-current='true'] {
+  color: var(--color-accent-300);
+  background: color-mix(in srgb, var(--color-accent-600) 7%, transparent);
+}
+.nocturne .nav-link[aria-current='true']::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nocturne *,
+  .nocturne *::before,
+  .nocturne *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .nocturne .gallery-scroller {
+    scroll-snap-type: none;
   }
 }
 

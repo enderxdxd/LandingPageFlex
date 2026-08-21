@@ -36,7 +36,7 @@ export default function ConceptSection() {
             {...fadeUp}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            30 anos formando a maior rede de academias de Goiânia.
+            Desde 1991, construindo uma história no mercado fitness em Goiânia.
             4 unidades, cada uma com identidade própria.
           </motion.p>
         </div>

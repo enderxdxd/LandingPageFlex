@@ -1,11 +1,7 @@
 // src/app/unidades/[slug]/page.tsx
 import { notFound } from 'next/navigation'
 import { getUnitBySlug } from '@/lib/constants/units-data'
-import dynamic from 'next/dynamic'
-
-const UnitPageClient = dynamic(() => import('./UnitPageClient'), {
-  ssr: false
-})
+import UnitPageClient from './UnitPageClient'
 
 interface UnitPageProps {
   params: {
