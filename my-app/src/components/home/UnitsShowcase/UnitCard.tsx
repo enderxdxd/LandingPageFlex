@@ -26,6 +26,8 @@ interface Unit {
   specialFeatures?: string[]
   images: string[]
   heroImage: string
+  /** o perfil da rede, que vem de `social.ts` via units-data */
+  instagram: string
   heroVideo?: string
   comingSoon?: boolean
   hasPool?: boolean
@@ -125,7 +127,7 @@ const OptimizedUnitCard = React.memo(function OptimizedUnitCard({
     e.preventDefault()
     e.stopPropagation()
     triggerHaptic('medium')
-    window.open('https://www.instagram.com/flexfitnesscenter/', '_blank', 'noopener,noreferrer')
+    window.open(unit.instagram, '_blank', 'noopener,noreferrer')
   }, [triggerHaptic])
 
   const handleWhatsAppClick = useCallback((e: React.MouseEvent) => {

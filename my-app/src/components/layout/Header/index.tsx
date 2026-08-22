@@ -32,6 +32,7 @@ import {
   getHeaderSolidServer,
   subscribeHeaderSolid,
 } from '@/lib/home/header-state'
+import SocialLinks from '@/components/shared/SocialLinks'
 
 /**
  * `desktop: false` só aparece no drawer, onde há altura de sobra. A linha do
@@ -610,6 +611,13 @@ export default function Header() {
               >
                 Fale com a FLEX
               </a>
+
+              {/* as redes ficam abaixo do CTA: quem abriu o menu para procurar
+                  o perfil acha aqui, sem disputar com a ação principal */}
+              <SocialLinks
+                label="Redes sociais da Flex"
+                style={{ marginTop: 12, justifyContent: 'center' }}
+              />
             </div>
           </aside>
         </>

@@ -1542,6 +1542,54 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   }
 }
 
+/* ── Redes sociais ─────────────────────────────────────────────────────────────
+   O alvo tem 44px mesmo com um glifo de 18px: no toque, o que vale é a área,
+   não o desenho. A borda é o mesmo filete das outras superfícies.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider);
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+  transition: color var(--dur-micro) var(--ease-arch),
+    border-color var(--dur-micro) var(--ease-arch),
+    background var(--dur-micro) var(--ease-arch),
+    transform var(--dur-micro) var(--ease-arch);
+}
+
+.nocturne .social-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px 8px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-divider);
+  font-size: 13px;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+  transition: color var(--dur-micro) var(--ease-arch),
+    border-color var(--dur-micro) var(--ease-arch),
+    background var(--dur-micro) var(--ease-arch),
+    transform var(--dur-micro) var(--ease-arch);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .social-icon:hover,
+  .nocturne .social-inline:hover {
+    color: var(--color-accent-300);
+    border-color: color-mix(in srgb, var(--color-accent-600) 55%, transparent);
+    background: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+    transform: translateY(-1px);
+  }
+}
+.nocturne .social-icon:active,
+.nocturne .social-inline:active {
+  transform: translateY(0);
+}
+
 /* ── Reveal: a assinatura única das seções informativas ────────────────────────
    opacidade + translateY curto, uma curva só, uma vez por sessão. A distância
    cai em telas compactas — 14px num monitor lê como intenção, num celular lê

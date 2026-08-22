@@ -1,4 +1,12 @@
 // src/lib/constants/units-data.ts
+import { SOCIAL_LINKS } from './social'
+
+/**
+ * O perfil é o mesmo da rede inteira — as quatro unidades apontam para ele.
+ * Sai de `social.ts` para não existirem cinco cópias da mesma URL no repo.
+ */
+const INSTAGRAM = SOCIAL_LINKS.find(link => link.id === 'instagram')!.href
+
 export interface Unit {
   id: string
   slug: string
@@ -108,7 +116,7 @@ export const unitsData: Unit[] = [
       '/images/optimized/alphaville-musculacao.webp',
       '/images/optimized/alphaville-recepcao.webp'
     ],
-    instagram: 'https://www.instagram.com/flexfitnesscenter/',
+    instagram: INSTAGRAM,
     hasPool: false,
     hasCrossfit: true,
     area: '3.500 m²',
@@ -182,7 +190,7 @@ export const unitsData: Unit[] = [
       '/images/optimized/buenavista-156.webp',
       '/images/optimized/buenavista-006.webp'
     ],
-    instagram: 'https://www.instagram.com/flexfitnesscenter/',
+    instagram: INSTAGRAM,
     area: '2.550 m²',
     parking: '100+ vagas',
     accessibility: true,
@@ -264,7 +272,7 @@ export const unitsData: Unit[] = [
       '/images/optimized/marista-030.webp',
       '/images/optimized/marista-hero.webp'
     ],
-    instagram: 'https://www.instagram.com/flexfitnesscenter/',
+    instagram: INSTAGRAM,
     area: '2.600 m²',
     parking: '150+',
     accessibility: true,
@@ -339,7 +347,7 @@ export const unitsData: Unit[] = [
       '/images/optimized/palmas-08.webp',
       '/images/optimized/palmas-hero.webp'
     ],
-    instagram: 'https://www.instagram.com/flexfitnesscenter/',
+    instagram: INSTAGRAM,
     hasPool: true,
     // não estava nos dados fornecidos pelo cliente — não inventar um número
     area: 'A confirmar',

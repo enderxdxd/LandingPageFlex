@@ -15,9 +15,9 @@ import Link from 'next/link'
 import { unitsData, unitMapUrl, unitWhatsAppUrl } from '@/lib/constants/units-data'
 import PhotoCrossfade from '@/components/shared/PhotoCrossfade'
 import Reveal from '@/components/shared/Reveal'
+import SocialLinks from '@/components/shared/SocialLinks'
 
 const EMAIL = 'contato@flexacademia.com.br'
-const INSTAGRAM = 'https://www.instagram.com/flexfitnesscenter/'
 const FRAME_SIZES = '(max-width: 820px) 100vw, 46vw'
 
 export default function Localizacao() {
@@ -231,15 +231,9 @@ export default function Localizacao() {
               >
                 Falar no WhatsApp
               </a>
-              <a
-                className="btn btn-ghost"
-                href={INSTAGRAM}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ padding: '11px 16px' }}
-              >
-                Instagram
-              </a>
+              {/* as redes ficam como ícones ao lado das duas ações de ir até a
+                  unidade — presentes, mas sem competir com "Como chegar" */}
+              <SocialLinks label={`Redes sociais da Flex — unidade ${unit.name}`} />
             </div>
           </div>
         </Reveal>

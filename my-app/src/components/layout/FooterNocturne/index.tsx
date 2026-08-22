@@ -10,6 +10,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getUnitBySlug } from '@/lib/constants/units-data'
 import { FOUNDED_YEAR, yearsInBusiness } from '@/lib/home/brand'
+import SocialLinks from '@/components/shared/SocialLinks'
 
 const LEGAL = [
   { href: '/procedimentos', label: 'Procedimentos' },
@@ -80,26 +81,33 @@ export default function FooterNocturne() {
           </p>
         </div>
 
-        <nav
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-          }}
-        >
-          {LEGAL.map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              style={{
-                fontSize: 13,
-                color: 'color-mix(in srgb, var(--color-text) 68%, transparent)',
-              }}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(24px,3vw,34px)' }}>
+          <nav
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+            }}
+          >
+            {LEGAL.map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                style={{
+                  fontSize: 13,
+                  color: 'color-mix(in srgb, var(--color-text) 68%, transparent)',
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div>
+            <p className="label-sm">Siga a FLEX</p>
+            <SocialLinks variant="inline" label="Redes sociais da Flex Fitness Center" />
+          </div>
+        </div>
       </div>
     </footer>
   )
