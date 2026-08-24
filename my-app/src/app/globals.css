@@ -86,8 +86,12 @@
     @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
   }
 
+  /* Texto em degradê é decoração: a ênfase vem de cor sólida, peso e tamanho.
+     Corrigido na própria classe para valer nos 17 arquivos que a usam de uma
+     vez, em vez de find-replace arquivo a arquivo. */
   .gradient-text {
-    @apply bg-gradient-to-r from-flex-primary to-flex-secondary bg-clip-text text-transparent;
+    color: var(--color-secondary);
+    font-weight: 700;
   }
 
   .gradient-bg {
@@ -106,7 +110,8 @@
   .animate-on-scroll {
     opacity: 0;
     transform: translateY(40px);
-    transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .animate-on-scroll.animate {
@@ -143,7 +148,7 @@
   .hero-content {
     transform: translateY(0);
     opacity: 1;
-    transition: all 0.3s ease-out;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   }
 
   .animate-element {
@@ -237,6 +242,19 @@
 
 /* the overscroll gutter and the scrollbar follow the page ground; set by
    LayoutWrapper so the light routes are unaffected */
+html[data-theme='nocturne'] {
+  /* faz o navegador pintar barra de rolagem, campos nativos e controles de
+     formulário no esquema escuro — sem isto o scrollbar sai claro sobre a
+     página escura no Windows e no Chrome */
+  color-scheme: dark;
+
+  /* O header é fixo com 66px. Sem isto, TODO salto de âncora do menu
+     (#unidades, #estrutura, #modalidades, #galeria, #horarios…) para com o
+     título da seção escondido atrás dele. Uma regra no html cobre todas as
+     âncoras de uma vez — melhor que scroll-margin-top em cada seção. */
+  scroll-padding-top: calc(66px + clamp(12px, 2vh, 28px));
+}
+
 html[data-theme='nocturne'],
 html[data-theme='nocturne'] body {
   background: var(--color-bg);
@@ -278,6 +296,16 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 .nocturne a {
   color: inherit;
   text-decoration: none;
+}
+
+/* mata o atraso de ~300ms do duplo-toque em tudo que é clicável, e evita o
+   flash cinza padrão do Android por cima dos nossos próprios estados */
+.nocturne a,
+.nocturne button,
+.nocturne [role='button'],
+.nocturne summary {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nocturne ::selection {
@@ -859,18 +887,9 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
     linear-gradient(145deg, var(--color-stage), var(--color-bg) 54%, var(--color-stage)) !important;
 }
 
-.nocturne .form-page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.17;
-  background-image:
-    linear-gradient(var(--color-divider) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-divider) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: linear-gradient(to bottom, black, transparent 76%);
-}
+/* A malha decorativa saiu: grade atrás de um formulário não mede nada — era a
+   linguagem de planta baixa da abertura copiada como enfeite. O fundo do
+   formulário é superfície lisa; a estrutura vem dos campos. */
 
 .nocturne .form-page-inner {
   position: relative;
@@ -1513,24 +1532,42 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
    ──────────────────────────────────────────────────────────────────────────── */
 .nocturne .modalidade-row {
   display: grid;
-  grid-template-columns: 1fr;
   gap: clamp(18px, 2.4vw, 28px);
-  align-items: start;
   padding: clamp(28px, 3.4vw, 46px) 0;
   border-top: 1px solid var(--color-divider);
 }
 
-.nocturne .modalidade-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-  gap: clamp(22px, 2.6vw, 40px);
+/* a categoria atravessa a largura toda com um filete que preenche o resto da
+   linha — a contagem fecha a régua do lado direito */
+.nocturne .modalidade-categoria {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0;
+  font-size: clamp(20px, 2vw, 28px);
+  letter-spacing: 0.02em;
+}
+.nocturne .modalidade-categoria::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-divider);
+}
+.nocturne .modalidade-categoria > span {
+  flex-shrink: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--color-text) 42%, transparent);
 }
 
-@media (min-width: 860px) {
-  .nocturne .modalidade-row {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
-    gap: clamp(24px, 3vw, 56px);
-  }
+.nocturne .modalidade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: clamp(22px, 2.4vw, 36px);
 }
 
 @keyframes photoIn {

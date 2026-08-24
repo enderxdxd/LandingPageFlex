@@ -157,7 +157,6 @@ export default function Unidades() {
           padding: '0 var(--edge) 40px',
         }}
       >
-        <p className="kicker">Unidades</p>
         <div
           style={{
             display: 'flex',

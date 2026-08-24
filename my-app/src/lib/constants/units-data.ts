@@ -77,6 +77,7 @@ export const unitsData: Unit[] = [
       'Wi-Fi Liberado',
       'Ar Condicionado',
       'Área de Alongamento',
+      'Espaço Kids Monitorado',
       'Loja de Suplementos'
     ],
     specialFeatures: [
@@ -120,7 +121,7 @@ export const unitsData: Unit[] = [
     hasPool: false,
     hasCrossfit: true,
     area: '3.500 m²',
-    parking: '80+ vagas',
+    parking: '+180 vagas',
     accessibility: true,
     landmark: 'Próximo ao AlphaPark Hotel',
     coordinates: {
@@ -154,6 +155,7 @@ export const unitsData: Unit[] = [
       'Wi-Fi Liberado',
       'Ar Condicionado',
       'Área de Alongamento',
+      'Espaço Kids Monitorado',
       'Loja de Suplementos',
   
     ],
@@ -192,7 +194,7 @@ export const unitsData: Unit[] = [
     ],
     instagram: INSTAGRAM,
     area: '2.550 m²',
-    parking: '100+ vagas',
+    parking: '+180 vagas',
     accessibility: true,
     landmark: 'Dentro do Shopping Buena-Vista',
     coordinates: {
@@ -226,11 +228,9 @@ export const unitsData: Unit[] = [
       'Wi-Fi Liberado',
       'Ar Condicionado',
       'Área de Alongamento',
-      'Loja de Suplementos',
-      'Kids Space'
+      'Espaço Kids Monitorado',
     ],
     specialFeatures: [
-      'Espaço Kids Monitorado',
       'Aulas para Terceira Idade',
       'Horários Flexíveis'
     ],
@@ -274,7 +274,7 @@ export const unitsData: Unit[] = [
     ],
     instagram: INSTAGRAM,
     area: '2.600 m²',
-    parking: '150+',
+    parking: '+180 vagas',
     accessibility: true,
     landmark: 'Dentro do ASSAÍ ATACADISTA',
     coordinates: {
@@ -308,7 +308,7 @@ export const unitsData: Unit[] = [
       'Wi-Fi Liberado',
       'Ar Condicionado',
       'Área de Alongamento',
-      'Loja de Suplementos',
+      'Espaço Kids Monitorado',
       'Piscina Semi-olímpica'
     ],
     specialFeatures: [
@@ -349,9 +349,8 @@ export const unitsData: Unit[] = [
     ],
     instagram: INSTAGRAM,
     hasPool: true,
-    // não estava nos dados fornecidos pelo cliente — não inventar um número
-    area: 'A confirmar',
-    parking: '100 vagas',
+    area: '3.498 m²',
+    parking: '+180 vagas',
     accessibility: true,
     landmark: 'Q. 206 Sul — Arse',
     coordinates: {

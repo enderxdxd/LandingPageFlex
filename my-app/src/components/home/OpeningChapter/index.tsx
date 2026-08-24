@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { CONTACT_WHATSAPP_URL } from '@/lib/constants/contact'
+import { unitsData } from '@/lib/constants/units-data'
 import { yearsInBusiness } from '@/lib/home/brand'
 import { useCompact, useNarrow, usePrefersReducedMotion } from '@/hooks/useCompact'
 import { setHeaderSolid } from '@/lib/home/header-state'
@@ -32,34 +33,30 @@ import {
 const LOGO = '/images/units/alphaville/flex-logo-outline.png'
 const ROOM = '/images/optimized/alphaville-wide.webp'
 
-/** As quatro anotações arquitetônicas, na caixa da planta. */
-const LABELS = [
-  { text: 'Área de treino', side: 'left' as const, style: { left: '6%', top: '18%' } },
-  { text: 'Musculação', side: 'right' as const, style: { right: '7%', top: '33%' } },
-  { text: 'Cardio', side: 'left' as const, style: { left: '13%', bottom: '24%' } },
-  { text: 'Funcional', side: 'right' as const, style: { right: '15%', bottom: '13%' } },
-]
+/**
+ * A prancha: as quatro unidades desenhadas sob a linha de referência, cada uma
+ * com largura PROPORCIONAL à área real. Não é decoração — é a rede medida, e o
+ * número de cada uma sai de `units-data`, não daqui.
+ */
+const PLATES = unitsData.map(u => ({
+  slug: u.slug,
+  name: u.name,
+  area: u.area,
+  m2: Number(u.area.replace(/[^0-9]/g, '')),
+}))
 
-const monoLabel: React.CSSProperties = {
-  fontFamily: 'var(--font-mono)',
-  fontSize: 10,
-  letterSpacing: '.18em',
-  textTransform: 'uppercase',
-  color: 'color-mix(in srgb, var(--color-text) 62%, transparent)',
-}
+const TOTAL_M2 = PLATES.reduce((sum, plate) => sum + plate.m2, 0)
+
+/** Largura de cada prancha como fração da folha. */
+const share = (m2: number) => m2 / TOTAL_M2
 
 export default function OpeningChapter() {
   const wrapRef = useRef<HTMLDivElement>(null)
 
   const rigInnerRef = useRef<HTMLDivElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
-  const planRef = useRef<HTMLDivElement>(null)
-  const plLRef = useRef<HTMLDivElement>(null)
-  const plRRef = useRef<HTMLDivElement>(null)
-  const plBRef = useRef<HTMLDivElement>(null)
-  const plDepthRef = useRef<HTMLDivElement>(null)
-  const plDimRef = useRef<HTMLDivElement>(null)
-  const labelRefs = useRef<(HTMLDivElement | null)[]>([])
+  const sheetRef = useRef<HTMLDivElement>(null)
+  const plateRefs = useRef<(HTMLDivElement | null)[]>([])
   const roomRef = useRef<HTMLDivElement>(null)
   const roomImgRef = useRef<HTMLDivElement>(null)
   const glowRef = useRef<HTMLDivElement>(null)
@@ -77,13 +74,13 @@ export default function OpeningChapter() {
     const logo = logoRef.current
     const bar = barRef.current
     const rigInner = rigInnerRef.current
-    const plan = planRef.current
+    const sheet = sheetRef.current
     const room = roomRef.current
     const roomImg = roomImgRef.current
     const scrim = scrimRef.current
     const area = areaRef.current
     const hint = hintRef.current
-    if (!logo || !bar || !rigInner || !plan || !room || !roomImg || !scrim || !area) return
+    if (!logo || !bar || !rigInner || !sheet || !room || !roomImg || !scrim || !area) return
 
     /* ── CENA 1 · 0.00–0.12 — a identidade, sozinha em cena ─────────────────
        Respiração mínima (1 → 1.015) e saída. A escala de 1.03 competia com o
@@ -115,39 +112,49 @@ export default function OpeningChapter() {
     const tilt = ease(seg(p, 0.3, 0.46))
     const drift = seg(p, 0.62, 0.72)
     const flat = ease(seg(p, 0.7, 0.79))
-    const rigScale = lerp(lerp(1, 1.05, drift), 1, flat)
-    const rotY = lerp(0, -9, tilt) * (1 - flat)
-    const rotX = lerp(0, 4, tilt) * (1 - flat)
+    const rigScale = lerp(lerp(1, 1.04, drift), 1, flat)
+    // sem rotação: uma planta se lê de frente. Os 9° de antes faziam o
+    // retângulo ler como tampa de notebook aberta, não como desenho técnico.
+    const rotY = 0
+    const rotX = 0
     const sag = ease(seg(p, 0.56, 0.7)) * (1 - flat)
     const arrival = impact(seg(p, 0.5, 0.58)) * 0.05
     rigInner.style.transform = `translate3d(0, ${lerp(0, 0.8, sag) + arrival}vh, 0) rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${lerp(0, 0.35, sag)}deg) scale(${rigScale})`
 
-    /* ── CENA 3 · 0.28–0.50 — a linha dobra nas pontas e fecha um volume ────
-       Laterais e base em sequência curta: a forma fica inequívoca ANTES de
-       receber qualquer dado. */
-    if (plLRef.current) plLRef.current.style.transform = `scaleY(${ease(seg(p, 0.29, 0.39))})`
-    if (plRRef.current) plRRef.current.style.transform = `scaleY(${ease(seg(p, 0.32, 0.42))})`
-    if (plBRef.current) plBRef.current.style.transform = `scaleX(${ease(seg(p, 0.4, 0.5))})`
-
-    /* ── CENA 4 · 0.47–0.70 — anotações e, por último, a medida ─────────────
-       As labels entram em ordem espacial e a última só chega depois da base da
-       planta estar concluída (0.50). Leitura de projeto, não chuva de dados. */
-    const lbGone = clamp01(seg(p, 0.7, 0.78))
-    labelRefs.current.forEach((el, i) => {
+    /* ── CENA 3 · 0.28–0.66 — a rede é desenhada, unidade por unidade ──────
+       Cada prancha desce da linha de referência e fecha, da maior para a
+       menor, e só então recebe nome e cota. Onde antes havia UM retângulo
+       parado por duas telas, agora há quatro eventos legíveis em sequência. */
+    const PLATE_SPAN = 0.085
+    plateRefs.current.forEach((el, i) => {
       if (!el) return
-      el.style.opacity = String(
-        clamp01(seg(p, 0.47 + i * 0.05, 0.53 + i * 0.05)) * (1 - lbGone)
-      )
+      const from = 0.28 + i * PLATE_SPAN
+      const draw = ease(clamp01(seg(p, from, from + 0.07)))
+      const legend = clamp01(seg(p, from + 0.05, from + 0.1))
+
+      el.style.opacity = String(clamp01(seg(p, from, from + 0.03)))
+
+      const [l, r, b] = [
+        el.querySelector('[data-edge="l"]') as HTMLElement | null,
+        el.querySelector('[data-edge="r"]') as HTMLElement | null,
+        el.querySelector('[data-edge="b"]') as HTMLElement | null,
+      ]
+      if (l) l.style.transform = `scaleY(${draw})`
+      if (r) r.style.transform = `scaleY(${ease(clamp01(seg(p, from + 0.012, from + 0.082)))})`
+      if (b) b.style.transform = `scaleX(${ease(clamp01(seg(p, from + 0.03, from + 0.095)))})`
+
+      const caption = el.lastElementChild as HTMLElement | null
+      if (caption) caption.style.opacity = String(legend)
     })
 
-    let depth = clamp01(seg(p, 0.52, 0.62)) * 0.9
-    // a cota é o último elemento da cena 4 — a medida fecha a leitura
-    if (plDimRef.current) {
-      plDimRef.current.style.opacity = String(
-        clamp01(seg(p, 0.61, 0.69)) * (1 - clamp01(seg(p, 0.92, 0.98)))
-      )
-    }
-    const areaIn = ease(clamp01(seg(p, 0.63, 0.73)))
+    /* ── CENA 4 · 0.66–0.80 — a folha resolve ──────────────────────────────
+       As quatro pranchas recuam e a folha inteira cede o palco à fotografia. */
+    const sheetGone = ease(clamp01(seg(p, 0.7, 0.82)))
+    sheet.style.opacity = String(1 - sheetGone)
+    sheet.style.transform = `translate(-50%,0) translate3d(0, ${lerp(0, -3, sheetGone)}vh, 0) scale(${lerp(1, 1.04, sheetGone)})`
+
+    // o total da rede é a soma das quatro cotas — nada digitado à mão
+    const areaIn = ease(clamp01(seg(p, 0.6, 0.72)))
     area.style.opacity = String(areaIn * (1 - clamp01(seg(p, 0.88, 0.96))))
     area.style.transform = `translate3d(0, ${lerp(18, 0, areaIn)}px, 0)`
 
@@ -155,13 +162,12 @@ export default function OpeningChapter() {
        A fotografia é uma camada de viewport inteiro que só é RECORTADA, nunca
        ampliada — assim permanece em resolução nativa enquanto o corte abre. */
     const open = ease(clamp01(seg(p, 0.8, 1)))
-    const planH = Math.min(window.innerWidth * 0.26, window.innerHeight * 0.52)
+    const planH = Math.max(Math.min(window.innerWidth * 0.26, window.innerHeight * 0.52), 200)
     const hPct = (planH / window.innerHeight) * 100
     const clip = `inset(${lerp(50, 0, open)}% ${lerp(27, 0, open)}% ${lerp(Math.max(0, 50 - hPct), 0, open)}% ${lerp(27, 0, open)}%)`
     room.style.opacity = String(clamp01(seg(p, 0.8, 0.87)))
     room.style.clipPath = clip
     roomImg.style.transform = `scale(${lerp(1.04, 1, open)})`
-    plan.style.transform = `translate(-50%,0) translate3d(0, ${lerp(0, -6, open)}%, 0) scale(${lerp(1, 1.05, open)})`
 
     /* o fio de luz que acompanha a borda do recorte: o espaço é REVELADO por
        uma leitura arquitetônica, não por um wipe genérico. Sobe e sai dentro
@@ -170,14 +176,6 @@ export default function OpeningChapter() {
       glowRef.current.style.clipPath = clip
       glowRef.current.style.opacity = String(Math.sin(seg(p, 0.8, 0.97) * Math.PI))
     }
-
-    const shed = clamp01(seg(p, 0.84, 0.94))
-    const lineOpacity = String(1 - shed)
-    if (plLRef.current) plLRef.current.style.opacity = lineOpacity
-    if (plRRef.current) plRRef.current.style.opacity = lineOpacity
-    if (plBRef.current) plBRef.current.style.opacity = lineOpacity
-    depth *= 1 - shed
-    if (plDepthRef.current) plDepthRef.current.style.opacity = String(depth)
 
     scrim.style.opacity = String(
       lerp(0.32, 0.86, clamp01(seg(p, 0.14, 0.62))) * (1 - clamp01(seg(p, 0.86, 1)))
@@ -256,96 +254,115 @@ export default function OpeningChapter() {
               }}
             />
 
-            {/* a planta desenhada: a barra É sua aresta superior */}
+            {/* ── A PRANCHA ────────────────────────────────────────────────
+                Quatro unidades desenhadas sob a linha de referência, cada uma
+                com largura proporcional à ÁREA REAL. Substitui o retângulo
+                único que ocupava duas telas de rolagem sem dizer nada. */}
             <div
-              ref={planRef}
+              ref={sheetRef}
               style={{
                 position: 'absolute',
                 left: 0,
                 top: 0,
-                width: '46vw',
-                height: 'min(26vw, 52vh)',
+                width: 'max(74vw, 330px)',
+                height: 'max(min(24vw, 42vh), 168px)',
                 transform: 'translate(-50%,0)',
-                transformStyle: 'preserve-3d',
-                willChange: 'transform',
+                display: 'flex',
+                alignItems: 'stretch',
+                gap: 'clamp(6px,0.7vw,12px)',
+                willChange: 'transform, opacity',
               }}
             >
-              <div
-                ref={plDepthRef}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  border: '1px solid rgba(233,233,237,.16)',
-                  transform: 'translateZ(-70px) translate(3%, 4%)',
-                  opacity: 0,
-                }}
-              />
-              <div
-                ref={plLRef}
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 2,
-                  background: 'linear-gradient(180deg,#7c8496,#2b2f3c)',
-                  transformOrigin: 'top',
-                  transform: 'scaleY(0)',
-                }}
-              />
-              <div
-                ref={plRRef}
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: 2,
-                  background: 'linear-gradient(180deg,#7c8496,#2b2f3c)',
-                  transformOrigin: 'top',
-                  transform: 'scaleY(0)',
-                }}
-              />
-              <div
-                ref={plBRef}
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 2,
-                  background: 'linear-gradient(90deg,#2b2f3c,#7c8496)',
-                  transformOrigin: 'left',
-                  transform: 'scaleX(0)',
-                }}
-              />
-              {/* a cota vive DENTRO da caixa da planta: a 34px abaixo dela
-                  cai fora do overflow:hidden em qualquer palco baixo e largo */}
-              <div
-                ref={plDimRef}
-                style={{
-                  position: 'absolute',
-                  left: 10,
-                  bottom: 10,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  opacity: 0,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <span style={{ width: 22, height: 1, background: 'var(--color-accent-600)' }} />
-                <span
+              {PLATES.map((plate, i) => (
+                <div
+                  key={plate.slug}
+                  ref={el => {
+                    plateRefs.current[i] = el
+                  }}
                   style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: 11,
-                    letterSpacing: '.14em',
-                    color: 'color-mix(in srgb, var(--color-text) 70%, transparent)',
+                    position: 'relative',
+                    flex: `${share(plate.m2)} 1 0%`,
+                    opacity: 0,
+                    willChange: 'opacity, transform',
                   }}
                 >
-                  3.500 M<sup style={{ fontSize: 8 }}>2</sup>&nbsp;&nbsp;ALPHAVILLE
-                </span>
-              </div>
+                  {/* as três arestas: a de cima é a própria linha de referência */}
+                  <span
+                    data-edge="l"
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 2,
+                      background: 'linear-gradient(180deg,#aab3c6,#5a6274)',
+                      transformOrigin: 'top',
+                    }}
+                  />
+                  <span
+                    data-edge="r"
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: 2,
+                      background: 'linear-gradient(180deg,#aab3c6,#5a6274)',
+                      transformOrigin: 'top',
+                    }}
+                  />
+                  <span
+                    data-edge="b"
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      height: 2,
+                      background: 'linear-gradient(90deg,#5a6274,#aab3c6)',
+                      transformOrigin: 'left',
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: 10,
+                      right: 10,
+                      bottom: 12,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 4,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'clamp(9px,0.78vw,11px)',
+                        letterSpacing: '.14em',
+                        textTransform: 'uppercase',
+                        color: 'var(--color-accent-400)',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {plate.name}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: 'clamp(9px,0.78vw,11px)',
+                        letterSpacing: '.1em',
+                        fontVariantNumeric: 'tabular-nums',
+                        color: 'color-mix(in srgb, var(--color-text) 72%, transparent)',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {plate.area}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -468,46 +485,6 @@ export default function OpeningChapter() {
           </div>
         </div>
 
-        {/* 02 · as anotações. Mesma caixa da planta, mas FORA do rig 3D,
-            para que a tipografia continue nítida. */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            width: '46vw',
-            height: 'min(26vw, 52vh)',
-            transform: 'translateX(-50%)',
-            pointerEvents: 'none',
-          }}
-        >
-          {LABELS.map((label, i) => (
-            <div
-              key={label.text}
-              ref={el => {
-                labelRefs.current[i] = el
-              }}
-              style={{
-                position: 'absolute',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 7,
-                opacity: 0,
-                whiteSpace: 'nowrap',
-                willChange: 'opacity',
-                ...label.style,
-              }}
-            >
-              {label.side === 'left' && (
-                <span style={{ width: 14, height: 1, background: 'var(--color-accent-600)' }} />
-              )}
-              <span style={monoLabel}>{label.text}</span>
-              {label.side === 'right' && (
-                <span style={{ width: 14, height: 1, background: 'var(--color-accent-600)' }} />
-              )}
-            </div>
-          ))}
-        </div>
 
         {/* 03 · a medida a que a arquitetura chega */}
         <div
@@ -516,7 +493,7 @@ export default function OpeningChapter() {
             position: 'absolute',
             left: 'var(--edge)',
             bottom: 'clamp(24px,9vh,88px)',
-            maxWidth: 'min(30ch, 66vw)',
+            maxWidth: 'min(34ch, 74vw)',
             opacity: 0,
             willChange: 'transform, opacity',
           }}
@@ -526,12 +503,12 @@ export default function OpeningChapter() {
               margin: '0 0 4px',
               fontFamily: 'var(--font-heading)',
               fontWeight: 600,
-              fontSize: 'clamp(56px,11vw,180px)',
-              lineHeight: 0.84,
-              letterSpacing: '-.02em',
+              fontSize: 'clamp(30px,4.4vw,68px)',
+              lineHeight: 0.92,
+              letterSpacing: '-.01em',
             }}
           >
-            3.500 m²
+            {TOTAL_M2.toLocaleString('pt-BR')} m²
           </p>
           <p
             style={{
@@ -541,7 +518,7 @@ export default function OpeningChapter() {
               color: 'color-mix(in srgb, var(--color-text) 66%, transparent)',
             }}
           >
-            Um espaço construído para movimento.
+            Quatro unidades medidas. Um padrão só.
           </p>
         </div>
 

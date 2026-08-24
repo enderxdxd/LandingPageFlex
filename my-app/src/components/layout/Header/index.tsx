@@ -342,16 +342,22 @@ export default function Header() {
                 onClick={() => setDrawer(true)}
                 aria-label="Abrir menu"
                 aria-expanded={drawer}
+                /* traços de 1.5px sem moldura sumiam sobre a foto do topo — o
+                   botão agora tem a mesma caixa de 44px dos ícones sociais */
                 style={{
                   display: 'inline-flex',
                   flexDirection: 'column',
+                  alignItems: 'center',
                   justifyContent: 'center',
                   gap: 5,
                   width: 44,
                   height: 44,
                   padding: 0,
-                  background: 'transparent',
-                  border: 0,
+                  borderRadius: 'var(--radius-md)',
+                  background: 'color-mix(in srgb, var(--color-stage) 55%, transparent)',
+                  border: '1px solid var(--color-divider)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
                   cursor: 'pointer',
                 }}
               >
@@ -361,8 +367,9 @@ export default function Header() {
                     aria-hidden="true"
                     style={{
                       display: 'block',
-                      height: 1.5,
-                      width: 22,
+                      height: 2,
+                      width: i === 1 ? 14 : 20,
+                      borderRadius: 2,
                       background: 'var(--color-text)',
                     }}
                   />
@@ -437,7 +444,16 @@ export default function Header() {
               </button>
             </div>
 
-            <nav style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 20px' }}>
+            {/* `overscroll-behavior: contain` impede que rolar até o fim do
+                drawer continue rolando a página atrás dele */}
+            <nav
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                overscrollBehavior: 'contain',
+                padding: '8px 20px 20px',
+              }}
+            >
               {LINKS.map(link => (
                 <a
                   key={link.id}

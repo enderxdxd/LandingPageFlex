@@ -38,7 +38,6 @@ export default function Rede() {
         }}
       >
         <Reveal>
-          <p className="kicker">A rede</p>
           <h2 className="h-section" style={{ marginBottom: 22 }}>
             Uma história construída em Goiânia
           </h2>
@@ -63,10 +62,12 @@ export default function Rede() {
             <div
               key={figure.value}
               style={{
-                display: 'flex',
+                /* antes era space-between: a 1440px o número ficava a 400px do
+                   próprio rótulo e o olho não associava um ao outro */
+                display: 'grid',
+                gridTemplateColumns: 'minmax(84px, auto) 1fr',
                 alignItems: 'baseline',
-                justifyContent: 'space-between',
-                gap: 24,
+                gap: 'clamp(14px,2vw,28px)',
                 padding: '20px 0',
                 borderBottom:
                   i === FIGURES.length - 1 ? 'none' : '1px solid var(--color-divider)',
@@ -87,7 +88,7 @@ export default function Rede() {
               <span
                 style={{
                   fontSize: 13,
-                  textAlign: 'right',
+                  lineHeight: 1.45,
                   color: 'color-mix(in srgb, var(--color-text) 58%, transparent)',
                 }}
               >

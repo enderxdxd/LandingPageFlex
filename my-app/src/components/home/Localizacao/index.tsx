@@ -54,7 +54,6 @@ export default function Localizacao() {
     >
       <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
         <Reveal>
-          <p className="kicker">Localização</p>
           <h2
             className="h-section"
             style={{ marginBottom: 'clamp(28px,4vw,52px)', maxWidth: '20ch' }}

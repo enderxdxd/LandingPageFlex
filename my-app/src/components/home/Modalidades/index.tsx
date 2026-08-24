@@ -18,17 +18,6 @@ import Link from 'next/link'
 import Reveal from '@/components/shared/Reveal'
 import { modalidadeCategories, modalidadesData } from '@/lib/constants/modalidades-data'
 
-/**
- * Índice contínuo 01…19 na ordem em que as categorias aparecem — o mesmo
- * recurso da tabela da Estrutura. Calculado uma vez, fora do render, para que
- * a numeração não dependa da ordem em que o JSX é avaliado.
- */
-const NUMBERED = modalidadeCategories.flatMap(category =>
-  modalidadesData.filter(item => item.category === category)
-)
-
-const numberOf = (name: string) => NUMBERED.findIndex(item => item.name === name) + 1
-
 export default function Modalidades() {
   return (
     <section
@@ -47,7 +36,6 @@ export default function Modalidades() {
           }}
         >
           <div>
-            <p className="kicker">Aulas coletivas</p>
             <h2 className="h-section">
               O que acontece
               <br />
@@ -84,64 +72,28 @@ export default function Modalidades() {
 
             return (
               <Reveal key={category} className="modalidade-row">
-                <div>
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontSize: 'clamp(22px,2.2vw,32px)',
-                      letterSpacing: '.02em',
-                    }}
-                  >
-                    {category}
-                  </h3>
-                  <p
-                    style={{
-                      margin: '10px 0 0',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: 11,
-                      letterSpacing: '.16em',
-                      textTransform: 'uppercase',
-                      color: 'color-mix(in srgb, var(--color-text) 45%, transparent)',
-                    }}
-                  >
-                    {String(classes.length).padStart(2, '0')}{' '}
-                    {classes.length === 1 ? 'aula' : 'aulas'}
-                  </p>
-                </div>
+                {/* a categoria é uma faixa que atravessa a linha inteira, não
+                    uma coluna estreita — com 5 categorias de nome curto, a
+                    coluna deixava um vazio de meia tela à esquerda */}
+                <h3 className="modalidade-categoria">
+                  {category}
+                  <span>
+                    {classes.length} {classes.length === 1 ? 'aula' : 'aulas'}
+                  </span>
+                </h3>
 
                 <div className="modalidade-grid">
                   {classes.map(item => (
                     <article key={item.name}>
-                      <div
+                      <h4
                         style={{
-                          display: 'flex',
-                          alignItems: 'baseline',
-                          gap: 10,
-                          marginBottom: 8,
+                          margin: '0 0 8px',
+                          fontSize: 'clamp(17px,1.5vw,21px)',
+                          letterSpacing: '.03em',
                         }}
                       >
-                        <span
-                          aria-hidden="true"
-                          style={{
-                            fontFamily: 'var(--font-mono)',
-                            fontSize: 11,
-                            letterSpacing: '.14em',
-                            fontVariantNumeric: 'tabular-nums',
-                            color: 'var(--color-accent-400)',
-                          }}
-                        >
-                          {String(numberOf(item.name)).padStart(2, '0')}
-                        </span>
-                        <h4
-                          style={{
-                            margin: 0,
-                            fontSize: 'clamp(17px,1.5vw,21px)',
-                            letterSpacing: '.03em',
-                          }}
-                        >
-                          {item.name}
-                        </h4>
-                      </div>
+                        {item.name}
+                      </h4>
                       <p
                         style={{
                           margin: 0,

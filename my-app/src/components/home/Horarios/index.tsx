@@ -100,9 +100,6 @@ export default function Horarios() {
   return (
     <section id="horarios" className="section-seam" style={{ padding: 'var(--band) var(--edge)' }}>
       <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>
-        <Reveal>
-          <p className="kicker">Horários</p>
-        </Reveal>
         <Reveal
           style={{
             display: 'flex',

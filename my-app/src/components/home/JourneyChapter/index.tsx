@@ -26,7 +26,7 @@ import {
   usePinnedChapter,
 } from '@/hooks/usePinnedChapter'
 
-const J1 = '/images/optimized/buenavista-wide.webp'
+const J1 = '/images/optimized/alphaville-wide.webp' // MESMA foto que fecha o cap. 1 — a emenda tem de ser invisível
 const J2 = '/images/optimized/palmas-01.webp'
 const J3 = '/images/optimized/alphaville-crossfit.webp'
 
@@ -138,7 +138,7 @@ export default function JourneyChapter() {
           <div ref={j1Ref} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>
             <Image
               src={J1}
-              alt="Área de treino da unidade Buena Vista"
+              alt="Unidade Alphaville ao entardecer"
               fill
               priority
               sizes="100vw"
@@ -318,9 +318,6 @@ export default function JourneyChapter() {
           }}
         >
           <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto', width: '100%' }}>
-            <p className="kicker" style={{ marginBottom: 14 }}>
-              Flex Fitness Center
-            </p>
             <h1
               style={{
                 margin: '0 0 20px',

@@ -22,14 +22,27 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
     pathname.startsWith('/horarios')
 
   useEffect(() => {
+    /**
+     * `theme-color` pinta a barra do navegador no mobile. As rotas nocturne são
+     * escuras e as legadas são claras, então uma meta estática estaria errada
+     * para metade do site — ela acompanha o tema aqui, junto do data-attribute.
+     */
+    const meta =
+      document.querySelector<HTMLMetaElement>('meta[name="theme-color"]') ??
+      document.head.appendChild(
+        Object.assign(document.createElement('meta'), { name: 'theme-color' })
+      )
+
     if (isNocturneRoute) {
       document.documentElement.dataset.theme = 'nocturne'
+      meta.content = '#161826'
       return () => {
         delete document.documentElement.dataset.theme
       }
     }
 
     delete document.documentElement.dataset.theme
+    meta.content = '#ffffff'
   }, [isNocturneRoute])
 
   if (isAppRoute) {

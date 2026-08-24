@@ -13,10 +13,10 @@ const ROWS: { item: string; scope: string; perUnit?: boolean }[] = [
   { item: 'Aulas coletivas', scope: '4 unidades' },
   { item: 'Personal training', scope: '4 unidades' },
   { item: 'Vestiários premium', scope: '4 unidades' },
-  { item: 'Estacionamento gratuito', scope: '80 a 150 vagas' },
-  { item: 'Loja de suplementos', scope: '4 unidades' },
+  { item: 'Estacionamento gratuito', scope: '+180 vagas' },
+  { item: 'Espaço Kids monitorado', scope: '4 unidades' },
   { item: 'CrossFit Box', scope: 'Alphaville', perUnit: true },
-  { item: 'Espaço Kids monitorado', scope: 'Marista', perUnit: true },
+  { item: 'Loja de suplementos', scope: 'Alphaville e Buena Vista', perUnit: true },
   { item: 'Piscina semi-olímpica e sauna', scope: 'Palmas', perUnit: true },
 ]
 
@@ -37,7 +37,6 @@ export default function Estrutura() {
           }}
         >
           <div>
-            <p className="kicker">Estrutura</p>
             <h2 className="h-section">
               O que existe em
               <br />

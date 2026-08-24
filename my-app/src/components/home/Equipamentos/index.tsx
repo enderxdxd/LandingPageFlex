@@ -66,34 +66,33 @@ function BrandPhoto({ src, alt }: { src: string; alt: string }) {
   )
 }
 
+/**
+ * Logo do fabricante direto sobre o fundo escuro.
+ *
+ * Antes cada marca vinha numa caixa branca — sobre a página escura elas liam
+ * como adesivos colados por cima do design. O tratamento padrão para marca de
+ * parceiro em fundo escuro é monocromático: o filtro achata o SVG para branco e
+ * a opacidade o coloca abaixo do nome da marca na hierarquia, sem descaracterizá-lo.
+ */
 function BrandLogo({ src, name, square }: { src: string; name: string; square: boolean }) {
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: 'min(100%, 280px)',
-        height: 72,
-        marginTop: 20,
-        overflow: 'hidden',
-        borderRadius: 'var(--radius-sm)',
-        background: 'var(--color-neutral-100)',
-      }}
-    >
+    /* os SVGs de canvas quadrado trazem a marca pequena no meio de muito ar;
+       casá-los por altura de caixa deixaria o Eleiko com 8px de letra. A altura
+       aqui é ÓPTICA — o que importa é as três marcas pesarem igual na página. */
+    <div style={{ marginTop: 22, height: square ? 74 : 34, display: 'flex', alignItems: 'center' }}>
       <Image
         src={src}
-        alt={`Logo ${name}`}
-        width={square ? 240 : 260}
-        height={square ? 240 : 44}
+        alt={`Logotipo ${name}`}
+        width={square ? 200 : 190}
+        height={square ? 200 : 34}
         unoptimized
         style={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          width: square ? 240 : 'calc(100% - 32px)',
-          height: square ? 240 : 'auto',
-          maxWidth: square ? 'none' : 248,
-          transform: 'translate(-50%, -50%)',
+          height: square ? 74 : 22,
+          width: 'auto',
+          maxWidth: 220,
           objectFit: 'contain',
+          filter: 'brightness(0) invert(1)',
+          opacity: 0.72,
         }}
       />
     </div>
@@ -118,7 +117,6 @@ export default function Equipamentos() {
           }}
         >
           <div>
-            <p className="kicker">Equipamentos</p>
             <h2 className="h-section">
               Performance começa
               <br />
