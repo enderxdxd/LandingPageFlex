@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer'
 import Header from '@/components/layout/Header'
 import FooterNocturne from '@/components/layout/FooterNocturne'
 import MobileActionBar from '@/components/layout/MobileActionBar'
+import WhatsAppFab from '@/components/layout/WhatsAppFab'
 import CookieBanner from '@/components/CookieBanner'
 
 export default function LayoutWrapper({ children }: { children: ReactNode }) {
@@ -57,6 +58,7 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
           <main>{children}</main>
           <FooterNocturne />
           <MobileActionBar />
+          <WhatsAppFab />
         </div>
         <CookieBanner />
       </>

@@ -1757,6 +1757,93 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   }
 }
 
+
+/* ── Botão flutuante de WhatsApp ───────────────────────────────────────────────
+   Canto inferior esquerdo, só no desktop (a barra fixa cobre o compacto).
+   O rótulo cresce no hover em vez de estar sempre aberto: em repouso é um alvo
+   redondo reconhecível, no hover diz o que faz.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .wa-fab {
+  position: fixed;
+  left: clamp(16px, 2.4vw, 32px);
+  bottom: calc(clamp(16px, 2.4vw, 32px) + env(safe-area-inset-bottom));
+  /* no compacto ele flutua ACIMA da barra fixa, que ocupa ~66px */
+  z-index: 75;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 56px;
+  padding: 0 15px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #06301a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.14);
+  transition: gap var(--dur-ui) var(--ease-arch),
+    padding var(--dur-ui) var(--ease-arch),
+    transform var(--dur-micro) var(--ease-arch),
+    box-shadow var(--dur-micro) var(--ease-arch);
+}
+
+.nocturne .wa-fab svg {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+/* o rótulo ocupa zero até o hover: grid 0fr → 1fr anima até `auto` sem medir.
+   O texto é real (não ::before), então o leitor de tela lê uma coisa só. */
+.nocturne .wa-fab-label {
+  display: grid;
+  grid-template-columns: 0fr;
+  transition: grid-template-columns var(--dur-ui) var(--ease-arch);
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.nocturne .wa-fab-label > * ,
+.nocturne .wa-fab-label {
+  min-width: 0;
+}
+.nocturne .wa-fab-label {
+  overflow: hidden;
+}
+
+/* abaixo de 1000px a barra fixa é dona do rodapé: o botão sobe para não cobri-la */
+@media (max-width: 999px) {
+  .nocturne .wa-fab {
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    height: 52px;
+    padding: 0 13px;
+  }
+  .nocturne .wa-fab svg {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nocturne .wa-fab:hover {
+    gap: 10px;
+    padding: 0 20px 0 15px;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.22);
+  }
+  .nocturne .wa-fab:hover .wa-fab-label {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nocturne .wa-fab:focus-visible .wa-fab-label {
+  grid-template-columns: 1fr;
+}
+.nocturne .wa-fab:focus-visible {
+  gap: 10px;
+  padding: 0 20px 0 15px;
+}
+
 /* ── Redes sociais ─────────────────────────────────────────────────────────────
    O alvo tem 44px mesmo com um glifo de 18px: no toque, o que vale é a área,
    não o desenho. A borda é o mesmo filete das outras superfícies.

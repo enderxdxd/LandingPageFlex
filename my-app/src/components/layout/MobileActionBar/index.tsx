@@ -10,7 +10,6 @@
  * O rodapé reserva 120px de padding-bottom para não terminar atrás dela.
  */
 
-import { CONTACT_WHATSAPP_URL } from '@/lib/constants/contact'
 import { useCompact } from '@/hooks/useCompact'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
@@ -41,24 +40,15 @@ export default function MobileActionBar() {
         borderTop: '1px solid var(--color-divider)',
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: 8 }}>
-        <Link
-          className="btn btn-secondary btn-block"
-          href={scheduleHref}
-          style={{ minHeight: 46, paddingInline: 10, fontSize: 12 }}
-        >
-          {isSchedulePage ? 'Outras grades' : 'Grade de aulas'}
-        </Link>
-        <a
-          className="btn btn-primary btn-block"
-          href={CONTACT_WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ minHeight: 46, paddingInline: 10, fontSize: 12 }}
-        >
-          WhatsApp
-        </a>
-      </div>
+      {/* só a grade: o WhatsApp mudou para o botão flutuante, e o espaço da
+          direita fica livre para ele não cobrir nada */}
+      <Link
+        className="btn btn-secondary btn-block"
+        href={scheduleHref}
+        style={{ minHeight: 46, paddingRight: 76 }}
+      >
+        {isSchedulePage ? 'Outras grades' : 'Grade de aulas'}
+      </Link>
     </div>
   )
 }
