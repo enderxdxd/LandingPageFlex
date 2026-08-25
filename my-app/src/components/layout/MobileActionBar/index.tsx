@@ -4,9 +4,8 @@
  * Barra de ação fixa — só abaixo de 1000px.
  *
  * Ela é dona dos ~67px de baixo da tela (10 + 46 + 10), e três elementos da
- * abertura cedem a esse espaço (ver MOBILE_BAR_CLEARANCE em usePinnedChapter):
- * o WhatsApp da abertura some, `t-area` ganha offset e o `scrollhint` sai.
- * Todos leem a MESMA flag `useCompact` que esta barra, para não divergirem.
+ * abertura cede a esse espaço: o herói ganha padding-bottom extra abaixo de
+ * 1000px, lendo a MESMA flag `useCompact` que esta barra.
  *
  * O rodapé reserva 120px de padding-bottom para não terminar atrás dela.
  */

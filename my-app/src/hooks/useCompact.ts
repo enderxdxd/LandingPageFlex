@@ -1,7 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { CHAPTER_HEIGHTS } from './usePinnedChapter'
+
+/**
+ * Os limites viviam em `usePinnedChapter`, que saiu junto com os capítulos
+ * fixados. 1000px é onde a linha de links do header fica sem espaço — a mesma
+ * flag liga o drawer e a barra de ação fixa, para não divergirem.
+ */
+const COMPACT_BREAKPOINT = 1000
+const NARROW_BREAKPOINT = 820
 
 /**
  * `true` abaixo de 1000px — onde a linha de links do header fica sem espaço e
@@ -12,7 +19,7 @@ import { CHAPTER_HEIGHTS } from './usePinnedChapter'
  * trilho, o botão de WhatsApp da abertura) sai da MESMA flag, para que não
  * possam divergir entre si.
  */
-export function useCompact(breakpoint: number = CHAPTER_HEIGHTS.compactBreakpoint): boolean {
+export function useCompact(breakpoint: number = COMPACT_BREAKPOINT): boolean {
   const [compact, setCompact] = useState(false)
 
   useEffect(() => {
@@ -28,7 +35,7 @@ export function useCompact(breakpoint: number = CHAPTER_HEIGHTS.compactBreakpoin
 
 /** `true` abaixo de 820px — onde os capítulos encurtam. */
 export function useNarrow(): boolean {
-  return useCompact(CHAPTER_HEIGHTS.narrowBreakpoint)
+  return useCompact(NARROW_BREAKPOINT)
 }
 
 /**

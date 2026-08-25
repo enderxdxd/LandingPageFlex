@@ -1579,6 +1579,184 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   }
 }
 
+
+/* ── O átrio ───────────────────────────────────────────────────────────────────
+   Uma tela, sem rolagem sequestrada. `100svh` porque em iOS o `100vh` conta a
+   barra do navegador que some — a composição ficava cortada embaixo.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--color-stage);
+}
+
+.nocturne .hero-frame {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+/* dois gradientes cruzados: um firma o texto no canto inferior, o outro tira a
+   foto de baixo do header transparente */
+.nocturne .hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(11, 12, 20, 0.78) 0%, rgba(11, 12, 20, 0) 34%),
+    linear-gradient(0deg, rgba(11, 12, 20, 0.92) 6%, rgba(11, 12, 20, 0.35) 46%, rgba(11, 12, 20, 0.1) 100%);
+}
+
+.nocturne .hero-inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: calc(66px + clamp(28px, 6vh, 72px)) var(--edge) clamp(24px, 4vh, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 5vh, 64px);
+}
+
+.nocturne .hero-lead {
+  margin-top: auto;
+}
+
+.nocturne .hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 clamp(14px, 2vh, 22px);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 76%, transparent);
+}
+.nocturne .hero-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-neutral-600);
+}
+.nocturne .hero-dot[data-open='true'] {
+  background: var(--color-open-dot);
+}
+.nocturne .hero-eyebrow-sep {
+  width: 22px;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-text) 34%, transparent);
+}
+
+.nocturne .hero-title {
+  margin: 0;
+  font-size: clamp(46px, 8.4vw, 132px);
+  line-height: 0.88;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.nocturne .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(22px, 3.4vh, 38px);
+}
+.nocturne .hero-actions .btn {
+  padding: 12px 20px;
+}
+
+/* ── O índice das unidades ─────────────────────────────────────────────────────
+   Legenda da fotografia, seletor dela e link para a página — um elemento com
+   três funções. A barra de acento marca qual está no fundo agora.
+   ──────────────────────────────────────────────────────────────────────────── */
+.nocturne .hero-index {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: color-mix(in srgb, var(--color-text) 16%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent);
+}
+
+.nocturne .hero-index a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: clamp(12px, 1.6vh, 18px) clamp(8px, 1.2vw, 18px);
+  background: color-mix(in srgb, var(--color-stage) 42%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  position: relative;
+  transition: background var(--dur-ui) var(--ease-arch);
+}
+.nocturne .hero-index a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: var(--color-accent-600);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-ui) var(--ease-arch);
+}
+.nocturne .hero-index a[aria-current='true']::before {
+  transform: scaleX(1);
+}
+.nocturne .hero-index a[aria-current='true'] {
+  background: color-mix(in srgb, var(--color-stage) 68%, transparent);
+}
+
+.nocturne .hero-index-name {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  font-size: clamp(15px, 1.7vw, 24px);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nocturne .hero-index-meta {
+  font-size: clamp(10px, 0.85vw, 12px);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nocturne .hero-sentinel {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* No celular quatro colunas espremem "Buena Vista" em 80px: viram duas. */
+@media (max-width: 720px) {
+  .nocturne .hero-index {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* a barra de ação fixa é dona dos ~67px de baixo abaixo de 1000px */
+@media (max-width: 999px) {
+  .nocturne .hero-inner {
+    padding-bottom: calc(clamp(24px, 4vh, 48px) + 62px);
+  }
+}
+
 /* ── Redes sociais ─────────────────────────────────────────────────────────────
    O alvo tem 44px mesmo com um glifo de 18px: no toque, o que vale é a área,
    não o desenho. A borda é o mesmo filete das outras superfícies.

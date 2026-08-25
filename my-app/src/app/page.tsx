@@ -1,9 +1,10 @@
 /**
  * Home — o redesenho "nocturne".
  *
- * A narrativa é Arquitetura → Espaço → Movimento → Treino → FLEX: dois
- * capítulos fixados abrem a página e, depois da ponte de palco, ela se torna um
- * site de informação convencional, quieto e legível.
+ * A abertura é UMA tela. Os dois capítulos fixados (380vh + 280vh de rolagem
+ * sequestrada) foram removidos: prendiam o visitante por seis telas antes da
+ * primeira informação útil. O átrio entrega marca, estado da rede e as quatro
+ * unidades de uma vez, e o conteúdo começa em seguida.
  *
  * Tudo abaixo vive dentro de `.nocturne`, que é o escopo dos tokens em
  * globals.css. Sem esse wrapper, nenhuma das regras do redesenho se aplica.
@@ -13,8 +14,7 @@
  * para o prático. Reordenar seções aqui sem mexer nos lifts quebra a rampa.
  */
 
-import OpeningChapter from '@/components/home/OpeningChapter'
-import JourneyChapter from '@/components/home/JourneyChapter'
+import Hero from '@/components/home/Hero'
 import BrandStatement from '@/components/home/BrandStatement'
 import Rede from '@/components/home/Rede'
 import Unidades from '@/components/home/Unidades'
@@ -29,9 +29,7 @@ import FinalCTA from '@/components/home/FinalCTA'
 export default function HomePage() {
   return (
     <>
-      {/* os dois capítulos cinematográficos, sobre --color-stage */}
-      <OpeningChapter />
-      <JourneyChapter />
+      <Hero />
 
       {/* a única transição entre #0b0c14 e o chão da página */}
       <div className="stage-bridge" />
