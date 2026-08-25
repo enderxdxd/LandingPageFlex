@@ -189,7 +189,7 @@ export default function Equipamentos() {
                 <span
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 'clamp(9px,.85vw,11px)',
+                    fontSize: 'clamp(12px,.9vw,13px)',
                     letterSpacing: '.16em',
                     textTransform: 'uppercase',
                     color: 'color-mix(in srgb, var(--color-text) 82%, transparent)',

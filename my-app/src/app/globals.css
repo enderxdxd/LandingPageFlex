@@ -1758,6 +1758,110 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 }
 
 
+
+/* ── Mobile primeiro ───────────────────────────────────────────────────────────
+   98% dos acessos vêm de celular. As regras abaixo não são "adaptação": são o
+   caso principal, e o desktop é que herda o resto.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Modalidades: categoria fechada por padrão no celular */
+.nocturne .modalidade-fold {
+  border: 0;
+}
+.nocturne .modalidade-fold > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  /* 56px de alvo: dedo, não cursor */
+  min-height: 56px;
+  padding: 6px 0;
+  cursor: pointer;
+  list-style: none;
+}
+.nocturne .modalidade-fold > summary::-webkit-details-marker {
+  display: none;
+}
+.nocturne .modalidade-categoria-nome {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  font-size: 22px;
+  line-height: 1;
+}
+.nocturne .modalidade-contagem {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--color-text) 48%, transparent);
+}
+/* o sinal de abrir/fechar, desenhado — não glifo unicode */
+.nocturne .modalidade-fold > summary::after {
+  content: '';
+  flex-shrink: 0;
+  width: 11px;
+  height: 11px;
+  margin-left: 2px;
+  border-right: 2px solid var(--color-accent-400);
+  border-bottom: 2px solid var(--color-accent-400);
+  transform: translateY(-3px) rotate(45deg);
+  transition: transform var(--dur-ui) var(--ease-arch);
+}
+.nocturne .modalidade-fold[open] > summary::after {
+  transform: translateY(1px) rotate(-135deg);
+}
+.nocturne .modalidade-fold[open] > .modalidade-grid {
+  padding: 4px 0 18px;
+}
+
+@media (max-width: 999px) {
+  /* ── Alvos de toque ──────────────────────────────────────────────────────
+     A auditoria encontrou 14 controles abaixo de 40px. O mínimo confortável
+     é 44px; botões de ação vão a 48. */
+  .nocturne .btn {
+    min-height: 48px;
+    padding-inline: 18px;
+  }
+  .nocturne .btn-ghost {
+    min-height: 44px;
+  }
+
+  /* links de texto (rodapé, e-mail, "grade de coletivas") ganham área sem
+     virar botão: o padding cresce, o traço fica onde estava */
+  .nocturne footer nav a,
+  .nocturne .footer-legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* ── Piso tipográfico ────────────────────────────────────────────────────
+     Havia 25 trechos entre 9 e 11px. Num telefone 9px não se lê. */
+  .nocturne .label-sm,
+  .nocturne .mono,
+  .nocturne .hero-index-meta,
+  .nocturne .open-unit {
+    font-size: 12px;
+  }
+
+  /* os três alvos que sobraram da auditoria */
+  .nocturne .social-inline,
+  .nocturne .social-icon {
+    min-height: 44px;
+  }
+  .nocturne a[href^='mailto:'] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .nocturne .modalidade-grid p,
+  .nocturne table {
+    font-size: 15px;
+  }
+}
+
 /* ── Botão flutuante de WhatsApp ───────────────────────────────────────────────
    Canto inferior esquerdo, só no desktop (a barra fixa cobre o compacto).
    O rótulo cresce no hover em vez de estar sempre aberto: em repouso é um alvo

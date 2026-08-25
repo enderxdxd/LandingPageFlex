@@ -71,8 +71,8 @@ export default function FooterNocturne() {
           <p
             style={{
               margin: '22px 0 0',
-              fontSize: 11,
-              letterSpacing: '.2em',
+              fontSize: 12,
+              letterSpacing: '.16em',
               textTransform: 'uppercase',
               color: 'color-mix(in srgb, var(--color-text) 52%, transparent)',
             }}

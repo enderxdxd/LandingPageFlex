@@ -23,9 +23,9 @@ const SWAP_MS = 420
 
 const PANEL_SIZES = '(max-width: 820px) 100vw, 55vw'
 
-/** A coluna direita da lista: área, ou o estado quando ela não foi confirmada. */
-const railMeta = (slug: string, area: string) =>
-  slug === 'palmas' ? 'Tocantins' : area
+/** A coluna direita da lista. Palmas deixou de ser "A confirmar", então as
+ *  quatro mostram a área — a régua fica comparável de cima a baixo. */
+const railMeta = (_slug: string, area: string) => area
 
 /**
  * O bloco de dados da unidade. O painel que sai fica `inert`: continua visível
@@ -234,8 +234,8 @@ export default function Unidades() {
                 <span
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: 11,
-                    letterSpacing: '.14em',
+                    fontSize: 12,
+                    letterSpacing: '.1em',
                     whiteSpace: 'nowrap',
                     color: 'color-mix(in srgb, var(--color-text) 45%, transparent)',
                   }}

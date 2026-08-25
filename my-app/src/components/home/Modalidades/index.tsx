@@ -5,20 +5,30 @@
  * salas. Esta seção fecha essa lacuna entre "Estrutura" (o que existe) e
  * "Equipamentos" (com o que se treina).
  *
- * O padrão visual é o vocabulário que a página já usa — filete de 1px, índice
- * monoespaçado, tipografia display à esquerda — em vez de mais um grid de
- * cards. As descrições vêm de `modalidades-data.ts`, a mesma fonte que a página
- * da unidade lê, então nenhuma copy é duplicada aqui.
+ * No CELULAR as categorias vêm fechadas. Aberta, esta seção ocupava 3,8 telas
+ * — 23% da página inteira — de texto corrido que ninguém lê no telefone. Quem
+ * quer o catálogo abre a categoria; quem está indo para horários ou unidades
+ * passa por ela em meia tela.
+ *
+ * O padrão visual é o vocabulário que a página já usa — filete de 1px,
+ * tipografia display à esquerda — em vez de mais um grid de cards. As
+ * descrições vêm de `modalidades-data.ts`, a mesma fonte que a página da
+ * unidade lê, então nenhuma copy é duplicada aqui.
  *
  * A grade com dias e horários NÃO vive aqui: ela é por unidade e sai do sistema
  * de PDFs no Firebase. Esta seção descreve as aulas e aponta para lá.
  */
 
+'use client'
+
 import Link from 'next/link'
 import Reveal from '@/components/shared/Reveal'
+import { useCompact } from '@/hooks/useCompact'
 import { modalidadeCategories, modalidadesData } from '@/lib/constants/modalidades-data'
 
 export default function Modalidades() {
+  const compact = useCompact()
+
   return (
     <section
       id="modalidades"
@@ -72,9 +82,44 @@ export default function Modalidades() {
 
             return (
               <Reveal key={category} className="modalidade-row">
-                {/* a categoria é uma faixa que atravessa a linha inteira, não
-                    uma coluna estreita — com 5 categorias de nome curto, a
-                    coluna deixava um vazio de meia tela à esquerda */}
+                {/* no celular a categoria é um <details> nativo: sem JS de
+                    abertura, acessível por teclado e com alvo de toque cheio */}
+                {compact ? (
+                  <details className="modalidade-fold">
+                    <summary>
+                      <span className="modalidade-categoria-nome">{category}</span>
+                      <span className="modalidade-contagem">
+                        {classes.length} {classes.length === 1 ? 'aula' : 'aulas'}
+                      </span>
+                    </summary>
+                    <div className="modalidade-grid">
+                      {classes.map(item => (
+                        <article key={item.name}>
+                          <h4
+                            style={{
+                              margin: '0 0 8px',
+                              fontSize: 18,
+                              letterSpacing: '.03em',
+                            }}
+                          >
+                            {item.name}
+                          </h4>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: 14,
+                              lineHeight: 1.6,
+                              color: 'color-mix(in srgb, var(--color-text) 64%, transparent)',
+                            }}
+                          >
+                            {item.description}
+                          </p>
+                        </article>
+                      ))}
+                    </div>
+                  </details>
+                ) : (
+                  <>
                 <h3 className="modalidade-categoria">
                   {category}
                   <span>
@@ -107,6 +152,8 @@ export default function Modalidades() {
                     </article>
                   ))}
                 </div>
+                  </>
+                )}
               </Reveal>
             )
           })}

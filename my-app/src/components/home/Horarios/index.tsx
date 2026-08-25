@@ -58,8 +58,8 @@ function UnitPanel({ unit }: { unit: Unit }) {
         <h3 style={{ margin: 0, fontSize: 22 }}>{unit.name}</h3>
         <span
           style={{
-            fontSize: 10,
-            letterSpacing: '.1em',
+            fontSize: 12,
+            letterSpacing: '.08em',
             textTransform: 'uppercase',
             padding: '3px 8px',
             borderRadius: 999,
