@@ -2,6 +2,7 @@
 'use client'
 
 import { useState } from 'react'
+import ConsentField from '@/components/shared/ConsentField'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { HiBriefcase, HiDocumentText, HiCheck, HiExclamationCircle, HiChevronDown, HiX } from 'react-icons/hi'
@@ -158,6 +159,8 @@ export default function TrabalheAqui() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  /** LGPD: nunca começa marcado — consentimento pré-marcado não é consentimento */
+  const [consent, setConsent] = useState(false)
   const [arquivoSelecionado, setArquivoSelecionado] = useState<File | null>(null)
   
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<CVData>()
@@ -534,9 +537,15 @@ export default function TrabalheAqui() {
               </motion.div>
             )}
 
+            <ConsentField
+              checked={consent}
+              onChange={setConsent}
+              purpose="avaliar minha candidatura e me contatar sobre vagas"
+            />
+
             <motion.button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !consent}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-4 rounded-lg font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"

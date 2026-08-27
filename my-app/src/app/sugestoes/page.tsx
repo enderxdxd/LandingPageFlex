@@ -2,6 +2,7 @@
 'use client'
 
 import { useState } from 'react'
+import ConsentField from '@/components/shared/ConsentField'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { HiLightBulb, HiCamera, HiCheck, HiExclamationCircle, HiChevronDown, HiX } from 'react-icons/hi'
@@ -153,6 +154,8 @@ export default function Sugestoes() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  /** LGPD: nunca começa marcado — consentimento pré-marcado não é consentimento */
+  const [consent, setConsent] = useState(false)
   const [fotosSelecionadas, setFotosSelecionadas] = useState<File[]>([])
   
   const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<SugData>()
@@ -535,9 +538,15 @@ export default function Sugestoes() {
               </motion.div>
             )}
 
+            <ConsentField
+              checked={consent}
+              onChange={setConsent}
+              purpose="responder e dar andamento à minha sugestão"
+            />
+
             <motion.button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !consent}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white py-4 rounded-lg font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"

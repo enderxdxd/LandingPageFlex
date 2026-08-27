@@ -16,6 +16,10 @@ const LEGAL = [
   { href: '/procedimentos', label: 'Procedimentos' },
   { href: '/privacy-policy', label: 'Política de Privacidade' },
   { href: '/termos-uso', label: 'Termos de Uso' },
+  /* depois que o banner é dispensado, este é o único caminho de volta para
+     rever ou revogar o consentimento — a LGPD exige que revogar seja tão
+     fácil quanto consentir (art. 8º, §5º) */
+  { href: '/politica-cookies', label: 'Política de Cookies' },
   { href: '/trabalhe-aqui', label: 'Trabalhe aqui' },
 ]
 

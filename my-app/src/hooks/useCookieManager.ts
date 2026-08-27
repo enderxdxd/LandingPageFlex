@@ -33,6 +33,17 @@ export function useCookieManager() {
         const saved = localStorage.getItem('cookie_consent')
         if (saved) {
           const consent: CookieConsent = JSON.parse(saved)
+
+          /* Um registro sem `preferences` (formato antigo, ou escrito à mão)
+             zerava o estado e derrubava a página. Sem forma válida não há
+             consentimento comprovável: descarta e pergunta de novo — o padrão
+             seguro sob a LGPD é NÃO tratar. */
+          if (!consent?.preferences || typeof consent.preferences !== 'object') {
+            localStorage.removeItem('cookie_consent')
+            setHasConsent(false)
+            return
+          }
+
           setPreferences(consent.preferences)
           setHasConsent(true)
           
