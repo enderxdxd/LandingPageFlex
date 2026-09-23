@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
       }
 
       return resend.emails.send({
-        from: 'Flex Fitness <onboarding@resend.dev>',
+        from: 'Flex Fitness <noreply@flexfitnesscenter.com.br>',
         to: [dest.email],
         subject: dest.subject,
         html: template({ ...formattedEmailData, ...dest }),
