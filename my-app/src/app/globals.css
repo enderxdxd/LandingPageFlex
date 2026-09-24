@@ -509,7 +509,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 .nocturne .schedule-hero-meta span {
   color: color-mix(in srgb, var(--color-text) 48%, transparent);
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 .nocturne .schedule-hero-meta strong {
@@ -582,7 +582,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   font-family: var(--font-body);
   font-size: 10px;
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
 }
 .nocturne .schedule-viewer {
   overflow: hidden;
@@ -709,10 +709,16 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   );
 }
 
+/* Etiqueta de seção, não "sobrancelha premium".
+   Estava em 11px com 0.24em de entreletra — texto miúdo esticado até virar
+   ornamento. Essa combinação é a assinatura tipográfica de template genérico,
+   e de quebra é o tamanho mais difícil de ler no celular. Um ponto maior e a
+   entreletra em um terço do valor: continua lendo como etiqueta, sem o
+   maneirismo. */
 .nocturne .kicker {
   margin: 0 0 18px;
-  font-size: 11px;
-  letter-spacing: 0.24em;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-accent-400);
 }
@@ -720,7 +726,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 .nocturne .label-sm {
   margin: 0 0 6px;
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 45%, transparent);
 }
@@ -794,7 +800,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   padding: 2px 5px 8px;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 52%, transparent);
 }
@@ -1392,7 +1398,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   margin: 0 0 4px;
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--color-text) 50%, transparent);
 }
@@ -1492,7 +1498,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   text-align: center;
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.07em;
   color: color-mix(in srgb, var(--color-text) 66%, transparent);
 }
 
@@ -1568,7 +1574,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 12px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
   color: color-mix(in srgb, var(--color-text) 42%, transparent);
@@ -1637,15 +1643,17 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   margin-top: auto;
 }
 
-.nocturne .hero-eyebrow {
+/* O status da rede, agora abaixo do título: frase normal, não etiqueta.
+   Sem caixa alta, sem entreletra aberta, no corpo do texto — é informação,
+   não decoração tipográfica. */
+.nocturne .hero-status {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 0 0 clamp(14px, 2vh, 22px);
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-text) 76%, transparent);
+  gap: 9px;
+  margin: 18px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--color-text) 74%, transparent);
 }
 .nocturne .hero-dot {
   width: 7px;
@@ -1655,11 +1663,6 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 }
 .nocturne .hero-dot[data-open='true'] {
   background: var(--color-open-dot);
-}
-.nocturne .hero-eyebrow-sep {
-  width: 22px;
-  height: 1px;
-  background: color-mix(in srgb, var(--color-text) 34%, transparent);
 }
 
 .nocturne .hero-title {
@@ -1806,7 +1809,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   margin-left: auto;
   flex-shrink: 0;
   font-size: 12px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
   color: color-mix(in srgb, var(--color-text) 48%, transparent);
@@ -2138,7 +2141,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   background: color-mix(in srgb, var(--color-stage) 72%, transparent);
   backdrop-filter: blur(8px);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--color-text);
   transition: background var(--dur-micro) var(--ease-arch),

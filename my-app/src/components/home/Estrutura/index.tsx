@@ -72,16 +72,11 @@ export default function Estrutura() {
                         i === ROWS.length - 1 ? 'none' : '1px solid var(--color-divider)',
                     }}
                   >
-                    <td
-                      style={{
-                        padding: '15px 12px 15px 0',
-                        width: 44,
-                        color: 'color-mix(in srgb, var(--color-text) 35%, transparent)',
-                        fontVariantNumeric: 'tabular-nums',
-                      }}
-                    >
-                      {String(i + 1).padStart(2, '0')}
-                    </td>
+                    {/* A coluna 01…10 saiu: a ordem desta lista não carrega
+                        informação nenhuma — não é ranking, não é sequência, não
+                        é passo a passo. Numerar itens que não têm ordem é um
+                        maneirismo de template, e ainda roubava 44px de largura
+                        do nome do item no celular. */}
                     <td
                       style={{
                         padding: '15px 0',

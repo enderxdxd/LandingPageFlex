@@ -85,26 +85,30 @@ export default function Hero() {
 
       <div className="hero-inner">
         <div className="hero-lead">
-          <p className="hero-eyebrow">
+          {/* O status vive ABAIXO do título, não acima.
+              Sobrancelha (texto minúsculo, caixa alta, entreletra larga)
+              empurrada para cima de um título gigante é a assinatura visual
+              mais reconhecível de landing page gerada por IA — e não carregava
+              nada que o título já não sustentasse. A informação é real e fica;
+              o formato é que saiu. */}
+          <h1 className="hero-title">
+            A evolução
+            <br />
+            do seu treino
+          </h1>
+
+          <p className="hero-status">
             <span
               className="hero-dot"
               data-open={open ? 'true' : 'false'}
               aria-hidden="true"
             />
             {open === null
-              ? 'Rede FLEX'
+              ? `${yearsInBusiness()} anos em Goiânia`
               : open
-                ? 'Aberto agora'
-                : 'Fechado agora'}
-            <span className="hero-eyebrow-sep" aria-hidden="true" />
-            {yearsInBusiness()} anos
+                ? `Aberto agora · ${yearsInBusiness()} anos em Goiânia`
+                : `Fechado agora · ${yearsInBusiness()} anos em Goiânia`}
           </p>
-
-          <h1 className="hero-title">
-            A evolução
-            <br />
-            do seu treino
-          </h1>
 
           <div className="hero-actions">
             <a
