@@ -245,7 +245,7 @@ export default function CookieBanner() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-end lg:items-center lg:justify-center p-4"
+          className="ck-overlay"
         >
           <motion.div
             initial={{ y: 100, opacity: 0, scale: 0.95 }}
@@ -257,100 +257,47 @@ export default function CookieBanner() {
               damping: 30,
               opacity: { duration: 0.3 }
             }}
-            className={`w-full max-w-4xl bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl overflow-hidden ${
-              showDetails ? 'max-h-[90vh]' : 'max-h-[80vh]'
-            } flex flex-col`}
+            className={`ck-sheet ${showDetails ? 'ck-sheet-full' : ''}`}
           >
-            {/* Header */}
-            <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-flex-primary/5 to-flex-secondary/5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <motion.div
-                    animate={{ 
-                      rotate: [0, 10, -10, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-12 h-12 bg-gradient-to-br from-flex-primary to-flex-secondary rounded-xl flex items-center justify-center"
-                  >
-                    <FaCookieBite className="text-white text-xl" />
-                  </motion.div>
-                  <div>
-                    <h2 className="text-xl font-display font-bold text-flex-dark">
-                      Configurações de Cookies
-                    </h2>
-                    <p className="text-sm text-flex-gray">
-                      Personalize sua experiência no site
-                    </p>
-                  </div>
-                </div>
-                
-                <motion.button
-                  whileHover={{ scale: 1.1, rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleRejectAll}
-                  className="p-2 text-flex-gray hover:text-flex-dark transition-colors rounded-lg hover:bg-gray-100"
-                >
-                  <HiX className="text-xl" />
-                </motion.button>
-              </div>
+            {/* O cabeçalho tinha um ícone de biscoito girando em loop infinito,
+                que nenhuma pessoa precisa ver e que `prefers-reduced-motion`
+                não desligava. O título basta. */}
+            <div className="ck-head">
+              <h2 id="ck-title" className="ck-title">
+                {showDetails ? 'Escolha o que permitir' : 'Cookies neste site'}
+              </h2>
+              <button
+                type="button"
+                onClick={handleRejectAll}
+                aria-label="Recusar cookies opcionais e fechar"
+                className="ck-close"
+              >
+                <HiX aria-hidden="true" />
+              </button>
             </div>
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto">
               {!showDetails ? (
-                // Simple view
-                <div className="p-6">
-                  <div className="mb-6">
-                    <h3 className="text-lg font-semibold text-flex-dark mb-3 flex items-center gap-2">
-                      <Cookie className="w-5 h-5" /> Nós utilizamos cookies
-                    </h3>
-                    <p className="text-flex-gray leading-relaxed">
-                      Utilizamos cookies e tecnologias similares para melhorar sua experiência em nosso site, 
-                      personalizar conteúdo e anúncios, fornecer recursos de mídia social e analisar nosso tráfego. 
-                      Também compartilhamos informações sobre o uso do site com nossos parceiros de mídia social, 
-                      publicidade e análise.
-                    </p>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4 mb-6">
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      className="p-4 border border-gray-200 rounded-xl hover:border-flex-primary/30 transition-all"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <HiShieldCheck className="text-green-500 text-xl" />
-                        <span className="font-medium text-flex-dark">Proteção de Dados</span>
-                      </div>
-                      <p className="text-sm text-flex-gray">
-                        Seus dados são protegidos seguindo a LGPD
-                      </p>
-                    </motion.div>
-
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      className="p-4 border border-gray-200 rounded-xl hover:border-flex-primary/30 transition-all"
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <HiCog className="text-flex-primary text-xl" />
-                        <span className="font-medium text-flex-dark">Controle Total</span>
-                      </div>
-                      <p className="text-sm text-flex-gray">
-                        Você pode personalizar suas preferências
-                      </p>
-                    </motion.div>
-                  </div>
-
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                /* A versão anterior ocupava ~80% da primeira tela no celular:
+                   quatro parágrafos de prosa jurídica e dois cartões de
+                   "Proteção de Dados"/"Controle Total" empurravam a decisão
+                   para baixo da dobra. Como 98% do acesso é por celular, o
+                   primeiro contato de quase todo visitante com a marca era
+                   esta parede. Agora: duas frases e as três saídas. */
+                <div className="ck-body">
+                  <p className="ck-text">
+                    Usamos cookies para entender como o site é usado e para medir
+                    nossas campanhas. Os necessários para o site funcionar são
+                    sempre ativos; os demais só com o seu aceite.
+                  </p>
+                  <button
+                    type="button"
                     onClick={() => setShowDetails(true)}
-                    className="w-full flex items-center justify-center gap-2 p-3 border border-flex-primary/20 text-flex-primary rounded-lg hover:bg-flex-primary/5 transition-all mb-6"
+                    className="ck-link"
                   >
-                    <HiCog className="text-lg" />
-                    <span>Personalizar Configurações</span>
-                    <HiChevronDown className="text-sm" />
-                  </motion.button>
+                    Escolher o que permitir
+                  </button>
                 </div>
               ) : (
                 // Detailed view
@@ -501,47 +448,28 @@ export default function CookieBanner() {
               )}
             </div>
 
-            {/* Footer */}
-            <div className="p-6 border-t border-gray-100 bg-gray-50/50">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleRejectAll}
-                  className="px-6 py-3 border border-gray-300 text-flex-gray rounded-lg hover:bg-gray-100 transition-all font-medium"
-                >
-                  Rejeitar Todos
-                </motion.button>
-                
+            {/* Aceitar e recusar com o MESMO peso visual. Antes, "Aceitar Todos"
+                era um gradiente saturado com brilho animado e "Rejeitar Todos"
+                um contorno apagado — desenho que empurra o consentimento, o
+                oposto do que a LGPD pede de uma escolha livre. */}
+            <div className="ck-foot">
+              <div className="ck-actions">
+                <button type="button" onClick={handleRejectAll} className="ck-btn">
+                  Recusar opcionais
+                </button>
+
                 {showDetails && (
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleAcceptSelected}
-                    className="px-6 py-3 bg-flex-primary text-white rounded-lg hover:bg-flex-secondary transition-all font-medium"
-                  >
-                    Salvar Preferências
-                  </motion.button>
+                  <button type="button" onClick={handleAcceptSelected} className="ck-btn">
+                    Salvar escolha
+                  </button>
                 )}
-                
-                <motion.button
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 10px 25px rgba(30, 64, 175, 0.3)"
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAcceptAll}
-                  className="px-6 py-3 bg-gradient-to-r from-flex-primary to-flex-secondary text-white rounded-lg font-medium shadow-lg flex-1 sm:flex-none relative overflow-hidden group"
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%]"
-                    transition={{ duration: 0.6 }}
-                  />
-                  <span className="relative z-10">Aceitar Todos</span>
-                </motion.button>
+
+                <button type="button" onClick={handleAcceptAll} className="ck-btn ck-btn-accent">
+                  Aceitar todos
+                </button>
               </div>
-              
-              <div className="mt-4 flex items-center justify-center gap-4 text-xs text-flex-gray">
+
+              <div className="ck-links">
                 <motion.a
                   whileHover={{ scale: 1.05 }}
                   href="/privacy-policy"

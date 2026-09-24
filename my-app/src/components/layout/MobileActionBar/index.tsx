@@ -33,19 +33,23 @@ export default function MobileActionBar() {
         right: 0,
         bottom: 0,
         zIndex: 70,
-        padding: '10px var(--edge) calc(10px + env(safe-area-inset-bottom))',
+        /* o recuo da esquerda abre a vaga do FAB (46px + 10px de respiro),
+           para os dois dividirem a linha em vez de se sobreporem */
+        padding: '10px var(--edge) calc(10px + env(safe-area-inset-bottom)) calc(var(--edge) + 56px)',
         background: 'color-mix(in srgb, var(--color-bg) 92%, transparent)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderTop: '1px solid var(--color-divider)',
       }}
     >
-      {/* só a grade: o WhatsApp mudou para o botão flutuante, e o espaço da
-          direita fica livre para ele não cobrir nada */}
+      {/* Só a grade. O WhatsApp ancora à ESQUERDA desta mesma faixa (ver
+          `.wa-fab` no compacto) e a vaga dele é o padding-left acima. Antes o
+          recuo era à direita enquanto o glifo flutuava 78px acima da barra, por
+          cima do conteúdo que rola — os dois nunca se encontravam. */}
       <Link
         className="btn btn-secondary btn-block"
         href={scheduleHref}
-        style={{ minHeight: 46, paddingRight: 76 }}
+        style={{ minHeight: 46 }}
       >
         {isSchedulePage ? 'Outras grades' : 'Grade de aulas'}
       </Link>

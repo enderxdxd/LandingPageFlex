@@ -356,15 +356,25 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   opacity: 0.45;
   cursor: not-allowed;
 }
+/* Primário PREENCHIDO, e por dois motivos que se somam.
+   Contraste: azul #3b82f6 como TEXTO sobre o fundo escuro dá 4.13:1, abaixo
+   do mínimo de 4.5:1 — e era justamente o botão que leva ao WhatsApp, o único
+   caminho comercial do site. Invertido, o mesmo azul como fundo com tinta
+   quase preta dá 5.1:1.
+   Hierarquia: contornado, o primário tinha MENOS presença que o secundário
+   (texto branco). A ação que converte era a menos visível da tela. */
 .nocturne .btn-primary {
-  color: var(--color-accent-600);
+  color: #0b0c14;
+  background: var(--color-accent-600);
   border-color: var(--color-accent-600);
 }
 .nocturne .btn-primary:hover {
-  background: color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+  background: color-mix(in srgb, var(--color-accent-600) 88%, #ffffff);
+  border-color: color-mix(in srgb, var(--color-accent-600) 88%, #ffffff);
 }
 .nocturne .btn-primary:active {
-  background: color-mix(in srgb, var(--color-accent-600) 22%, transparent);
+  background: color-mix(in srgb, var(--color-accent-600) 82%, #000000);
+  border-color: color-mix(in srgb, var(--color-accent-600) 82%, #000000);
 }
 .nocturne .btn-secondary {
   border-color: var(--color-divider);
@@ -1920,15 +1930,24 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 }
 
 /* abaixo de 1000px a barra fixa é dona do rodapé: o botão sobe para não cobri-la */
+/* No compacto o botão NÃO flutua: ele desce para dentro da faixa da barra fixa,
+   no canto inferior esquerdo, ocupando o espaço que a barra já reserva.
+
+   Antes ele ficava 78px acima da barra, ou seja, permanentemente por cima do
+   conteúdo que rola — e cobria texto de verdade (o "+180 vagas gratuitas" da
+   Localização e o título da categoria em Modalidades, entre outros). Agora o
+   rodapé tem UMA faixa só, e nada paira sobre a leitura. */
 @media (max-width: 999px) {
   .nocturne .wa-fab {
-    bottom: calc(78px + env(safe-area-inset-bottom));
-    height: 52px;
-    padding: 0 13px;
+    left: var(--edge);
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    /* mesma altura do botão da barra, para os dois lerem como uma linha só */
+    height: 46px;
+    padding: 0 11px;
   }
   .nocturne .wa-fab svg {
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -2340,4 +2359,250 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
    o anel de foco ali so confundiria. */
 main:focus {
   outline: none;
+}
+
+/* ── Consentimento de cookies ──────────────────────────────────────────────────
+   O banner renderiza FORA do wrapper `.nocturne` (ele vale para o site claro e
+   para o escuro), então as classes aqui são autônomas e repetem os valores dos
+   tokens em vez de herdá-los.
+
+   Por que foi redesenhado: a versão anterior era um painel branco que ocupava
+   ~80% da primeira tela no celular, em cima de um site escuro. Como 98% do
+   acesso é por celular, o primeiro contato de quase todo visitante com a marca
+   era uma parede clara que não se parecia com o site — lida mais como pop-up de
+   terceiro do que como parte da página.
+   ──────────────────────────────────────────────────────────────────────────── */
+.ck-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  background: rgba(6, 7, 12, 0.66);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+
+.ck-sheet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: 82vh;
+  color: #e9e9ed;
+  background: #161826;
+  border-top: 1px solid rgba(233, 233, 237, 0.14);
+  border-radius: 18px 18px 0 0;
+  /* sombra com deslocamento e desfoque; halo sem offset é decoração */
+  box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ck-sheet-full {
+  max-height: 88vh;
+}
+
+.ck-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 20px 0;
+}
+
+.ck-title {
+  margin: 0;
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 21px;
+  line-height: 1.05;
+  color: #e9e9ed;
+}
+
+.ck-close {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: -10px -10px -10px 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, #e9e9ed 62%, transparent);
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 160ms ease-out, background 160ms ease-out;
+}
+.ck-close:hover {
+  color: #e9e9ed;
+  background: rgba(233, 233, 237, 0.08);
+}
+.ck-close:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.ck-body {
+  padding: 12px 20px 0;
+}
+
+.ck-text {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  /* 78% sobre #161826 dá ~7:1; cinza puro cairia abaixo do mínimo */
+  color: color-mix(in srgb, #e9e9ed 78%, transparent);
+}
+
+.ck-link {
+  margin-top: 14px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #93c5fd;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.ck-link:hover {
+  color: #bfdbfe;
+}
+.ck-link:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.ck-foot {
+  padding: 18px 20px 20px;
+}
+
+.ck-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* Aceitar e recusar têm o MESMO desenho: mesma altura, mesma tipografia, mesmo
+   raio. O aceite só ganha a cor de marca; recusar não é um botão apagado. */
+.ck-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 11px 18px;
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #e9e9ed;
+  background: transparent;
+  border: 1px solid rgba(233, 233, 237, 0.26);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 160ms ease-out, border-color 160ms ease-out;
+}
+.ck-btn:hover {
+  background: rgba(233, 233, 237, 0.08);
+  border-color: rgba(233, 233, 237, 0.4);
+}
+.ck-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.ck-btn-accent {
+  color: #0b0c14;
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+.ck-btn-accent:hover {
+  background: #5b96f8;
+  border-color: #5b96f8;
+}
+
+.ck-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: color-mix(in srgb, #e9e9ed 55%, transparent);
+}
+.ck-links a {
+  color: inherit;
+  text-decoration: none;
+}
+.ck-links a:hover {
+  color: #e9e9ed;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* A partir de tablet a folha vira um diálogo centrado. */
+@media (min-width: 700px) {
+  .ck-overlay {
+    align-items: center;
+    padding: 24px;
+  }
+  .ck-sheet {
+    border-radius: 16px;
+    border: 1px solid rgba(233, 233, 237, 0.14);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+  }
+  .ck-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  .ck-btn {
+    min-width: 168px;
+  }
+}
+
+/* No site claro (rotas legadas) a folha acompanha o fundo da página. */
+:root:not([data-theme='nocturne']) .ck-sheet {
+  color: #0f172a;
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+:root:not([data-theme='nocturne']) .ck-title {
+  color: #0f172a;
+}
+:root:not([data-theme='nocturne']) .ck-text {
+  color: #475569;
+}
+:root:not([data-theme='nocturne']) .ck-btn {
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.22);
+}
+:root:not([data-theme='nocturne']) .ck-btn:hover {
+  background: rgba(15, 23, 42, 0.05);
+}
+:root:not([data-theme='nocturne']) .ck-btn-accent {
+  color: #ffffff;
+  background: #1e40af;
+  border-color: #1e40af;
+}
+:root:not([data-theme='nocturne']) .ck-btn-accent:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+:root:not([data-theme='nocturne']) .ck-close {
+  color: #475569;
+}
+:root:not([data-theme='nocturne']) .ck-links {
+  color: #64748b;
+}
+:root:not([data-theme='nocturne']) .ck-link {
+  color: #1d4ed8;
 }

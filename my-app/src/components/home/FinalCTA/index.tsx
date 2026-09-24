@@ -1,12 +1,21 @@
 /**
  * CTA final — fotografia full-bleed sob um scrim, sem card.
  *
- * Duas ações: "Encontrar minha FLEX" desce para #localizacao (a escolha de
- * unidade acontece lá, com foto e endereço), e o WhatsApp central. Não há
- * preço em nenhum caminho — todo caminho comercial vai para o WhatsApp.
+ * A aula experimental entra aqui como ação principal. Antes a home inteira
+ * tinha só dois destinos — WhatsApp e #localizacao — e `/freepass`, que é a
+ * única página que captura o lead no CRM (nome, e-mail, telefone via RD
+ * Station), só existia dentro do menu. Quem rolava a página até o fim nunca
+ * era convidado a agendar.
+ *
+ * O WhatsApp continua ao lado, porque conversa fechada na hora vale mais do
+ * que formulário para quem já decidiu. "Encontrar minha FLEX" desceu para
+ * link discreto: a seção de Localização é a imediatamente acima desta.
+ *
+ * Não há preço em nenhum caminho.
  */
 
 import Image from 'next/image'
+import Link from 'next/link'
 import Reveal from '@/components/shared/Reveal'
 import { CONTACT_WHATSAPP_URL } from '@/lib/constants/contact'
 
@@ -63,7 +72,7 @@ export default function FinalCTA() {
               color: 'color-mix(in srgb, var(--color-text) 68%, transparent)',
             }}
           >
-            Escolha sua unidade e venha conhecer a FLEX.
+            A primeira aula é por nossa conta. Escolha a unidade e venha conhecer.
           </p>
         </Reveal>
 
@@ -76,9 +85,9 @@ export default function FinalCTA() {
             marginTop: 'clamp(28px,4vh,44px)',
           }}
         >
-          <a className="btn btn-primary" href="#localizacao" style={{ padding: '13px 22px' }}>
-            Encontrar minha FLEX
-          </a>
+          <Link className="btn btn-primary" href="/freepass" style={{ padding: '13px 22px' }}>
+            Agendar aula experimental
+          </Link>
           <a
             className="btn btn-secondary"
             href={CONTACT_WHATSAPP_URL}
@@ -87,6 +96,9 @@ export default function FinalCTA() {
             style={{ padding: '13px 22px' }}
           >
             Falar no WhatsApp
+          </a>
+          <a className="btn btn-ghost" href="#localizacao" style={{ padding: '13px 18px' }}>
+            Ver endereços
           </a>
         </Reveal>
       </div>
