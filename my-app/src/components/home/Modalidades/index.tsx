@@ -86,8 +86,12 @@ export default function Modalidades() {
                     abertura, acessível por teclado e com alvo de toque cheio */}
                 {compact ? (
                   <details className="modalidade-fold">
+                    {/* A categoria precisa ser um heading tambem no celular:
+                        neste ramo ela era um <span>, entao a pagina pulava de
+                        h2 direto para os h4 das aulas. Heading dentro de
+                        <summary> e valido e mantem o accordion nativo. */}
                     <summary>
-                      <span className="modalidade-categoria-nome">{category}</span>
+                      <h3 className="modalidade-categoria-nome">{category}</h3>
                       <span className="modalidade-contagem">
                         {classes.length} {classes.length === 1 ? 'aula' : 'aulas'}
                       </span>

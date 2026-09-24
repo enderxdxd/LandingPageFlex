@@ -1,6 +1,8 @@
 // src/app/procedimentos/page.tsx
 'use client'
 
+import { HONEYPOT_FIELD } from '@/lib/api/honeypot'
+
 import { useState } from 'react'
 import ConsentField from '@/components/shared/ConsentField'
 import { motion } from 'framer-motion'
@@ -40,12 +42,10 @@ function buildFieldsTable(data: FormData): string {
 }
 
 // Mapeia destinatários por unidade
-const unitRecipients: Record<string, string> = {
-  'marista': 'jonatas@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendasmarista@flexacademia.com.br' ,
-  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br',
-  'alphaville': 'hudson@flexacademia.com.br,comercial@flexacademia.com.br, comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendas.alphaville@flexacademia.com.br,supervisaotecnicaalphaville@flexacademia.com.br',
-  'palmas': 'comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,vendaspalmas@flexacademia.com.br,gestaotecnica@flexpalmas.com.br,atendimento@paresconsultoria.com.br'
-}
+/* `unitRecipients` e `signatureLinks` saíram daqui: a lista de destinatários
+   viajava dentro do corpo da requisição e a API obedecia, o que fazia de
+   `/api/send-email` um relay aberto. Agora quem resolve destinatário,
+   assunto, template e link de assinatura é o servidor. */
 
 // Mapeia nomes das unidades
 const unitNames: Record<string, string> = {
@@ -68,10 +68,6 @@ const procedureNames: Record<string, string> = {
   'retencao-credito': 'Retenção de Crédito para Novo Plano'
 }
 
-const signatureLinks = {
-  cancelamento: 'https://app.zapsign.com.br/verificar/doc/7e0e84ef-36ac-432d-b60e-614136502106',
-  'transferencia-dias': 'https://app.zapsign.com.br/verificar/doc/1b8f4550-b9ec-42dd-9a94-02a9c5235fd9'
-} as const
 
 // Mapeia nomes dos motivos
 const reasonNames: Record<string, string> = {
@@ -281,119 +277,35 @@ export default function Procedimentos() {
         }
       }
   
-      // Dados formatados
-      const dataFormatada = new Date().toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-  
       const unidadeNome = unitNames[data.unidade] || data.unidade
       const procedimentoNome = procedureNames[data.procedimento] || data.procedimento
       const motivoNome = reasonNames[data.motivo] || data.motivo
-      const numeroSolicitacao = `FLEX-${Date.now().toString().slice(-6)}`
-      
-      // Obter emails da unidade (string separada por vírgula)
-      const managerEmailString = unitRecipients[data.unidade]
-  
-      if (!managerEmailString) {
-        throw new Error('Unidade não encontrada no sistema')
-      }
-  
-      // Converter string em array de emails
-      const managerEmails = managerEmailString.split(',').map(email => email.trim())
-  
-      // Blocos condicionais
-      const resgateBlock = data.procedimento.includes('resgate-cheque')
-        ? `<div style="background:#fff3cd;padding:15px;border-left:4px solid #ffc107;margin:20px 0;">
-           <h4 style="color:#856404;margin:0 0 10px 0;">Sobre resgate de cheques:</h4>
-           <p style="color:#856404;margin:0;">O processo para resgate de cheques só poderá ser efetuado após o pagamento total dos cheques a serem resgatados + a taxa de resgate.</p>
-           </div>`
-        : ''
-  
-      const cancelBlock = data.procedimento === 'cancelamento'
-        ? `<div style="background:#f8d7da;padding:15px;border-left:4px solid #dc3545;margin:20px 0;">
-           <h4 style="color:#721c24;margin:0 0 10px 0;">Em caso de solicitação de rescisão:</h4>
-           <p style="color:#721c24;margin:0;">O prazo é de <strong>ATÉ 40 DIAS</strong>.</p>
-           </div>`
-        : ''
-  
-      // Dados comuns para ambos os emails
-      const emailData = {
-        numero_solicitacao: numeroSolicitacao,
-        unidade: unidadeNome,
-        procedimento: procedimentoNome,
-        motivo: motivoNome,
-        data_solicitacao: dataFormatada,
-        nome_cliente: data.nome,
-        whatsapp: data.whatsapp,
-        email_cliente: data.email,
-        matricula: data.matricula || 'Não informado',
-        detalhes: data.detalhes || 'Nenhum detalhe adicional',
-        data_inicio: data.dataInicio || 'Não se aplica',
-        data_fim: data.dataFim || 'Não se aplica',
-        resgate_block: resgateBlock,
-        cancelamento_block: cancelBlock,
-        anexo: anexoBase64,
-        nome_arquivo: nomeArquivo
-      }
-  
-      // Definir tipo de email
-      const isCancelamento = data.procedimento === 'cancelamento'
-      const isTransferenciaDias = data.procedimento === 'transferencia-dias'
-      const clientTemplate = isCancelamento
-        ? 'cancelamento'
-        : isTransferenciaDias
-          ? 'cessao-plano'
-          : 'comprovante'
-      const clientSubject = isCancelamento
-        ? `📋 Confirmação Necessária - Cancelamento ${numeroSolicitacao} - Flex Fitness`
-        : isTransferenciaDias
-          ? `📋 Confirmação Necessária - Termo de Cessão de Plano ${numeroSolicitacao} - Flex Fitness`
-          : `✅ Comprovante de Solicitação - ${numeroSolicitacao} - Flex Fitness`
-      const clientSignatureLink = isCancelamento
-        ? signatureLinks.cancelamento
-        : isTransferenciaDias
-          ? signatureLinks['transferencia-dias']
-          : ''
-      
-      // Criar destinatários
-      const destinatarios = []
-  
-      // 1. Email para o cliente (SEM anexo)
-      destinatarios.push({
-        email: data.email,
-        subject: clientSubject,
-        template: clientTemplate,
-        link_assinatura: clientSignatureLink,
-        anexo: '',
-        nome_arquivo: ''
-      })
-  
-      // 2. Emails para a empresa (COM anexo se existir)
-      managerEmails.forEach(email => {
-        destinatarios.push({
-          email: email,
-          subject: `🚨 Nova Solicitação - ${procedimentoNome} - ${numeroSolicitacao}`,
-          template: 'empresa',
-          link_assinatura: '',
-          anexo: anexoBase64,
-          nome_arquivo: nomeArquivo
-        })
-      })
-  
-      // Enviar todos os emails de uma vez
+
+      /* O payload agora leva só os DADOS do formulário. Os códigos de unidade e
+         procedimento vão junto porque é com eles que o servidor resolve quem
+         recebe, qual template usa e qual link de assinatura envia. */
       const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          destinatarios: destinatarios,
-          ...emailData
+          unidade_codigo: data.unidade,
+          procedimento_codigo: data.procedimento,
+          unidade: unidadeNome,
+          procedimento: procedimentoNome,
+          motivo: motivoNome,
+          nome_cliente: data.nome,
+          whatsapp: data.whatsapp,
+          email_cliente: data.email,
+          matricula: data.matricula || 'Não informado',
+          detalhes: data.detalhes || 'Nenhum detalhe adicional',
+          data_inicio: data.dataInicio || 'Não se aplica',
+          data_fim: data.dataFim || 'Não se aplica',
+          anexo: anexoBase64,
+          nome_arquivo: nomeArquivo,
+          [HONEYPOT_FIELD]: (data as any)[HONEYPOT_FIELD] ?? '',
         })
       })
-  
+
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Erro ao enviar emails')

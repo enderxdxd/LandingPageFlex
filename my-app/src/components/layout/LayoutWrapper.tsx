@@ -55,7 +55,7 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
       <>
         <div className="nocturne">
           <Header />
-          <main>{children}</main>
+          <main id="conteudo" tabIndex={-1}>{children}</main>
           <FooterNocturne />
           <MobileActionBar />
           <WhatsAppFab />
@@ -68,7 +68,7 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
   return (
     <>
       <Navigation />
-      <main>{children}</main>
+      <main id="conteudo" tabIndex={-1}>{children}</main>
       <Footer />
       <CookieBanner />
     </>

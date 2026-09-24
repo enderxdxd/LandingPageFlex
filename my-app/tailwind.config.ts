@@ -19,6 +19,13 @@ const config: Config = {
         'flex-light': '#F8FAFC',
         'flex-light-gray': '#F1F5F9',
         'flex-cta': '#F97316',
+        /* `flex-gray` e `flex-red` eram usados em 65 lugares sem nunca terem
+           sido declarados aqui — ou seja, as classes nao produziam nada. O
+           caso mais grave era `focus:border-flex-red` nos formularios
+           legados: o indicador de foco simplesmente nao existia. Os valores
+           saem da propria paleta para nao introduzir cor nova. */
+        'flex-gray': '#475569',
+        'flex-red': '#F97316',
         'flex-blue-50': '#EFF6FF',
         'flex-blue-100': '#DBEAFE',
         'flex-blue-200': '#BFDBFE',

@@ -1,6 +1,8 @@
 // src/app/sugestoes/page.tsx
 'use client'
 
+import { HONEYPOT_FIELD, honeypotInputProps } from '@/lib/api/honeypot'
+
 import { useState } from 'react'
 import ConsentField from '@/components/shared/ConsentField'
 import { motion } from 'framer-motion'
@@ -123,6 +125,8 @@ function CustomSelect({
 
 // Tipagem
 type SugData = {
+  /** campo-armadilha; sempre vazio quando quem preenche é gente */
+  [HONEYPOT_FIELD]?: string
   nome: string
   telefone: string
   email?: string
@@ -244,7 +248,8 @@ export default function Sugestoes() {
         sugestao: data.sugestao,
         fotos: fotosBase64,
         nomes_fotos: nomesFotos,
-        quantidade_fotos: fotosBase64.length
+        quantidade_fotos: fotosBase64.length,
+        [HONEYPOT_FIELD]: (data as any)[HONEYPOT_FIELD] ?? '',
       }
 
       // Enviar para API
@@ -352,38 +357,51 @@ export default function Sugestoes() {
             className="form-card glass-effect rounded-2xl p-8 backdrop-blur-lg border border-white/10 space-y-6"
           >
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
+              <label htmlFor="sg-nome" className="block text-sm font-medium text-flex-light mb-2">
                 Nome Completo *
               </label>
               <input
+                id="sg-nome"
+                type="text"
+                autoComplete="name"
+                autoCapitalize="words"
                 {...register('nome', { required: 'Nome é obrigatório' })}
                 placeholder="Seu nome completo"
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {errors.nome && (
-                <p className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
+                <p role="alert" className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
               )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-flex-light mb-2">
+                <label htmlFor="sg-telefone" className="block text-sm font-medium text-flex-light mb-2">
                   Telefone *
                 </label>
                 <input
+                  id="sg-telefone"
+                  type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
                   {...register('telefone', { required: 'Telefone é obrigatório' })}
                   placeholder="(62) 99999-9999"
                   className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                 />
                 {errors.telefone && (
-                  <p className="text-red-400 text-sm mt-1">{errors.telefone.message}</p>
+                  <p role="alert" className="text-red-400 text-sm mt-1">{errors.telefone.message}</p>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-flex-light mb-2">
+                <label htmlFor="sg-email" className="block text-sm font-medium text-flex-light mb-2">
                   E-mail (Opcional)
                 </label>
                 <input
+                  id="sg-email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
                   type="email"
                   {...register('email')}
                   placeholder="seu@email.com"
@@ -427,10 +445,11 @@ export default function Sugestoes() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
+              <label htmlFor="sg-sugestao" className="block text-sm font-medium text-flex-light mb-2">
                 Sua Sugestão *
               </label>
               <textarea
+                id="sg-sugestao"
                 {...register('sugestao', { 
                   required: 'Por favor, compartilhe sua sugestão',
                   minLength: {
@@ -443,7 +462,7 @@ export default function Sugestoes() {
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
               />
               {errors.sugestao && (
-                <p className="text-red-400 text-sm mt-1">{errors.sugestao.message}</p>
+                <p role="alert" className="text-red-400 text-sm mt-1">{errors.sugestao.message}</p>
               )}
             </div>
 
@@ -543,6 +562,9 @@ export default function Sugestoes() {
               onChange={setConsent}
               purpose="responder e dar andamento à minha sugestão"
             />
+
+            {/* Campo-armadilha: invisível para gente, preenchido por robô. */}
+            <input {...honeypotInputProps} {...register(HONEYPOT_FIELD as any)} />
 
             <motion.button
               type="submit"

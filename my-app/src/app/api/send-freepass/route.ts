@@ -1,6 +1,16 @@
 // app/api/send-aula-experimental/route.ts
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  MAIL_FROM,
+  MAIL_REPLY_TO,
+  cleanRecipientList,
+  isBot,
+  normalizeEmail,
+  garantirEnvio,
+  rateLimit,
+  sanitizeDeep,
+} from '@/lib/api/security';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -195,15 +205,45 @@ const unitRecipients: Record<string, string> = {
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const { destinatarios, ...emailData } = data;
+    /* Teto por IP: um interessado real preenche isto uma vez, não cinco por
+       hora. Antes de qualquer parse pesado, para o abuso sair barato. */
+    const limited = rateLimit(request, { scope: 'freepass', limit: 3, windowMs: 60 * 60 * 1000 });
+    if (limited) return limited;
+
+    const rawData = await request.json();
+
+    /* Campo-armadilha preenchido: responde como se tivesse dado certo e não
+       envia nada. Erro explícito só ensinaria o robô a desviar. */
+    if (isBot(rawData)) {
+      return NextResponse.json({ success: true, message: 'Solicitação recebida' });
+    }
+
+    /* `destinatarios` é DESCARTADO de propósito. Ele vinha do corpo da
+       requisição e mandava e-mail, assinado pelo domínio verificado, para
+       qualquer endereço que o cliente listasse — relay aberto. Quem decide
+       para quem vai, daqui em diante, é esta rota. */
+    const { destinatarios: _ignorado, ...emailData } = rawData;
+
+    const emailInteressado = normalizeEmail(emailData.email);
+    if (!emailInteressado) {
+      return NextResponse.json(
+        { success: false, error: 'Informe um e-mail válido para receber a confirmação.' },
+        { status: 400 }
+      );
+    }
+
+    if (typeof emailData.nome !== 'string' || emailData.nome.trim().length < 2) {
+      return NextResponse.json(
+        { success: false, error: 'Informe seu nome.' },
+        { status: 400 }
+      );
+    }
 
     // Log para debug
-    console.log('🎁 Iniciando envio de solicitação de aula experimental:', { 
-      nome: emailData.nome, 
+    console.log('🎁 Iniciando envio de solicitação de aula experimental:', {
+      nome: emailData.nome,
       qual_unidade: emailData.qual_unidade,
-      email: emailData.email,
-      destinatarios_fornecidos: !!destinatarios
+      email: emailInteressado
     });
 
     // Gerar número do protocolo
@@ -212,18 +252,20 @@ export async function POST(request: NextRequest) {
     // Determinar email da unidade usando o código enviado
     const unidadeCode = emailData.codigo_unidade || 'marista';
     // Converte a lista de emails da unidade (separados por vírgula) em um array
-    const managerEmails = (unitRecipients[unidadeCode] || '')
-      .split(',')
-      .map(e => e.trim())
-      .filter(Boolean);
+    const managerEmails = cleanRecipientList(unitRecipients[unidadeCode] || '');
 
     if (managerEmails.length === 0) {
       throw new Error('Unidade não encontrada no sistema');
     }
 
+    /* Escapa tudo que veio do visitante ANTES de virar HTML. Os templates são
+       template strings; sem isto, `nome` entra como marcação no e-mail que a
+       equipe abre. */
+    const safeData = sanitizeDeep(emailData);
+
     // Dados formatados
     const formattedEmailData = {
-      ...emailData,
+      ...safeData,
       numero_protocolo: numeroProtocolo,
       data_solicitacao: new Date().toLocaleString('pt-BR', {
         timeZone: 'America/Sao_Paulo',
@@ -234,24 +276,31 @@ export async function POST(request: NextRequest) {
         minute: '2-digit',
         second: '2-digit'
       }),
-      email_interessado: emailData.email,
+      email_interessado: emailInteressado,
     };
 
-    // Definir destinatários se não fornecidos
-    const defaultDestinatarios = managerEmails.map(email => ({
+    /* Destinatários resolvidos AQUI, a partir do código da unidade. A equipe
+       responde direto para o interessado; o interessado responde para uma
+       caixa monitorada. */
+    const finalDestinatarios: Array<{
+      email: string
+      subject: string
+      template: string
+      replyTo: string
+    }> = managerEmails.map(email => ({
       email,
-      subject: `🎁 Nova Solicitação de Aula Experimental - ${emailData.qual_unidade} - FP-${numeroProtocolo}`,
-      template: 'empresa'
+      subject: `🎁 Nova Solicitação de Aula Experimental - ${safeData.qual_unidade} - FP-${numeroProtocolo}`,
+      template: 'empresa',
+      replyTo: emailInteressado,
     }));
 
-    // Adicionar email de confirmação para o cliente
-    defaultDestinatarios.push({
-      email: emailData.email,
+    // Confirmação para o interessado
+    finalDestinatarios.push({
+      email: emailInteressado,
       subject: `🎁 Aula Experimental Solicitada - FP-${numeroProtocolo} - Flex Fitness`,
-      template: 'cliente'
+      template: 'cliente',
+      replyTo: MAIL_REPLY_TO,
     });
-
-    const finalDestinatarios = destinatarios || defaultDestinatarios;
 
     // Templates
     const templates = {
@@ -277,13 +326,15 @@ export async function POST(request: NextRequest) {
         }
 
         const result = await resend.emails.send({
-          from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
+          from: MAIL_FROM,
           to: [dest.email],
+          replyTo: dest.replyTo,
           subject: dest.subject,
           html: template(formattedEmailData),
         });
 
-        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        const id = garantirEnvio(result);
+        console.log(`Email ${i + 1} enviado. ID: ${id}`);
         results.push(result);
 
         // Delay de 500ms entre envios para evitar rate limit
@@ -313,7 +364,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: results.length > 0,
-      message: `Solicitação de aula experimental enviada com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
+      message: results.length > 0
+        ? `Solicitação enviada. ${results.length} de ${finalDestinatarios.length} e-mails entregues ao provedor.`
+        : 'Não foi possível enviar sua solicitação agora. Tente novamente ou fale conosco pelo WhatsApp.',
       protocolo: numeroProtocolo,
       enviado_para: managerEmails.join(', '),
       confirmacao_cliente: true,

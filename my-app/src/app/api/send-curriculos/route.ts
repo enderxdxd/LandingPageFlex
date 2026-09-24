@@ -1,6 +1,16 @@
 // app/api/send-curriculos/route.ts
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  MAIL_FROM,
+  MAIL_REPLY_TO,
+  cleanRecipientList,
+  isBot,
+  normalizeEmail,
+  garantirEnvio,
+  rateLimit,
+  sanitizeDeep,
+} from '@/lib/api/security';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -616,15 +626,32 @@ const templateCandidato = (data: any) => `
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const { destinatarios, ...emailData } = data;
+    const limited = rateLimit(request, { scope: 'curriculos', limit: 3, windowMs: 60 * 60 * 1000 });
+    if (limited) return limited;
+
+    const rawData = await request.json();
+
+    if (isBot(rawData)) {
+      return NextResponse.json({ success: true, message: 'Currículo recebido' });
+    }
+
+    /* `destinatarios` descartado: vinha do cliente e virava relay aberto —
+       com anexo arbitrário junto, que é pior ainda. */
+    const { destinatarios: _ignorado, ...emailData } = rawData;
+
+    const emailCandidato = normalizeEmail(emailData.email);
+    if (!emailCandidato) {
+      return NextResponse.json(
+        { success: false, error: 'Informe um e-mail válido para receber a confirmação.' },
+        { status: 400 }
+      );
+    }
 
     // Log para debug
     console.log('📤 Iniciando envio de currículo:', { 
       nome: emailData.nome, 
       departamento: emailData.codigo_departamento,
-      unidade: emailData.unidade,
-      destinatarios_fornecidos: !!destinatarios
+      unidade: emailData.unidade
     });
 
     // Gerar número do protocolo
@@ -638,12 +665,19 @@ export async function POST(request: NextRequest) {
       throw new Error('Departamento não encontrado no sistema');
     }
 
-    // Converter string em array de emails
-    const managerEmails = managerEmailString.split(',').map(email => email.trim());
+    // Converter string em array de emails, descartando entradas quebradas
+    const managerEmails = cleanRecipientList(managerEmailString);
+
+    if (managerEmails.length === 0) {
+      throw new Error('Departamento sem destinatário válido configurado');
+    }
+
+    /* `curriculo` fica de fora: é base64 do anexo. */
+    const safeData = sanitizeDeep(emailData, ['curriculo']);
 
     // Dados formatados
     const formattedEmailData = {
-      ...emailData,
+      ...safeData,
       numero_protocolo: numeroProtocolo,
       data_envio: new Date().toLocaleString('pt-BR', {
         timeZone: 'America/Sao_Paulo',
@@ -662,28 +696,34 @@ export async function POST(request: NextRequest) {
       content: emailData.curriculo.split(',')[1], // Remove o "data:type/subtype;base64," do início
     }] : [];
 
-    // Definir destinatários se não fornecidos
-    const defaultDestinatarios = [];
+    // Destinatários resolvidos no servidor
+    const finalDestinatarios: Array<{
+      to: string
+      subject: string
+      template: string
+      attachments: any[]
+      replyTo: string
+    }> = [];
 
-// 1. Emails para o departamento (COM anexo)
+    // 1. Emails para o departamento (COM anexo) — responder fala com o candidato
     managerEmails.forEach(emailDestinatario => {
-      defaultDestinatarios.push({
-        to: emailDestinatario,  // ← MUDOU: 'email' para 'to'
-        subject: `💼 Novo Currículo - ${emailData.departamento} - CV-${numeroProtocolo}`,
+      finalDestinatarios.push({
+        to: emailDestinatario,
+        subject: `💼 Novo Currículo - ${safeData.departamento} - CV-${numeroProtocolo}`,
         template: 'empresa',
-        attachments: attachments
+        attachments: attachments,
+        replyTo: emailCandidato,
       });
     });
 
     // 2. Email de confirmação para o candidato (SEM anexo)
-    defaultDestinatarios.push({
-      to: emailData.email,  // ← MUDOU: 'email' para 'to'
+    finalDestinatarios.push({
+      to: emailCandidato,
       subject: `🎉 Currículo Recebido com Sucesso - CV-${numeroProtocolo} - Flex Fitness`,
       template: 'candidato',
-      attachments: []
+      attachments: [],
+      replyTo: MAIL_REPLY_TO,
     });
-
-    const finalDestinatarios = destinatarios || defaultDestinatarios;
 
     // Templates
     const templates = {
@@ -709,14 +749,16 @@ export async function POST(request: NextRequest) {
         }
 
         const result = await resend.emails.send({
-          from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
-          to: [dest.to],  // ← MUDOU: dest.email para dest.to
+          from: MAIL_FROM,
+          to: [dest.to],
+          replyTo: dest.replyTo,
           subject: dest.subject,
-          html: template(formattedEmailData),  // ← MUDOU: removeu o ...dest
+          html: template(formattedEmailData),
           attachments: dest.attachments || [],
         });
 
-        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        const id = garantirEnvio(result);
+        console.log(`Email ${i + 1} enviado. ID: ${id}`);
         results.push(result);
 
         // Delay de 500ms entre envios para evitar rate limit
@@ -749,7 +791,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: results.length > 0,
-      message: `Currículo enviado com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
+      message: results.length > 0
+        ? `Sua currículo foi enviada. ${results.length} de ${finalDestinatarios.length} e-mails entregues ao provedor.`
+        : 'Não foi possível enviar agora. Tente novamente ou fale conosco pelo WhatsApp.',
       protocolo: numeroProtocolo,
       enviado_para: managerEmailString,
       departamento: emailData.departamento,

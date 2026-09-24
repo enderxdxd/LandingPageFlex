@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { Unit } from '@/lib/constants/units-data'
 import { HiX, HiChevronLeft, HiChevronRight, HiPhotograph } from 'react-icons/hi'
 import { Building2, Camera } from 'lucide-react'
+import Link from 'next/link'
 
 interface UnitGalleryProps {
   unit: Unit
@@ -167,12 +168,12 @@ export default function UnitGallery({ unit }: UnitGalleryProps) {
             <p className="text-white/60 mb-6">
               Agende uma visita e conheca cada detalhe pessoalmente
             </p>
-            <button
-              onClick={() => window.location.assign('/freepass')}
-              className="bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
+            <Link
+              href="/freepass"
+              className="inline-block bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
             >
               Agendar Visita
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>

@@ -1,6 +1,15 @@
 // app/api/send-sugestoes/route.ts
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  MAIL_FROM,
+  MAIL_REPLY_TO,
+  isBot,
+  normalizeEmail,
+  garantirEnvio,
+  rateLimit,
+  sanitizeDeep,
+} from '@/lib/api/security';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -181,15 +190,34 @@ const unitRecipients: Record<string, string[]> = {
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const { destinatarios, ...emailData } = data;
+    const limited = rateLimit(request, { scope: 'sugestoes', limit: 3, windowMs: 60 * 60 * 1000 });
+    if (limited) return limited;
+
+    const rawData = await request.json();
+
+    if (isBot(rawData)) {
+      return NextResponse.json({ success: true, message: 'Sugestão recebida' });
+    }
+
+    /* `destinatarios` descartado: vinha do cliente e virava relay aberto. */
+    const { destinatarios: _ignorado, ...emailData } = rawData;
+
+    /* Aqui o e-mail é opcional — a sugestão pode ser anônima. Só precisa ser
+       válido SE veio preenchido; endereço malformado saindo daqui volta como
+       hard bounce e cobra o preço na reputação do domínio. */
+    const emailInteressado = emailData.email ? normalizeEmail(emailData.email) : null;
+    if (emailData.email && !emailInteressado) {
+      return NextResponse.json(
+        { success: false, error: 'O e-mail informado não é válido. Corrija ou deixe o campo em branco.' },
+        { status: 400 }
+      );
+    }
 
     // Log para debug
     console.log('📤 Iniciando envio de sugestão:', { 
       nome: emailData.nome, 
       qual_flex: emailData.qual_flex,
-      quantidade_fotos: emailData.quantidade_fotos || 0,
-      destinatarios_fornecidos: !!destinatarios
+      quantidade_fotos: emailData.quantidade_fotos || 0
     });
 
     // Gerar número do protocolo
@@ -203,9 +231,13 @@ export async function POST(request: NextRequest) {
       throw new Error('Unidade não encontrada no sistema');
     }
 
+    /* Escapa o que veio do visitante antes de virar HTML. `fotos` fica de
+       fora: é base64 de anexo, escapar corromperia o arquivo. */
+    const safeData = sanitizeDeep(emailData, ['fotos']);
+
     // Dados formatados
     const formattedEmailData = {
-      ...emailData,
+      ...safeData,
       numero_protocolo: numeroProtocolo,
       data_sugestao: new Date().toLocaleString('pt-BR', {
         timeZone: 'America/Sao_Paulo',
@@ -224,25 +256,32 @@ export async function POST(request: NextRequest) {
       content: foto.split(',')[1], // Remove o "data:image/jpeg;base64," do início
     })) : [];
 
-    // Definir destinatários se não fornecidos
-    const defaultDestinatarios = managerEmails.map(email => ({
+    // Destinatários resolvidos no servidor
+    const finalDestinatarios: Array<{
+      email: string
+      subject: string
+      template: string
+      attachments: any[]
+      replyTo: string
+    }> = managerEmails.map(email => ({
       email,
-      subject: `💡 Nova Sugestão - ${emailData.qual_flex} - SUG-${numeroProtocolo}`,
+      subject: `💡 Nova Sugestão - ${safeData.qual_flex} - SUG-${numeroProtocolo}`,
       template: 'empresa',
-      attachments: attachments
+      attachments: attachments,
+      /* Sugestão anônima não tem para onde responder: cai na caixa monitorada. */
+      replyTo: emailInteressado ?? MAIL_REPLY_TO,
     }));
 
-    // Adicionar email de confirmação para o cliente se tiver email
-    if (emailData.email) {
-      defaultDestinatarios.push({
-        email: emailData.email,
+    // Confirmação para quem sugeriu, se deixou e-mail
+    if (emailInteressado) {
+      finalDestinatarios.push({
+        email: emailInteressado,
         subject: `💡 Sugestão Recebida - SUG-${numeroProtocolo} - Flex Fitness`,
         template: 'cliente',
-        attachments: []
+        attachments: [],
+        replyTo: MAIL_REPLY_TO,
       });
     }
-
-    const finalDestinatarios = destinatarios || defaultDestinatarios;
 
     // Templates
     const templates = {
@@ -268,14 +307,16 @@ export async function POST(request: NextRequest) {
         }
 
         const result = await resend.emails.send({
-          from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
+          from: MAIL_FROM,
           to: [dest.email],
+          replyTo: dest.replyTo,
           subject: dest.subject,
           html: template({ ...formattedEmailData, ...dest }),
           attachments: dest.attachments || [],
         });
 
-        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        const id = garantirEnvio(result);
+        console.log(`Email ${i + 1} enviado. ID: ${id}`);
         results.push(result);
 
         // Delay de 500ms entre envios para evitar rate limit
@@ -311,7 +352,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: results.length > 0,
-      message: `Sugestão enviada com sucesso! ${results.length} de ${finalDestinatarios.length} emails enviados`,
+      message: results.length > 0
+        ? `Sua sugestão foi enviada. ${results.length} de ${finalDestinatarios.length} e-mails entregues ao provedor.`
+        : 'Não foi possível enviar agora. Tente novamente ou fale conosco pelo WhatsApp.',
       protocolo: numeroProtocolo,
       enviado_para: managerEmails.join(', '),
       confirmacao_cliente: !!emailData.email,

@@ -8,6 +8,7 @@ import { HiLocationMarker } from 'react-icons/hi'
 import { MdDirections } from 'react-icons/md'
 import { Calendar, Car, Accessibility, Ruler } from 'lucide-react'
 import ContactForm from '@/components/home/CTASection/ContactForm'
+import Link from 'next/link'
 
 interface UnitContactProps {
   unit: Unit
@@ -119,13 +120,16 @@ export default function UnitContact({ unit }: UnitContactProps) {
           transition={{ delay: 0.3, duration: 0.5 }}
         >
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => window.location.assign('/freepass')}
+            {/* Era um <button> com window.location.assign: recarregava o app
+                inteiro, nao abria em nova aba, nao aparecia no menu de contexto
+                e o buscador nao seguia o link. Navegacao e <Link>. */}
+            <Link
+              href="/freepass"
               className="inline-flex items-center justify-center gap-2 bg-flex-primary text-white px-8 py-4 rounded-full font-medium text-base hover:bg-flex-secondary transition-colors duration-200"
             >
-              <Calendar className="w-5 h-5" />
+              <Calendar className="w-5 h-5" aria-hidden="true" />
               Agendar Visita
-            </button>
+            </Link>
 
             <a
               href={`https://wa.me/55${unit.whatsapp.replace(/\D/g, '')}`}

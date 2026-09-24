@@ -124,6 +124,12 @@ export const unitsData: Unit[] = [
     parking: '+180 vagas',
     accessibility: true,
     landmark: 'Próximo ao AlphaPark Hotel',
+    /* ATENCAO: estas coordenadas apontam para Barueri/SP (o Alphaville de Sao
+       Paulo), nao para o Alphaville Flamboyant de Goiania. O campo nunca teve
+       consumidor — os links de mapa usam `address` em texto —, entao o erro
+       passou despercebido. O JSON-LD em lib/seo/structured-data.ts DESCARTA
+       geo fora do estado declarado, logo esta unidade hoje vai para o Google
+       sem coordenada. Substitua pelo valor real para recuperar o ganho. */
     coordinates: {
       lat: -23.5081,
       lng: -46.8487

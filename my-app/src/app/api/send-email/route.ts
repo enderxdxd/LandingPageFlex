@@ -1,6 +1,16 @@
 // app/api/send-email/route.ts
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  MAIL_FROM,
+  MAIL_REPLY_TO,
+  cleanRecipientList,
+  isBot,
+  normalizeEmail,
+  garantirEnvio,
+  rateLimit,
+  sanitizeDeep,
+} from '@/lib/api/security';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -378,104 +388,221 @@ const templates = {
   `
 };
 
+/**
+ * Destinatários por unidade e links de assinatura.
+ *
+ * Estavam no componente de `/procedimentos`, o que significava que a lista de
+ * quem recebe cada solicitação viajava dentro do corpo da requisição — e esta
+ * rota obedecia. Era o pior dos cinco relays: destinatário, assunto, template
+ * E anexo, todos escolhidos por quem chamasse a API. Agora moram aqui.
+ */
+const unitRecipients: Record<string, string> = {
+  'marista': 'jonatas@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendasmarista@flexacademia.com.br',
+  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,supervisaotecnicabuenavista@flexacademia.com.br,hudson@flexacademia.com.br,comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br',
+  'alphaville': 'hudson@flexacademia.com.br,comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,atendimento@paresconsultoria.com.br,vendas.alphaville@flexacademia.com.br,supervisaotecnicaalphaville@flexacademia.com.br',
+  'palmas': 'comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,vendaspalmas@flexacademia.com.br,gestaotecnica@flexpalmas.com.br,atendimento@paresconsultoria.com.br',
+};
+
+const signatureLinks: Record<string, string> = {
+  cancelamento: 'https://app.zapsign.com.br/verificar/doc/7e0e84ef-36ac-432d-b60e-614136502106',
+  'transferencia-dias': 'https://app.zapsign.com.br/verificar/doc/1b8f4550-b9ec-42dd-9a94-02a9c5235fd9',
+};
+
+/* Os dois blocos condicionais são HTML montado pelo SERVIDOR, e por isso
+   entram depois do escape — nunca vêm do corpo da requisição. */
+const RESGATE_BLOCK = `<div style="background:#fff3cd;padding:15px;border-left:4px solid #ffc107;margin:20px 0;">
+  <h4 style="color:#856404;margin:0 0 10px 0;">Sobre resgate de cheques:</h4>
+  <p style="color:#856404;margin:0;">O processo para resgate de cheques só poderá ser efetuado após o pagamento total dos cheques a serem resgatados + a taxa de resgate.</p>
+  </div>`;
+
+const CANCELAMENTO_BLOCK = `<div style="background:#f8d7da;padding:15px;border-left:4px solid #dc3545;margin:20px 0;">
+  <h4 style="color:#721c24;margin:0 0 10px 0;">Em caso de solicitação de rescisão:</h4>
+  <p style="color:#721c24;margin:0;">O prazo é de <strong>ATÉ 40 DIAS</strong>.</p>
+  </div>`;
+
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const { destinatarios, ...emailData } = data;
+    const limited = rateLimit(request, { scope: 'procedimentos', limit: 5, windowMs: 60 * 60 * 1000 });
+    if (limited) return limited;
 
-    // Log para debug
-    console.log('📤 Iniciando envio para:', { quantidade: destinatarios.length });
+    const rawData = await request.json();
+
+    if (isBot(rawData)) {
+      return NextResponse.json({ success: true, message: 'Solicitação recebida' });
+    }
+
+    /* `destinatarios` descartado. Esta rota antes enviava EXCLUSIVAMENTE com
+       base nele: sem lista padrão, sem validação, com anexo arbitrário. */
+    const { destinatarios: _ignorado, ...emailData } = rawData;
+
+    const emailCliente = normalizeEmail(emailData.email_cliente);
+    if (!emailCliente) {
+      return NextResponse.json(
+        { success: false, error: 'Informe um e-mail válido para receber o comprovante.' },
+        { status: 400 }
+      );
+    }
+
+    const unidadeCode = String(emailData.unidade_codigo ?? '');
+    const managerEmails = cleanRecipientList(unitRecipients[unidadeCode] ?? '');
+    if (managerEmails.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Unidade não encontrada no sistema' },
+        { status: 400 }
+      );
+    }
+
+    const procedimentoCode = String(emailData.procedimento_codigo ?? '');
+    const isCancelamento = procedimentoCode === 'cancelamento';
+    const isTransferenciaDias = procedimentoCode === 'transferencia-dias';
+
+    const numeroSolicitacao = `FLEX-${Date.now().toString().slice(-6)}`;
+    const dataFormatada = new Date().toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    /* `anexo` fica fora do escape: é base64 do arquivo enviado. */
+    const safeData = sanitizeDeep(emailData, ['anexo']);
+
+    const anexoBase64 = typeof emailData.anexo === 'string' ? emailData.anexo : '';
+    const nomeArquivo = typeof safeData.nome_arquivo === 'string' && safeData.nome_arquivo
+      ? safeData.nome_arquivo
+      : 'documento.pdf';
+
+    const attachments = anexoBase64.trim() !== ''
+      ? [{
+          filename: nomeArquivo,
+          content: anexoBase64.includes(',') ? anexoBase64.split(',')[1] : anexoBase64,
+        }]
+      : [];
+
+    const clientTemplate = isCancelamento
+      ? 'cancelamento'
+      : isTransferenciaDias
+        ? 'cessao-plano'
+        : 'comprovante';
+
+    const clientSubject = isCancelamento
+      ? `📋 Confirmação Necessária - Cancelamento ${numeroSolicitacao} - Flex Fitness`
+      : isTransferenciaDias
+        ? `📋 Confirmação Necessária - Termo de Cessão de Plano ${numeroSolicitacao} - Flex Fitness`
+        : `✅ Comprovante de Solicitação - ${numeroSolicitacao} - Flex Fitness`;
+
+    const clientSignatureLink = isCancelamento
+      ? signatureLinks.cancelamento
+      : isTransferenciaDias
+        ? signatureLinks['transferencia-dias']
+        : '';
+
+    const formattedEmailData = {
+      ...safeData,
+      numero_solicitacao: numeroSolicitacao,
+      data_solicitacao: dataFormatada,
+      // blocos gerados aqui, depois do escape
+      resgate_block: procedimentoCode.includes('resgate-cheque') ? RESGATE_BLOCK : '',
+      cancelamento_block: isCancelamento ? CANCELAMENTO_BLOCK : '',
+    };
+
+    /* Cliente primeiro (sem anexo), equipe depois (com anexo). */
+    const finalDestinatarios: Array<{
+      email: string
+      subject: string
+      template: string
+      link_assinatura: string
+      attachments: any[]
+      replyTo: string
+    }> = [
+      {
+        email: emailCliente,
+        subject: clientSubject,
+        template: clientTemplate,
+        link_assinatura: clientSignatureLink,
+        attachments: [],
+        replyTo: MAIL_REPLY_TO,
+      },
+      ...managerEmails.map(email => ({
+        email,
+        subject: `🚨 Nova Solicitação - ${safeData.procedimento} - ${numeroSolicitacao}`,
+        template: 'empresa',
+        link_assinatura: '',
+        attachments,
+        replyTo: emailCliente,
+      })),
+    ];
+
+    console.log('Iniciando envio de procedimento:', {
+      protocolo: numeroSolicitacao,
+      unidade: unidadeCode,
+      procedimento: procedimentoCode,
+      destinatarios: finalDestinatarios.length,
+    });
 
     // Enviar emails sequencialmente com delay para evitar rate limit
     const results = [];
     const errors = [];
 
-    for (let i = 0; i < destinatarios.length; i++) {
-      const dest = destinatarios[i];
-      
+    for (let i = 0; i < finalDestinatarios.length; i++) {
+      const dest = finalDestinatarios[i];
+
       try {
-        console.log(`📧 Enviando email ${i + 1}/${destinatarios.length} para: ${dest.email}`);
-        
-        // Escolher o template
         const template = templates[dest.template as keyof typeof templates];
         if (!template) {
           throw new Error(`Template '${dest.template}' não encontrado`);
         }
 
-        // Preparar dados específicos para este destinatário
         const dadosEspecificos = {
-          ...emailData,
-          link_assinatura: dest.link_assinatura || '',
-          anexo: dest.anexo || '',
-          nome_arquivo: dest.nome_arquivo || ''
+          ...formattedEmailData,
+          link_assinatura: dest.link_assinatura,
+          nome_arquivo: nomeArquivo,
         };
 
-        // Preparar anexos se existirem
-        const attachments = dest.anexo && dest.anexo.trim() !== '' ? [{
-          filename: dest.nome_arquivo || 'documento.pdf',
-          content: dest.anexo.includes(',') ? dest.anexo.split(',')[1] : dest.anexo,
-        }] : [];
-
         const result = await resend.emails.send({
-          from: 'FlexFitnessCenter <noreply@flexfitnesscenter.com.br>',
+          from: MAIL_FROM,
           to: [dest.email],
+          replyTo: dest.replyTo,
           subject: dest.subject,
           html: template(dadosEspecificos),
-          attachments: attachments,
+          attachments: dest.attachments,
         });
 
-        console.log(`✅ Email ${i + 1} enviado com sucesso! ID: ${result.data?.id}`);
+        const id = garantirEnvio(result);
+        console.log(`Email ${i + 1} enviado. ID: ${id}`);
         results.push(result);
 
-        // Delay de 500ms entre envios para evitar rate limit
-        if (i < destinatarios.length - 1) {
-          console.log('⏳ Aguardando 500ms antes do próximo envio...');
+        if (i < finalDestinatarios.length - 1) {
           await new Promise(resolve => setTimeout(resolve, 500));
         }
 
       } catch (error) {
-        console.error(`❌ Erro ao enviar email ${i + 1} para ${dest.email}:`, error);
+        console.error(`Erro ao enviar email ${i + 1}:`, error);
         errors.push({
           email: dest.email,
           error: error instanceof Error ? error.message : 'Erro desconhecido'
         });
-        
-        // Continue tentando os próximos emails mesmo se um falhar
         continue;
       }
     }
 
-    // Log dos resultados finais
-    console.log('📊 RESUMO FINAL DO ENVIO:');
-    console.log(`✅ Emails enviados com sucesso: ${results.length}`);
-    console.log(`❌ Emails com erro: ${errors.length}`);
-    
-    if (errors.length > 0) {
-      console.log('🚨 Detalhes dos erros:', errors);
-    }
+    console.log(`RESUMO: ${results.length} enviados, ${errors.length} com erro`);
 
-    if (results.length > 0) {
-      console.log('🎯 IDs dos emails enviados:', results.map(r => r.data?.id));
-    }
-
-    // Retornar resultado mesmo se houver alguns erros
-    return NextResponse.json({ 
-      success: results.length > 0, // Sucesso se pelo menos um foi enviado
-      message: `${results.length} de ${destinatarios.length} emails enviados com sucesso${errors.length > 0 ? `, ${errors.length} com erro` : ''}`,
+    return NextResponse.json({
+      success: results.length > 0,
+      message: `${results.length} de ${finalDestinatarios.length} emails enviados com sucesso`,
+      protocolo: numeroSolicitacao,
       enviados: results.length,
       erros: errors.length,
       detalhes_erros: errors.length > 0 ? errors : undefined,
       ids: results.map(r => r.data?.id).filter(Boolean),
-      enviados_para: destinatarios
-        .filter((_: any, i: number) => i < results.length)
-        .map((d: any) => d.email)
-        .join(', '),
-      total_tentativas: destinatarios.length
     });
 
   } catch (error) {
-    console.error('💥 Erro geral no servidor:', error);
-    return NextResponse.json({ 
+    console.error('Erro geral no servidor:', error);
+    return NextResponse.json({
       success: false,
       error: 'Erro interno do servidor',
       details: error instanceof Error ? error.message : 'Erro desconhecido'

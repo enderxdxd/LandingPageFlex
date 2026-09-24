@@ -1,5 +1,14 @@
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  MAIL_FROM,
+  MAIL_REPLY_TO,
+  cleanRecipientList,
+  isBot,
+  normalizeEmail,
+  rateLimit,
+  sanitizeDeep,
+} from '@/lib/api/security';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -96,7 +105,7 @@ const templateCliente = (data: any) => `
         
         <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px;">
           <p style="margin: 0; color: #1976d2;"><strong>Unidade de interesse:</strong> ${data.unidade}</p>
-          <p style="margin: 10px 0 0 0; color: #1976d2; line-height: 1.6;">"${data.mensagem.substring(0, 150)}${data.mensagem.length > 150 ? '...' : ''}"</p>
+          <p style="margin: 10px 0 0 0; color: #1976d2; line-height: 1.6;">"${String(data.mensagem ?? '').substring(0, 150)}${String(data.mensagem ?? '').length > 150 ? '…' : ''}"</p>
         </div>
 
         <!-- Próximos Passos -->
@@ -135,38 +144,63 @@ const templateCliente = (data: any) => `
 // Mapeia destinatários por unidade para contatos
 const unitRecipients: Record<string, string> = {
   'marista':     'henriquepcosta@hotmail.com',
-  'buena-vista': 'gestao-buena@flex.com',
-  'alphaville':  'gestao-alphaville@flex.com',
+  /* Estes dois apontavam para `@flex.com`, dominio que nao e da rede: hard
+     bounce garantido a cada contato dessas duas unidades, e portanto dano
+     direto e continuo a reputacao de envio do dominio. Os enderecos abaixo sao
+     os mesmos que send-freepass ja usa para as mesmas unidades. */
+  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br',
+  'alphaville':  'vendas.alphaville@flexacademia.com.br,comercial.atendimento@flexacademia.com.br',
   'palmas':      'comercial@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,financeiro@flexacademia.com.br,COMERCIAL@FLEXPALMAS.COM.BR,gestaotecnica@flexpalmas.com.br',
   'geral':       'henriquepcosta@hotmail.com', 
 };
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const { destinatarios, ...emailData } = data;
+    const limited = rateLimit(request, { scope: 'contato', limit: 5, windowMs: 60 * 60 * 1000 });
+    if (limited) return limited;
+
+    const rawData = await request.json();
+
+    if (isBot(rawData)) {
+      return NextResponse.json({ success: true, message: 'Contato recebido' });
+    }
+
+    /* `destinatarios` descartado: vinha do cliente e virava relay aberto. */
+    const { destinatarios: _ignorado, ...emailData } = rawData;
+
+    const emailInteressado = normalizeEmail(emailData.email);
+    if (!emailInteressado) {
+      return NextResponse.json(
+        { error: 'Informe um e-mail válido para receber a confirmação.' },
+        { status: 400 }
+      );
+    }
 
     // Log para debug
-    console.log('Enviando contato:', { 
-      nome: emailData.nome, 
-      unidade: emailData.unidade,
-      destinatarios: destinatarios?.length || 0
+    console.log('Enviando contato:', {
+      nome: emailData.nome,
+      unidade: emailData.unidade
     });
 
     // Gerar número do protocolo
     const numeroProtocolo = Date.now().toString().slice(-6);
 
-    // Determinar email da unidade
+    /* Cada unidade guarda a lista separada por vírgula numa string só. Ela
+       precisa virar um endereço por envio: "a@x.com,b@x.com" dentro de um
+       único `to` não é endereço nenhum — o Resend rejeita e isso volta como
+       falha de entrega. */
     const flexCode = emailData.codigo_flex || 'geral';
-    const managerEmail = unitRecipients[flexCode];
-    
-    if (!managerEmail) {
+    const managerEmails = cleanRecipientList(unitRecipients[flexCode] || '');
+
+    if (managerEmails.length === 0) {
       throw new Error('Unidade não encontrada no sistema');
     }
 
+    const safeData = sanitizeDeep(emailData);
+
     // Dados formatados
     const formattedEmailData = {
-      ...emailData,
+      ...safeData,
       numero_protocolo: numeroProtocolo,
       data_contato: new Date().toLocaleString('pt-BR', {
         timeZone: 'America/Sao_Paulo',
@@ -179,23 +213,23 @@ export async function POST(request: NextRequest) {
       }),
     };
 
-    // Definir destinatários se não fornecidos
-    const defaultDestinatarios = [
-      // Email para a empresa responsável pela unidade
+    // Destinatários resolvidos no servidor, um endereço por envio
+    const finalDestinatarios = [
+      // Equipe da unidade — responder fala direto com o interessado
+      ...managerEmails.map(email => ({
+        email,
+        subject: `📞 Novo Contato - ${safeData.unidade} - CONT-${numeroProtocolo}`,
+        template: 'empresa',
+        replyTo: emailInteressado,
+      })),
+      // Confirmação para o interessado
       {
-        email: managerEmail,
-        subject: `📞 Novo Contato - ${emailData.unidade} - CONT-${numeroProtocolo}`,
-        template: 'empresa'
-      },
-      // Email de confirmação para o cliente
-      {
-        email: emailData.email,
+        email: emailInteressado,
         subject: `📞 Contato Recebido - CONT-${numeroProtocolo} - Flex Fitness`,
-        template: 'cliente'
+        template: 'cliente',
+        replyTo: MAIL_REPLY_TO,
       }
     ];
-
-    const finalDestinatarios = destinatarios || defaultDestinatarios;
 
     // Templates
     const templates = {
@@ -211,23 +245,35 @@ export async function POST(request: NextRequest) {
       }
 
       return resend.emails.send({
-        from: 'Flex Fitness <noreply@flexfitnesscenter.com.br>',
+        from: MAIL_FROM,
         to: [dest.email],
+        replyTo: dest.replyTo,
         subject: dest.subject,
         html: template({ ...formattedEmailData, ...dest }),
       });
     });
 
     const results = await Promise.all(emailPromises);
-    
-    // Log dos resultados
-    console.log('Emails enviados com sucesso:', results.map(r => r.data?.id));
+
+    /* O SDK do Resend devolve o erro no retorno em vez de lançar, entao um
+       Promise.all "bem-sucedido" pode conter seis recusas. Sem esta conta, a
+       rota responderia sucesso com zero e-mail entregue. */
+    const recusados = results.filter(r => r.error);
+    if (recusados.length === results.length) {
+      const motivo = recusados[0]?.error?.message ?? 'sem detalhe';
+      throw new Error(`Nenhum e-mail foi aceito pelo provedor: ${motivo}`);
+    }
+    if (recusados.length > 0) {
+      console.error('Envios recusados pelo provedor:', recusados.map(r => r.error?.message));
+    }
+
+    console.log('Emails enviados:', results.filter(r => r.data?.id).map(r => r.data?.id));
 
     return NextResponse.json({ 
       success: true, 
       message: 'Contato enviado com sucesso',
       protocolo: numeroProtocolo,
-      enviado_para: managerEmail,
+      enviado_para: managerEmails.join(', '),
       confirmacao_cliente: true,
       ids: results.map(r => r.data?.id)
     });

@@ -6,6 +6,7 @@ import { HiCheckCircle, HiStar } from 'react-icons/hi'
 import { FaDumbbell, FaSwimmingPool, FaChild, FaEye } from 'react-icons/fa'
 import { MdAccessibility, MdLocalParking } from 'react-icons/md'
 import { Ruler } from 'lucide-react'
+import Link from 'next/link'
 
 interface UnitFeaturesProps {
   unit: Unit
@@ -152,12 +153,12 @@ export default function UnitFeatures({ unit }: UnitFeaturesProps) {
             <p className="text-gray-500 mb-6">
               Venha conhecer todos os nossos diferenciais pessoalmente
             </p>
-            <button
-              onClick={() => window.location.assign('/freepass')}
-              className="bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
+            <Link
+              href="/freepass"
+              className="inline-block bg-flex-primary text-white px-8 py-3 rounded-full font-medium hover:bg-flex-secondary transition-colors duration-200"
             >
               Agendar Visita
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>

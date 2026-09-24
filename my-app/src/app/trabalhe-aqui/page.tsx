@@ -1,6 +1,8 @@
 // src/app/trabalhe-aqui/page.tsx
 'use client'
 
+import { HONEYPOT_FIELD, honeypotInputProps } from '@/lib/api/honeypot'
+
 import { useState } from 'react'
 import ConsentField from '@/components/shared/ConsentField'
 import { motion } from 'framer-motion'
@@ -123,6 +125,8 @@ function CustomSelect({
 
 // Tipagem
 type CVData = {
+  /** campo-armadilha; sempre vazio quando quem preenche é gente */
+  [HONEYPOT_FIELD]?: string
   nome: string
   email: string
   telefone: string
@@ -235,7 +239,8 @@ export default function TrabalheAqui() {
         unidade: unitLabels[data.unidade] || data.unidade,
         experiencia: data.experiencia || 'Não informado',
         curriculo: curriculoBase64,
-        nome_arquivo: arquivoSelecionado.name
+        nome_arquivo: arquivoSelecionado.name,
+        [HONEYPOT_FIELD]: (data as any)[HONEYPOT_FIELD] ?? '',
       }
 
       // Enviar para API
@@ -371,24 +376,33 @@ export default function TrabalheAqui() {
           >
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-flex-light mb-2">
+                <label htmlFor="tb-nome" className="block text-sm font-medium text-flex-light mb-2">
                   Nome Completo *
                 </label>
                 <input
+                  id="tb-nome"
+                  type="text"
+                  autoComplete="name"
+                  autoCapitalize="words"
                   {...register('nome', { required: 'Nome é obrigatório' })}
                   placeholder="Seu nome completo"
                   className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
                 {errors.nome && (
-                  <p className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
+                  <p role="alert" className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-flex-light mb-2">
+                <label htmlFor="tb-email" className="block text-sm font-medium text-flex-light mb-2">
                   E-mail *
                 </label>
                 <input
+                  id="tb-email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="none"
+                  spellCheck={false}
                   type="email"
                   {...register('email', { 
                     required: 'E-mail é obrigatório',
@@ -401,22 +415,26 @@ export default function TrabalheAqui() {
                   className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
                 {errors.email && (
-                  <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                  <p role="alert" className="text-red-400 text-sm mt-1">{errors.email.message}</p>
                 )}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
+              <label htmlFor="tb-telefone" className="block text-sm font-medium text-flex-light mb-2">
                 Telefone/WhatsApp *
               </label>
               <input
+                id="tb-telefone"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
                 {...register('telefone', { required: 'Telefone é obrigatório' })}
                 placeholder="(62) 99999-9999"
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
               {errors.telefone && (
-                <p className="text-red-400 text-sm mt-1">{errors.telefone.message}</p>
+                <p role="alert" className="text-red-400 text-sm mt-1">{errors.telefone.message}</p>
               )}
             </div>
 
@@ -460,10 +478,11 @@ export default function TrabalheAqui() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
+              <label htmlFor="tb-experiencia" className="block text-sm font-medium text-flex-light mb-2">
                 Conte sobre sua experiência
               </label>
               <textarea
+                id="tb-experiencia"
                 {...register('experiencia')}
                 rows={4}
                 placeholder="Descreva brevemente sua experiência na área, principais qualificações, certificações, etc."
@@ -542,6 +561,9 @@ export default function TrabalheAqui() {
               onChange={setConsent}
               purpose="avaliar minha candidatura e me contatar sobre vagas"
             />
+
+            {/* Campo-armadilha: invisível para gente, preenchido por robô. */}
+            <input {...honeypotInputProps} {...register(HONEYPOT_FIELD as any)} />
 
             <motion.button
               type="submit"

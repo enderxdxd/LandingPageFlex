@@ -1,6 +1,8 @@
 // src/app/aula-experimental/page.tsx
 'use client'
 
+import { HONEYPOT_FIELD, honeypotInputProps } from '@/lib/api/honeypot'
+
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -127,6 +129,8 @@ type AulaExperimentalData = {
   email: string
   celular: string
   aceito_termos: boolean
+  /** campo-armadilha; sempre vazio quando quem preenche e gente */
+  [HONEYPOT_FIELD]?: string
 }
 
 // Mapas de valores para labels
@@ -167,7 +171,8 @@ export default function AulaExperimental() {
         nome: data.nome,
         email: data.email,
         celular: data.celular,
-        aceito_termos: data.aceito_termos
+        aceito_termos: data.aceito_termos,
+        [HONEYPOT_FIELD]: (data as any)[HONEYPOT_FIELD] ?? '',
       }
 
       // Enviar para API
@@ -299,25 +304,34 @@ export default function AulaExperimental() {
             />
 
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
+              <label htmlFor="fp-nome" className="block text-sm font-medium text-flex-light mb-2">
                 Nome <span className="text-red-400">*</span>
               </label>
               <input
+                id="fp-nome"
+                type="text"
+                autoComplete="name"
+                autoCapitalize="words"
                 {...register('nome', { required: 'Nome é obrigatório' })}
                 placeholder="Seu nome completo"
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {errors.nome && (
-                <p className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
+                <p role="alert" className="text-red-400 text-sm mt-1">{errors.nome.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
-                Email <span className="text-red-400">*</span>
+              <label htmlFor="fp-email" className="block text-sm font-medium text-flex-light mb-2">
+                E-mail <span className="text-red-400">*</span>
               </label>
               <input
+                id="fp-email"
                 type="email"
+                inputMode="email"
+                autoComplete="email"
+                autoCapitalize="none"
+                spellCheck={false}
                 {...register('email', { 
                   required: 'Email é obrigatório',
                   pattern: {
@@ -329,38 +343,54 @@ export default function AulaExperimental() {
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {errors.email && (
-                <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                <p role="alert" className="text-red-400 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-flex-light mb-2">
+              <label htmlFor="fp-celular" className="block text-sm font-medium text-flex-light mb-2">
                 Celular <span className="text-red-400">*</span>
               </label>
+              {/* `type="tel"` + `inputMode="numeric"` abrem o teclado numérico.
+                  Sem isso o celular abre o teclado alfabético — atrito puro num
+                  site em que quase todo o acesso é por telefone. */}
               <input
+                id="fp-celular"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
                 {...register('celular', { required: 'Celular é obrigatório' })}
                 placeholder="(62) 99999-9999"
                 className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-flex-light placeholder:text-flex-light/50 focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
               {errors.celular && (
-                <p className="text-red-400 text-sm mt-1">{errors.celular.message}</p>
+                <p role="alert" className="text-red-400 text-sm mt-1">{errors.celular.message}</p>
               )}
             </div>
 
-            <div className="flex items-start gap-3">
-              <input
-                type="checkbox"
-                {...register('aceito_termos', { 
-                  required: 'Você deve aceitar os Termos de Política e Privacidade' 
-                })}
-                className="mt-1 w-4 h-4 bg-white/5 border border-white/20 rounded text-yellow-500 focus:ring-2 focus:ring-yellow-500"
-              />
+            {/* Rótulo e controle passam a ser UM alvo só: antes o `<label>` ficava
+                num irmão do input, então o toque só valia nos 16px do quadrado.
+                Agora a linha inteira alterna o aceite, com altura de 44px. */}
+            <div>
+              <label
+                htmlFor="fp-termos"
+                className="flex items-start gap-3 min-h-[44px] py-2 cursor-pointer text-flex-light text-sm"
+              >
+                <input
+                  id="fp-termos"
+                  type="checkbox"
+                  {...register('aceito_termos', {
+                    required: 'Você deve aceitar os Termos de Política e Privacidade'
+                  })}
+                  className="mt-0.5 w-5 h-5 shrink-0 bg-white/5 border border-white/20 rounded text-yellow-500 focus:ring-2 focus:ring-yellow-500"
+                />
+                <span>
+                  Li e aceito os Termos de Política e Privacidade. <span className="text-red-400">*</span>
+                </span>
+              </label>
               <div>
-                <label className="text-flex-light text-sm cursor-pointer">
-                  Li e Aceito os Termos de Política e Privacidade. <span className="text-red-400">*</span>
-                </label>
                 {errors.aceito_termos && (
-                  <p className="text-red-400 text-sm mt-1">{errors.aceito_termos.message}</p>
+                  <p role="alert" className="text-red-400 text-sm mt-1">{errors.aceito_termos.message}</p>
                 )}
               </div>
             </div>
@@ -369,12 +399,16 @@ export default function AulaExperimental() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
+                role="alert"
                 className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 p-3 rounded-lg border border-red-500/20"
               >
-                <HiExclamationCircle />
+                <HiExclamationCircle aria-hidden="true" />
                 {submitError}
               </motion.div>
             )}
+
+            {/* Campo-armadilha: invisível para gente, preenchido por robô. */}
+            <input {...honeypotInputProps} {...register(HONEYPOT_FIELD as any)} />
 
             <motion.button
               type="submit"
