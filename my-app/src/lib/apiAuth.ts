@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { adminAuth } from '@/lib/firebaseAdmin'
-import { getFirestore } from 'firebase-admin/firestore'
-import { getApps } from 'firebase-admin/app'
+import { adminAuth, adminDb } from '@/lib/firebaseAdmin'
 
 /**
  * Verifica se a requisição vem de um usuario autenticado com role admin.
@@ -20,9 +18,10 @@ export async function verificarAdmin(req: NextRequest): Promise<{ uid: string } 
     const decoded = await adminAuth.verifyIdToken(token)
     const uid = decoded.uid
 
-    // Verificar se o usuario é admin no Firestore
-    const db = getFirestore(getApps()[0])
-    const userDoc = await db.collection('chamados_usuarios').doc(uid).get()
+    /* Usa o `adminDb` preguiçoso em vez de `getFirestore(getApps()[0])`: com
+       a inicialização adiada, `getApps()` está vazio até o primeiro acesso, e
+       pegar o índice 0 de um array vazio passaria `undefined` adiante. */
+    const userDoc = await adminDb.collection('chamados_usuarios').doc(uid).get()
 
     if (!userDoc.exists) {
       return NextResponse.json({ error: 'Usuario não encontrado' }, { status: 403 })
