@@ -220,12 +220,12 @@ export default function Header() {
           zIndex: 80,
           display: 'flex',
           alignItems: 'center',
-          background: headerSolid ? 'rgba(22,24,38,.9)' : 'transparent',
+          background: headerSolid ? 'color-mix(in srgb, var(--color-bg) 92%, transparent)' : 'transparent',
           backdropFilter: headerSolid ? 'blur(14px)' : undefined,
           WebkitBackdropFilter: headerSolid ? 'blur(14px)' : undefined,
           borderBottom: headerSolid
-            ? '1px solid var(--color-divider)'
-            : '1px solid transparent',
+            ? '1.5px solid var(--color-text)'
+            : '1.5px solid transparent',
           transition:
             'background .35s var(--ease-arch), border-color .35s var(--ease-arch)',
         }}
@@ -246,6 +246,7 @@ export default function Header() {
             <Image
               src="/images/units/alphaville/flex-logo-outline.png"
               alt="Flex Fitness Center"
+              className="site-logo"
               width={118}
               height={34}
               priority
@@ -342,8 +343,9 @@ export default function Header() {
                 onClick={() => setDrawer(true)}
                 aria-label="Abrir menu"
                 aria-expanded={drawer}
-                /* traços de 1.5px sem moldura sumiam sobre a foto do topo — o
-                   botão agora tem a mesma caixa de 44px dos ícones sociais */
+                /* Caixa de tinta sobre papel: sem vidro fosco, sem raio. O
+                   fundo translúcido com blur existia para o botão sobreviver em
+                   cima da foto do herói — e a foto saiu de trás do topo. */
                 style={{
                   display: 'inline-flex',
                   flexDirection: 'column',
@@ -353,11 +355,9 @@ export default function Header() {
                   width: 44,
                   height: 44,
                   padding: 0,
-                  borderRadius: 'var(--radius-md)',
-                  background: 'color-mix(in srgb, var(--color-stage) 55%, transparent)',
-                  border: '1px solid var(--color-divider)',
-                  backdropFilter: 'blur(8px)',
-                  WebkitBackdropFilter: 'blur(8px)',
+                  borderRadius: 0,
+                  background: 'transparent',
+                  border: '1.5px solid var(--color-text)',
                   cursor: 'pointer',
                 }}
               >
@@ -369,7 +369,7 @@ export default function Header() {
                       display: 'block',
                       height: 2,
                       width: i === 1 ? 14 : 20,
-                      borderRadius: 2,
+                      borderRadius: 0,
                       background: 'var(--color-text)',
                     }}
                   />
@@ -390,7 +390,7 @@ export default function Header() {
               position: 'fixed',
               inset: 0,
               zIndex: 90,
-              background: 'rgba(11,12,20,.6)',
+              background: 'color-mix(in srgb, var(--color-text) 45%, transparent)',
               opacity: drawer ? 1 : 0,
               pointerEvents: drawer ? 'auto' : 'none',
               transition: 'opacity .34s var(--ease-arch)',

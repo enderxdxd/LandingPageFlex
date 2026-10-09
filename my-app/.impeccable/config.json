@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/app/api/send-freepass/route.ts"
+        ],
+        "createdAt": "2026-09-24T13:24:09.807Z",
+        "reason": "Claude: arquivo e template de e-mail HTML (<!DOCTYPE html> em template literal enviado via Resend), nao UI do site. border-left inline e o padrao de bloco de aviso que sobrevive ao Gmail/Outlook, que descartam CSS externo."
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "src/app/api/contact/route.ts"
+        ],
+        "createdAt": "2026-09-24T13:24:09.928Z",
+        "reason": "Claude: idem — template de e-mail HTML, nao UI do site."
+      }
+    ]
+  }
+}

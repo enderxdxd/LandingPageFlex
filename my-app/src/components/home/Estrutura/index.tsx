@@ -2,7 +2,7 @@
  * Uma tabela, não uma grade de cards.
  *
  * As linhas 08–10 são específicas de unidade e o texto do item vem em
- * accent-300 — é o que diferencia "padrão da rede" de "só aqui".
+ * accent-600 — é o que diferencia "padrão da rede" de "só aqui".
  */
 
 import Reveal from '@/components/shared/Reveal'
@@ -80,7 +80,7 @@ export default function Estrutura() {
                     <td
                       style={{
                         padding: '15px 0',
-                        color: row.perUnit ? 'var(--color-accent-300)' : undefined,
+                        color: row.perUnit ? 'var(--color-accent-600)' : undefined,
                       }}
                     >
                       {row.item}

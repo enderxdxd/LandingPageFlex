@@ -1,5 +1,6 @@
 import { mailer } from '@/lib/mail';
 import { NextRequest, NextResponse } from 'next/server'
+import { folha, secao, dados as dados_, paragrafo, citacao, botao } from '@/lib/email/layout'
 
 
 const FROM_EMAIL = process.env.CHAMADOS_FROM_EMAIL || 'chamados@flexacademia.com.br'
@@ -36,77 +37,26 @@ function gerarEmailHTML(dados: {
   const corPrioridade = CORES_PRIORIDADE[dados.prioridade] || '#3B82F6'
   const labelPrioridade = LABELS_PRIORIDADE[dados.prioridade] || dados.prioridade
 
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9;">
-      <div style="max-width: 600px; margin: 0 auto; padding: 24px;">
-        <!-- Header -->
-        <div style="background: #1E40AF; border-radius: 12px 12px 0 0; padding: 24px; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 20px; letter-spacing: 1px;">SISTEMA DE CHAMADOS</h1>
-          <p style="color: rgba(255,255,255,0.7); margin: 4px 0 0; font-size: 13px;">Flex Fitness Center</p>
-        </div>
-
-        <!-- Body -->
-        <div style="background: white; border-left: 4px solid ${corPrioridade}; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e2e8f0; border-top: none;">
-          <p style="color: #64748b; font-size: 14px; margin: 0 0 16px;">${dados.mensagemPrincipal}</p>
-
-          <!-- Chamado Card -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 13px;">Protocolo</td>
-                <td style="padding: 6px 0; color: #1e293b; font-size: 13px; font-weight: 600; text-align: right; font-family: monospace;">${dados.protocolo}</td>
-              </tr>
-              <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 13px;">Titulo</td>
-                <td style="padding: 6px 0; color: #1e293b; font-size: 13px; font-weight: 600; text-align: right;">${dados.titulo}</td>
-              </tr>
-              <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 13px;">Unidade</td>
-                <td style="padding: 6px 0; color: #1e293b; font-size: 13px; text-align: right;">${dados.unidade}</td>
-              </tr>
-              <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 13px;">Categoria</td>
-                <td style="padding: 6px 0; color: #1e293b; font-size: 13px; text-align: right;">${dados.categoria}</td>
-              </tr>
-              ${dados.departamento ? `
-              <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 13px;">Departamento</td>
-                <td style="padding: 6px 0; color: #1e293b; font-size: 13px; text-align: right;">${dados.departamento}</td>
-              </tr>` : ''}
-              <tr>
-                <td style="padding: 6px 0; color: #94a3b8; font-size: 13px;">Prioridade</td>
-                <td style="padding: 6px 0; text-align: right;">
-                  <span style="background: ${corPrioridade}20; color: ${corPrioridade}; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">${labelPrioridade}</span>
-                </td>
-              </tr>
-            </table>
-          </div>
-
-          ${dados.detalhes ? `<p style="color: #64748b; font-size: 13px; margin: 16px 0; padding: 12px; background: #fffbeb; border-radius: 8px; border: 1px solid #fef3c7;">${dados.detalhes}</p>` : ''}
-
-          <!-- CTA Button -->
-          <div style="text-align: center; margin: 24px 0 8px;">
-            <a href="${BASE_URL}/chamados/meus/${dados.chamadoId}" style="background: #1E40AF; color: white; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block;">
-              Ver Chamado
-            </a>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div style="text-align: center; padding: 16px; color: #94a3b8; font-size: 11px;">
-          <p style="margin: 0;">Flex Fitness Center - Sistema de Chamados Internos</p>
-          <p style="margin: 4px 0 0;">Este email foi gerado automaticamente. Não responda diretamente.</p>
-        </div>
-      </div>
-    </body>
-    </html>
-  `
+  return folha({
+    assunto: `${dados.titulo} - ${dados.protocolo}`,
+    previa: dados.mensagemPrincipal,
+    etiqueta: `Protocolo ${dados.protocolo}`,
+    titulo: dados.titulo,
+    corpo: [
+      paragrafo(dados.mensagemPrincipal),
+      secao('Chamado'),
+      dados_([
+        ['Protocolo', dados.protocolo],
+        ['Unidade', dados.unidade],
+        ['Categoria', dados.categoria],
+        ['Departamento', dados.departamento],
+        ['Prioridade', labelPrioridade],
+      ]),
+      dados.detalhes ? secao('Detalhes') : '',
+      dados.detalhes ? citacao(dados.detalhes) : '',
+      botao('Abrir o chamado', `${BASE_URL}/chamados/meus/${dados.chamadoId}`),
+    ].join(''),
+  })
 }
 
 const ASSUNTO_MAP: Record<string, (protocolo: string, extra?: string) => string> = {

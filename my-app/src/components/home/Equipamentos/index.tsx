@@ -162,7 +162,7 @@ export default function Equipamentos() {
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(180deg, rgba(11,12,20,.28) 0%, rgba(11,12,20,.62) 100%)',
+              background: 'transparent',
             }}
           />
           <div

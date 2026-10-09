@@ -11,189 +11,88 @@ import {
   rateLimit,
   sanitizeDeep,
 } from '@/lib/api/security';
+import { folha, secao, dados, paragrafo, aviso, lista, botao } from '@/lib/email/layout';
 
 
-// Template da empresa para aula experimental
-const templateEmpresa = (data: any) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Solicitação de Aula Experimental - Flex Fitness</title>
-  </head>
-  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
-        
-        <h2 style="color: #f59e0b; margin: 0 0 20px 0;">🎁 NOVA SOLICITAÇÃO DE AULA EXPERIMENTAL</h2>
-        
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 4px; margin: 20px 0;">
-          <strong>Data:</strong> ${data.data_solicitacao}<br>
-          <strong>Protocolo:</strong> FP-${data.numero_protocolo}
-        </div>
+/**
+ * Os dois templates da aula experimental.
+ *
+ * Antes eram ~190 linhas de HTML com paleta própria (âmbar, azul-claro, verde),
+ * emoji nos títulos e seis blocos coloridos empilhados. Agora montam blocos do
+ * kit em `lib/email/layout`, que é o mesmo das outras rotas — a ênfase vem de
+ * peso e espaço, não de caixa colorida.
+ */
 
-        <h3>📋 Dados do Interessado</h3>
-        
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-family: Arial, sans-serif;">
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Unidade de Interesse</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.qual_unidade}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Nome</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.nome}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Email</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.email_interessado}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Celular</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.celular}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Termos Aceitos</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">✅ Sim</td>
-          </tr>
-        </table>
+const templateEmpresa = (data: any) =>
+  folha({
+    assunto: `Aula experimental - ${data.qual_unidade} - FP-${data.numero_protocolo}`,
+    previa: `${data.nome} pediu aula experimental na unidade ${data.qual_unidade}. Contato em ate 24h.`,
+    etiqueta: `Protocolo FP-${data.numero_protocolo}`,
+    titulo: 'Nova solicitação de aula experimental',
+    corpo: [
+      paragrafo(
+        `Recebida em ${data.data_solicitacao}. Entre em contato com esta pessoa para agendar a visita e o treino.`
+      ),
+      secao('Dados do interessado'),
+      dados([
+        ['Nome', data.nome],
+        ['Unidade', data.qual_unidade],
+        ['E-mail', data.email_interessado],
+        ['Celular', data.celular],
+      ]),
+      aviso(
+        'Responder este e-mail fala direto com a pessoa interessada — o remetente da resposta já está configurado para isso.'
+      ),
+      secao('Próximos passos'),
+      lista(
+        [
+          'Fazer contato por telefone em até 24 horas',
+          'Agendar data e horário da visita',
+          'Designar profissional para a recepção',
+          'Fazer o acompanhamento depois da visita',
+        ],
+        { numerada: true }
+      ),
+      aviso('Cada CPF tem direito a apenas uma aula experimental.', { destaque: true }),
+    ].join(''),
+  });
 
-        <div style="background: #e0f2fe; border-left: 4px solid #0288d1; padding: 15px; margin: 20px 0;">
-          <h4 style="color: #0277bd; margin: 0 0 10px 0;">🎯 O que inclui a Aula Experimental:</h4>
-          <ul style="color: #0277bd; margin: 0; padding-left: 20px;">
-            <li>Visita guiada pela academia</li>
-            <li>Treino experimental gratuito</li>
-            <li>Avaliação física completa</li>
-            <li>Orientação com nossos profissionais</li>
-          </ul>
-        </div>
-
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
-          <strong style="color: #92400e;">⚠️ IMPORTANTE:</strong><br>
-          <span style="color: #92400e;">Cada CPF tem direito a apenas uma aula experimental.</span>
-        </div>
-
-        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
-          <strong>⚠️ AÇÃO NECESSÁRIA:</strong><br>
-          Entre em contato com este interessado para agendar a visita e o treino experimental.
-        </div>
-
-        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0;">
-          <h4 style="color: #059669; margin: 0 0 10px 0;">📞 Próximos Passos:</h4>
-          <ol style="color: #059669; margin: 0; padding-left: 20px;">
-            <li>Fazer contato telefônico em até 24h</li>
-            <li>Agendar data e horário da visita</li>
-            <li>Preparar documentação necessária</li>
-            <li>Designar profissional para recepção</li>
-            <li>Realizar follow-up pós-visita</li>
-          </ol>
-        </div>
-
-      </div>
-    </div>
-  </body>
-  </html>
-`;
-
-// Template de confirmação para o cliente
-const templateCliente = (data: any) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula Experimental Solicitada - Flex Fitness</title>
-  </head>
-  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
-    <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
-      <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        
-        <!-- Cabeçalho -->
-        <div style="text-align: center; border-bottom: 3px solid #f59e0b; padding-bottom: 20px; margin-bottom: 30px;">
-          <h1 style="color: #f59e0b; font-size: 28px; margin: 0;">💪 FLEX FITNESS</h1>
-          <div style="background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin: 15px 0;">
-            🎁 AULA EXPERIMENTAL SOLICITADA
-          </div>
-        </div>
-
-        <!-- Saudação -->
-        <p style="font-size: 16px; color: #333;">Olá <strong>${data.nome}</strong>,</p>
-        <p style="color: #666;">Sua solicitação de aula experimental foi <strong>recebida com sucesso</strong>!</p>
-
-        <!-- Protocolo -->
-        <div style="background: #f59e0b; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-          <strong>Protocolo: FP-${data.numero_protocolo}</strong><br>
-          <small>Data: ${data.data_solicitacao}</small>
-        </div>
-
-        <!-- Resumo da solicitação -->
-        <h3 style="color: #333; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">📝 Resumo da sua solicitação</h3>
-        
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <p style="margin: 0; color: #92400e;"><strong>Unidade:</strong> ${data.qual_unidade}</p>
-          <p style="margin: 10px 0 0 0; color: #92400e;"><strong>Email:</strong> ${data.email}</p>
-          <p style="margin: 10px 0 0 0; color: #92400e;"><strong>Celular:</strong> ${data.celular}</p>
-        </div>
-
-        <!-- O que está incluso -->
-        <div style="background: #e0f2fe; border-left: 4px solid #0288d1; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <h4 style="color: #0277bd; margin: 0 0 10px 0;">🎯 Sua Aula Experimental Inclui:</h4>
-          <ul style="color: #0277bd; margin: 0; padding-left: 20px;">
-            <li>Visita guiada pela academia</li>
-            <li>Treino experimental gratuito</li>
-            <li>Orientação com nossos profissionais</li>
-          </ul>
-        </div>
-
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <h4 style="color: #92400e; margin: 0 0 10px 0;">⚠️ Atenção:</h4>
-          <p style="color: #92400e; margin: 0; font-size: 14px;"><strong>Cada CPF tem direito a apenas uma aula experimental.</strong></p>
-        </div>
-
-        <!-- Próximos Passos -->
-        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <h4 style="color: #059669; margin: 0 0 10px 0;">🚀 O que acontece agora?</h4>
-          <ul style="color: #059669; margin: 0; padding-left: 20px;">
-            <li>Agendaremos sua visita no melhor horário para você</li>
-            <li>Você receberá todas as orientações por WhatsApp/telefone</li>
-            <li>No dia, será recebido(a) por um de nossos profissionais</li>
-          </ul>
-        </div>
-
-        <!-- Informações importantes -->
-        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <h4 style="color: #856404; margin: 0 0 10px 0;">⚠️ Informações Importantes:</h4>
-          <ul style="color: #856404; margin: 0; padding-left: 20px; font-size: 14px;">
-            <li>Traga roupas adequadas para exercícios</li>
-            <li>Leve uma toalha e garrafa de água</li>
-            <li>Chegue 15 minutos antes do horário agendado</li>
-            <li>Limitado a uma aula experimental por CPF</li>
-          </ul>
-        </div>
-
-        <!-- Agradecimento -->
-        <div style="background: #fef3c7; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
-          <h3 style="color: #92400e; margin: 0 0 10px 0;">🙏 Muito Obrigado!</h3>
-          <p style="color: #92400e; margin: 0;">Estamos ansiosos para recebê-lo(a) e mostrar como a Flex pode transformar sua vida através do movimento!</p>
-        </div>
-
-        <!-- Rodapé -->
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d;">
-          <p><strong>Flex Fitness</strong><br>
-          Transformando vidas através do movimento</p>
-          <p style="font-size: 12px;">Este é um e-mail automático. Guarde este comprovante para seus registros.</p>
-          <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 15px; border-radius: 4px;">
-            <p style="color: #856404; margin: 0; font-size: 12px;"><strong>💡 Dica:</strong> Se não receber nossa ligação, verifique se seu número está correto e com DDD.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </body>
-  </html>
-`;
-
-
+const templateCliente = (data: any) =>
+  folha({
+    assunto: `Aula experimental solicitada - FP-${data.numero_protocolo}`,
+    previa: 'Recebemos seu pedido. Entramos em contato em ate 24 horas uteis para agendar.',
+    etiqueta: `Protocolo FP-${data.numero_protocolo}`,
+    titulo: 'Sua aula experimental está reservada',
+    corpo: [
+      paragrafo(`Olá, ${data.nome}.`),
+      paragrafo(
+        'Recebemos seu pedido de aula experimental. Nossa equipe entra em contato em até 24 horas úteis para combinar o melhor dia e horário.'
+      ),
+      secao('Resumo do pedido'),
+      dados([
+        ['Unidade', data.qual_unidade],
+        ['E-mail', data.email],
+        ['Celular', data.celular],
+        ['Solicitado em', data.data_solicitacao],
+      ]),
+      secao('O que está incluso'),
+      lista([
+        'Visita guiada pela academia',
+        'Treino experimental gratuito',
+        'Orientação com nossos profissionais',
+      ]),
+      secao('Para o dia'),
+      lista([
+        'Roupa adequada para exercício',
+        'Toalha e garrafa de água',
+        'Chegar 15 minutos antes do horário combinado',
+      ]),
+      botao('Conhecer as unidades', 'https://www.flexfitnesscenter.com.br/unidades/alphaville'),
+      aviso('Cada CPF tem direito a apenas uma aula experimental.', { destaque: true }),
+    ].join(''),
+    rodape:
+      'Se não receber nossa ligação, confira se o número informado está correto e com DDD. Guarde o número do protocolo.',
+  });
 
 const unitRecipients: Record<string, string> = {
   'marista': 'vendasmarista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexbuenavista@flexacademia.com.br, vendas.alphaville@flexacademia.com.br',
@@ -288,7 +187,7 @@ export async function POST(request: NextRequest) {
       replyTo: string
     }> = managerEmails.map(email => ({
       email,
-      subject: `🎁 Nova Solicitação de Aula Experimental - ${safeData.qual_unidade} - FP-${numeroProtocolo}`,
+      subject: `Nova solicitação de aula experimental - ${safeData.qual_unidade} - FP-${numeroProtocolo}`,
       template: 'empresa',
       replyTo: emailInteressado,
     }));
@@ -296,7 +195,7 @@ export async function POST(request: NextRequest) {
     // Confirmação para o interessado
     finalDestinatarios.push({
       email: emailInteressado,
-      subject: `🎁 Aula Experimental Solicitada - FP-${numeroProtocolo} - Flex Fitness`,
+      subject: `Aula experimental solicitada - FP-${numeroProtocolo} - Flex Fitness`,
       template: 'cliente',
       replyTo: MAIL_REPLY_TO,
     });

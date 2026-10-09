@@ -72,17 +72,6 @@ export default function Hero() {
 
   return (
     <section className="hero" aria-label="Flex Fitness Center">
-      <div className="hero-frame">
-        <PhotoCrossfade
-          src={unit.wideImage}
-          alt={`Unidade ${unit.name}`}
-          sizes={HERO_SIZES}
-          priority
-          warm={unitsData.map(u => u.wideImage)}
-        />
-      </div>
-      <div className="hero-scrim" aria-hidden="true" />
-
       <div className="hero-inner">
         <div className="hero-lead">
           {/* O status vive ABAIXO do título, não acima.
@@ -125,6 +114,21 @@ export default function Hero() {
           </div>
         </div>
 
+        {/* A chapa. Fora do fluxo do texto de proposito: nenhuma palavra encosta
+            na imagem, entao ela nao precisa de scrim e aparece com o contraste
+            que o fotografo entregou. */}
+        <div className="hero-frame">
+          <PhotoCrossfade
+            src={unit.wideImage}
+            alt={`Unidade ${unit.name}`}
+            sizes={HERO_SIZES}
+            priority
+            warm={unitsData.map(u => u.wideImage)}
+          />
+        </div>
+      </div>
+
+      <div className="hero-inner" style={{ paddingTop: 0 }}>
         {/* o índice: legenda da foto, seletor e link, no mesmo elemento */}
         <ul className="hero-index">
           {unitsData.map((u, i) => (

@@ -36,7 +36,7 @@ export default function LayoutWrapper({ children }: { children: ReactNode }) {
 
     if (isNocturneRoute) {
       document.documentElement.dataset.theme = 'nocturne'
-      meta.content = '#161826'
+      meta.content = '#EFEBE3'
       return () => {
         delete document.documentElement.dataset.theme
       }

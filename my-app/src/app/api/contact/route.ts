@@ -1,5 +1,6 @@
 import { mailer } from '@/lib/mail';
 import { NextRequest, NextResponse } from 'next/server';
+import { folha, secao, dados, paragrafo, citacao, aviso, lista, botao, divisor } from '@/lib/email/layout';
 import {
   MAIL_FROM,
   MAIL_REPLY_TO,
@@ -11,134 +12,49 @@ import {
 } from '@/lib/api/security';
 
 
-// Template para a empresa
-const templateEmpresa = (data: any) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Contato - Flex Fitness</title>
-  </head>
-  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
-    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-      <div style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
-        
-        <h2 style="color: #007bff; margin: 0 0 20px 0;">📞 NOVO CONTATO RECEBIDO</h2>
-        
-        <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; border-radius: 4px; margin: 20px 0;">
-          <strong>Data:</strong> ${data.data_contato}<br>
-          <strong>Protocolo:</strong> CONT-${data.numero_protocolo}
-        </div>
+const templateEmpresa = (data: any) =>
+  folha({
+    assunto: `Novo contato - ${data.unidade} - CONT-${data.numero_protocolo}`,
+    previa: `${data.nome} entrou em contato pela unidade ${data.unidade}.`,
+    etiqueta: `Protocolo CONT-${data.numero_protocolo}`,
+    titulo: 'Novo contato pelo site',
+    corpo: [
+      paragrafo(`Recebido em ${data.data_contato}. Retorne em até 24 horas úteis.`),
+      secao('Dados do contato'),
+      dados([
+        ['Nome', data.nome],
+        ['Unidade', data.unidade],
+        ['Telefone', data.telefone],
+        ['E-mail', data.email],
+      ]),
+      secao('Mensagem'),
+      citacao(data.mensagem ?? ''),
+      aviso('Responder este e-mail fala direto com a pessoa que escreveu.'),
+    ].join(''),
+  });
 
-        <h3>📋 Dados do Contato</h3>
-        
-        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Nome</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.nome}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Telefone</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.telefone}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">E-mail</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.email}</td>
-          </tr>
-          <tr>
-            <td style="padding: 8px 12px; border: 1px solid #ddd; background: #f8f9fa; font-weight: bold;">Unidade de Interesse</td>
-            <td style="padding: 8px 12px; border: 1px solid #ddd;">${data.unidade}</td>
-          </tr>
-        </table>
-
-        <h3>💬 Mensagem:</h3>
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #007bff; margin: 20px 0;">
-          <p style="margin: 0; line-height: 1.6; white-space: pre-wrap;">${data.mensagem}</p>
-        </div>
-
-        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
-          <strong>⚠️ AÇÃO NECESSÁRIA:</strong><br>
-          Entre em contato com o cliente através do telefone ${data.telefone} ou e-mail ${data.email} em até 24 horas úteis.
-        </div>
-
-      </div>
-    </div>
-  </body>
-  </html>
-`;
-
-// Template de confirmação para o cliente
-const templateCliente = (data: any) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contato Recebido - Flex Fitness</title>
-  </head>
-  <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
-    <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
-      <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        
-        <!-- Cabeçalho -->
-        <div style="text-align: center; border-bottom: 3px solid #007bff; padding-bottom: 20px; margin-bottom: 30px;">
-          <h1 style="color: #007bff; font-size: 28px; margin: 0;">💪 FLEX FITNESS</h1>
-          <div style="background: #28a745; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: bold; display: inline-block; margin: 15px 0;">
-            📞 CONTATO RECEBIDO
-          </div>
-        </div>
-
-        <!-- Saudação -->
-        <p style="font-size: 16px; color: #333;">Olá <strong>${data.nome}</strong>,</p>
-        <p style="color: #666;">Seu contato foi <strong>recebido com sucesso</strong>!</p>
-
-        <!-- Protocolo -->
-        <div style="background: #007bff; color: white; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
-          <strong>Protocolo: CONT-${data.numero_protocolo}</strong><br>
-          <small>Data: ${data.data_contato}</small>
-        </div>
-
-        <!-- Resumo do contato -->
-        <h3 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">📝 Resumo do seu contato</h3>
-        
-        <div style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <p style="margin: 0; color: #1976d2;"><strong>Unidade de interesse:</strong> ${data.unidade}</p>
-          <p style="margin: 10px 0 0 0; color: #1976d2; line-height: 1.6;">"${String(data.mensagem ?? '').substring(0, 150)}${String(data.mensagem ?? '').length > 150 ? '…' : ''}"</p>
-        </div>
-
-        <!-- Próximos Passos -->
-        <div style="background: #f0fdf4; border-left: 4px solid #10b981; padding: 15px; margin: 20px 0; border-radius: 4px;">
-          <h4 style="color: #059669; margin: 0 0 10px 0;">🚀 O que acontece agora?</h4>
-          <ul style="color: #059669; margin: 0; padding-left: 20px;">
-            <li>Nossa equipe vai analisar sua mensagem</li>
-            <li>Entraremos em contato em até 24 horas úteis</li>
-            <li>Forneceremos todas as informações solicitadas</li>
-            <li>Agendaremos uma visita se necessário</li>
-          </ul>
-        </div>
-
-        <!-- Agradecimento -->
-        <div style="background: #e3f2fd; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
-          <h3 style="color: #1976d2; margin: 0 0 10px 0;">🙏 Muito Obrigado!</h3>
-          <p style="color: #1976d2; margin: 0;">Estamos ansiosos para atendê-lo e mostrar como podemos transformar sua vida através do movimento.</p>
-        </div>
-
-        <!-- Rodapé -->
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d;">
-          <p><strong>Flex Fitness</strong><br>
-          Transformando vidas através do movimento</p>
-          <p style="font-size: 12px;">Este é um e-mail automático. Guarde este comprovante para seus registros.</p>
-          <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 15px; border-radius: 4px;">
-            <p style="color: #856404; margin: 0; font-size: 12px;"><strong>💡 Dica:</strong> Se não receber nossa resposta, verifique sua pasta de spam/lixo eletrônico.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </body>
-  </html>
-`;
+const templateCliente = (data: any) =>
+  folha({
+    assunto: `Contato recebido - CONT-${data.numero_protocolo}`,
+    previa: 'Recebemos sua mensagem. Retornamos em ate 24 horas uteis.',
+    etiqueta: `Protocolo CONT-${data.numero_protocolo}`,
+    titulo: 'Recebemos sua mensagem',
+    corpo: [
+      paragrafo(`Olá, ${data.nome}.`),
+      paragrafo(
+        'Sua mensagem chegou para a equipe da unidade escolhida. Retornamos em até 24 horas úteis.'
+      ),
+      secao('Resumo'),
+      dados([
+        ['Unidade', data.unidade],
+        ['Enviado em', data.data_contato],
+      ]),
+      secao('O que você escreveu'),
+      citacao(String(data.mensagem ?? '').substring(0, 400)),
+      botao('Ver as unidades', 'https://www.flexfitnesscenter.com.br/#localizacao'),
+    ].join(''),
+    rodape: 'Se não encontrar nossa resposta, confira a pasta de spam.',
+  });
 
 // Mapeia destinatários por unidade para contatos
 const unitRecipients: Record<string, string> = {
@@ -217,14 +133,14 @@ export async function POST(request: NextRequest) {
       // Equipe da unidade — responder fala direto com o interessado
       ...managerEmails.map(email => ({
         email,
-        subject: `📞 Novo Contato - ${safeData.unidade} - CONT-${numeroProtocolo}`,
+        subject: `Novo contato - ${safeData.unidade} - CONT-${numeroProtocolo}`,
         template: 'empresa',
         replyTo: emailInteressado,
       })),
       // Confirmação para o interessado
       {
         email: emailInteressado,
-        subject: `📞 Contato Recebido - CONT-${numeroProtocolo} - Flex Fitness`,
+        subject: `Contato recebido - CONT-${numeroProtocolo} - Flex Fitness`,
         template: 'cliente',
         replyTo: MAIL_REPLY_TO,
       }
