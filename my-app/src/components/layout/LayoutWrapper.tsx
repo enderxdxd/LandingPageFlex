@@ -12,7 +12,7 @@ import CookieBanner from '@/components/CookieBanner'
 
 export default function LayoutWrapper({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const isAppRoute = pathname.startsWith('/chamados') || pathname.startsWith('/admin') || pathname.startsWith('/arte')
+  const isAppRoute = pathname.startsWith('/chamados') || pathname.startsWith('/admin')
   const isNocturneRoute =
     pathname === '/' ||
     pathname === '/procedimentos' ||
