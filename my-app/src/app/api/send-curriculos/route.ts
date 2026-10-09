@@ -1,5 +1,5 @@
 // app/api/send-curriculos/route.ts
-import { Resend } from 'resend';
+import { mailer } from '@/lib/mail';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   MAIL_FROM,
@@ -12,7 +12,6 @@ import {
   sanitizeDeep,
 } from '@/lib/api/security';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Mapeia destinatários por departamento (baseado na imagem)
 const departmentRecipients: Record<string, string> = {
@@ -748,7 +747,7 @@ export async function POST(request: NextRequest) {
           throw new Error(`Template '${dest.template}' não encontrado`);
         }
 
-        const result = await resend.emails.send({
+        const result = await mailer.emails.send({
           from: MAIL_FROM,
           to: [dest.to],
           replyTo: dest.replyTo,

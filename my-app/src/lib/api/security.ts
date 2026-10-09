@@ -183,18 +183,11 @@ export function isBot(data: Record<string, unknown>): boolean {
 /* ── Remetente ─────────────────────────────────────────────────────────────── */
 
 /**
- * O remetente continua sendo o `noreply@` que já está em produção — trocar o
- * endereço de envio por conta própria arriscaria o que hoje funciona.
- *
- * `noreply@` é penalizado por filtro de spam e deixa quem responde falando com
- * o vazio, então o caminho é `RESEND_FROM` no ambiente, assim que existir uma
- * caixa de verdade no domínio (qualquer endereço do domínio verificado serve
- * para o Resend; o que precisa existir é a caixa para RECEBER a resposta).
- *
- * O ganho que já entra hoje, sem risco, é o `replyTo` das funções abaixo.
+ * Nome de exibição do remetente. O endereço em si é sempre a caixa que
+ * domínio de remetente do SMTP Locaweb (SMTP_FROM) — ver `src/lib/mail.ts`.
  */
 export const MAIL_FROM =
-  process.env.RESEND_FROM ?? 'Flex Fitness Center <noreply@flexfitnesscenter.com.br>'
+  process.env.MAIL_FROM ?? 'Flex Fitness Center <noreply@envios.flexacademia.com.br>'
 
 /**
  * Para onde vai a resposta de quem recebeu o e-mail.
@@ -204,14 +197,14 @@ export const MAIL_FROM =
  * responder tem que cair numa caixa monitorada, nunca no vazio.
  */
 export const MAIL_REPLY_TO =
-  process.env.RESEND_REPLY_TO ?? 'comercial@flexacademia.com.br'
+  process.env.MAIL_REPLY_TO ?? process.env.RESEND_REPLY_TO ?? 'comercial@flexacademia.com.br'
 
 /* ── Resultado de envio ────────────────────────────────────────────────────── */
 
 /**
- * O SDK do Resend NÃO lança exceção quando a API recusa o envio: ele devolve
- * `{ data: null, error: {...} }`. Todos os `try/catch` em volta de
- * `resend.emails.send()` passavam batido por isso, então chave inválida,
+ * `mailer.emails.send()` (como o SDK do Resend antes dele) NÃO lança exceção
+ * quando o envio é recusado: devolve `{ data: null, error: {...} }`. Os
+ * `try/catch` em volta do envio passavam batido por isso, então chave inválida,
  * domínio não verificado e endereço recusado eram contabilizados como sucesso
  * — a rota respondia "6 de 6 enviados" com zero e-mail entregue.
  *
@@ -223,7 +216,7 @@ export function garantirEnvio(
 ): string | undefined {
   if (resultado?.error) {
     const { name, message } = resultado.error
-    throw new Error(`Resend recusou o envio (${name ?? 'erro'}): ${message ?? 'sem detalhe'}`)
+    throw new Error(`Servidor de e-mail recusou o envio (${name ?? 'erro'}): ${message ?? 'sem detalhe'}`)
   }
   return resultado?.data?.id
 }

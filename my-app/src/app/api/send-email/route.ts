@@ -1,5 +1,5 @@
 // app/api/send-email/route.ts
-import { Resend } from 'resend';
+import { mailer } from '@/lib/mail';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   MAIL_FROM,
@@ -12,7 +12,6 @@ import {
   sanitizeDeep,
 } from '@/lib/api/security';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Templates como funções (muito mais flexível que EmailJS!)
 const templates = {
@@ -561,7 +560,7 @@ export async function POST(request: NextRequest) {
           nome_arquivo: nomeArquivo,
         };
 
-        const result = await resend.emails.send({
+        const result = await mailer.emails.send({
           from: MAIL_FROM,
           to: [dest.email],
           replyTo: dest.replyTo,

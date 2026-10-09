@@ -1,7 +1,6 @@
-import { Resend } from 'resend'
+import { mailer } from '@/lib/mail';
 import { NextRequest, NextResponse } from 'next/server'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 const FROM_EMAIL = process.env.CHAMADOS_FROM_EMAIL || 'chamados@flexacademia.com.br'
 const REPLY_TO = process.env.CHAMADOS_REPLY_TO || 'suporte@flexacademia.com.br'
@@ -202,7 +201,7 @@ export async function POST(request: NextRequest) {
     const assunto = assuntoFn(protocolo, detalhes || departamento)
 
     // Enviar email
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await mailer.emails.send({
       from: `Flex Chamados <${FROM_EMAIL}>`,
       to: emails,
       replyTo: REPLY_TO,
@@ -211,7 +210,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error('Erro Resend:', error)
+      console.error('Erro SMTP:', error)
       return NextResponse.json({ error: 'Erro ao enviar email' }, { status: 500 })
     }
 
