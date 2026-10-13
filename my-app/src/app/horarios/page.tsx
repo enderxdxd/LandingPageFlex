@@ -68,7 +68,7 @@ function WeekPanel({ unit, today }: { unit: Unit; today: number | null }) {
                 background: current
                   ? 'color-mix(in srgb, var(--color-accent-600) 12%, transparent)'
                   : 'transparent',
-                color: current ? 'var(--color-accent-600)' : 'inherit',
+                color: current ? 'var(--color-accent-300)' : 'inherit',
                 fontSize: 14,
               }}
             >

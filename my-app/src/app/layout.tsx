@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Barlow, Barlow_Condensed, Archivo, Space_Mono } from 'next/font/google'
+import { Barlow, Barlow_Condensed, Inter } from 'next/font/google'
 import './globals.css'
 import AnimationProvider from '@/components/providers/AnimationProvider'
 import ErrorBoundary from '@/components/ErrorBoundary'
@@ -33,32 +33,11 @@ const barlowCondensed = Barlow_Condensed({
   display: 'swap',
 })
 
-/*
- * As duas faces do redesenho.
- *
- * Saíram Barlow Condensed (títulos) e Inter (corpo). Condensada em caixa alta é
- * o default de academia, e Inter é a fonte mais usada da internet: juntas, elas
- * dizem "página de template" antes de qualquer palavra ser lida.
- *
- * Archivo é um grotesco de eixo variável: dá para pedir 800 bem apertado no
- * título e 400 confortável no corpo com a MESMA família, então a página tem uma
- * voz só em vez de duas emprestadas.
- *
- * Space Mono entra só onde há medida — hora, m², quilo, telefone, CEP. Não é
- * fantasia de "técnico": academia é medição, e número em monoespaçada alinha em
- * coluna, que é o que uma ficha precisa.
- */
-const archivo = Archivo({
+// body face for the redesigned (nocturne) routes
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-archivo',
-  weight: ['400', '500', '600', '700', '800'],
-  display: 'swap',
-})
-
-const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  variable: '--font-space-mono',
-  weight: ['400', '700'],
+  variable: '--font-inter',
+  weight: ['400', '500', '600'],
   display: 'swap',
 })
 
@@ -137,7 +116,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={`${barlow.variable} ${barlowCondensed.variable} ${archivo.variable} ${spaceMono.variable}`}>
+    <html lang="pt-BR" className={`${barlow.variable} ${barlowCondensed.variable} ${inter.variable}`}>
       <head>
         {/* Quatro academias físicas: sem LocalBusiness o Google adivinha
             endereço, telefone e horário a partir do texto, e não mostra o

@@ -90,7 +90,7 @@ export default function Rede() {
                   lineHeight: 1.2,
                   fontVariantNumeric: 'tabular-nums',
                   whiteSpace: 'nowrap',
-                  color: linha.destaque ? 'var(--color-accent-600)' : 'var(--color-text)',
+                  color: linha.destaque ? 'var(--color-accent-300)' : 'var(--color-text)',
                 }}
               >
                 {linha.valor}

@@ -24,10 +24,29 @@ export default function FinalCTA() {
     <section
       style={{
         position: 'relative',
-        padding: 'clamp(72px,10vh,140px) var(--edge)',
-        borderTop: '2px solid var(--color-text)',
+        isolation: 'isolate',
+        padding: 'clamp(84px,13vh,180px) var(--edge)',
+        overflow: 'hidden',
       }}
     >
+      <Image
+        src="/images/optimized/buenavista-wide.webp"
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="100vw"
+        style={{ objectFit: 'cover', zIndex: -2 }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: -1,
+          background:
+            'linear-gradient(180deg, rgba(11,12,20,.72) 0%, rgba(11,12,20,.86) 100%)',
+        }}
+      />
 
       {/* título primeiro, ações logo atrás — os botões não chegam junto com a
           headline, senão não há ponto de pouso para a leitura */}
@@ -50,7 +69,7 @@ export default function FinalCTA() {
               fontSize: 'clamp(15px,1.7vw,20px)',
               lineHeight: 1.6,
               maxWidth: '46ch',
-              color: 'var(--color-text-soft)',
+              color: 'color-mix(in srgb, var(--color-text) 68%, transparent)',
             }}
           >
             A primeira aula é por nossa conta. Escolha a unidade e venha conhecer.
@@ -82,26 +101,6 @@ export default function FinalCTA() {
             Ver endereços
           </a>
         </Reveal>
-
-        {/* A foto como chapa, não como fundo sob scrim: o texto vive no papel e
-            a imagem aparece com o contraste original. */}
-        <div
-          style={{
-            position: 'relative',
-            marginTop: 'clamp(36px,5vh,64px)',
-            aspectRatio: '16 / 9',
-            border: '2px solid var(--color-text)',
-            overflow: 'hidden',
-          }}
-        >
-          <Image
-            src="/images/optimized/buenavista-wide.webp"
-            alt="Área de treino da unidade Buena Vista"
-            fill
-            sizes="100vw"
-            style={{ objectFit: 'cover' }}
-          />
-        </div>
       </div>
     </section>
   )

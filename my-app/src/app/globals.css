@@ -188,77 +188,51 @@
    block above untouched.
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* ── Papel e tinta ──────────────────────────────────────────────────────────
-     O fundo nao e branco: e papel morno. Branco puro a 100% de luminancia num
-     celular ao sol de Goiania cansa, e branco puro tambem e o fundo de todo
-     template. O off-white quente da a pagina temperatura sem custar contraste.
+  --color-stage: #0b0c14;
+  --color-bg: #161826;
+  --color-surface: #232532;
+  --color-text: #e9e9ed;
+  --color-divider: color-mix(in srgb, #e9e9ed 16%, transparent);
 
-     A tinta nao e preta pura: #14120F tem um residuo quente, entao a pagina
-     inteira fica na mesma familia de temperatura em vez de cinza neutro de
-     sistema. Contraste com o papel: 15.4:1. */
-  --color-stage: #E6E1D7;
-  --color-bg: #EFEBE3;
-  --color-surface: #E6E1D7;
-  --color-text: #14120F;
-  --color-text-soft: #57514A;
-  --color-divider: color-mix(in srgb, #14120F 15%, transparent);
-  --color-rule: color-mix(in srgb, #14120F 88%, transparent);
+  --color-accent-100: #eff6ff;
+  --color-accent-200: #dbeafe;
+  --color-accent-300: #bfdbfe;
+  --color-accent-400: #93c5fd;
+  --color-accent-500: #60a5fa;
+  --color-accent-600: #3b82f6;
+  --color-accent-700: #2563eb;
+  --color-accent-800: #1d4ed8;
+  --color-accent-900: #1e3a8a;
 
-  /* ── Acento ─────────────────────────────────────────────────────────────────
-     Vermelho de carimbo, nao azul. O azul do mundo anterior era literalmente o
-     blue-500 do Tailwind: a cor mais usada da internet, e por isso a que menos
-     diz. Este vermelho vem do lugar certo — tinta de carimbo, numero pintado em
-     anilha, placa de sinalizacao de sala. Sobre o papel da 5.6:1. */
-  --color-accent-100: #FBEAE3;
-  --color-accent-200: #F4CDBE;
-  --color-accent-300: #E89477;
-  --color-accent-400: #DE6B44;
-  --color-accent-500: #D1451A;
-  --color-accent-600: #B93A14;
-  --color-accent-700: #97300F;
-  --color-accent-800: #74250B;
-  --color-accent-900: #521A07;
+  --color-neutral-100: #f2f3f7;
+  --color-neutral-200: #dfe1ea;
+  --color-neutral-300: #c8cbd9;
+  --color-neutral-400: #b2b6ca;
+  --color-neutral-500: #9397ab;
+  --color-neutral-600: #75798c;
+  --color-neutral-700: #595d6c;
+  --color-neutral-800: #3f424d;
+  --color-neutral-900: #292b31;
 
-  --color-neutral-100: #EFEBE3;
-  --color-neutral-200: #DFD9CD;
-  --color-neutral-300: #C9C2B4;
-  --color-neutral-400: #A9A294;
-  --color-neutral-500: #878073;
-  --color-neutral-600: #6B6459;
-  --color-neutral-700: #4E4842;
-  --color-neutral-800: #2E2A26;
-  --color-neutral-900: #14120F;
+  --color-open-dot: #22c55e;
+  --color-open-text: #4ade80;
 
-  --color-open-dot: #1B7F3B;
-  --color-open-text: #14622F;
-
-  /* ── Vozes ──────────────────────────────────────────────────────────────────
-     Uma familia so (Archivo, eixo variavel) para titulo e corpo — a pagina fala
-     com uma voz, nao com duas emprestadas. A monoespaçada entra APENAS onde ha
-     medida: hora, m2, telefone, CEP, quilo. Nao e fantasia de "tecnico"; e o
-     que alinha numero em coluna numa ficha. */
-  --font-heading: var(--font-archivo), 'Archivo', system-ui, sans-serif;
-  --font-body: var(--font-archivo), 'Archivo', system-ui, sans-serif;
-  --font-mono: var(--font-space-mono), 'Space Mono', ui-monospace, monospace;
-  --font-heading-weight: 800;
+  --font-heading: var(--font-barlow-condensed), 'Barlow Condensed', 'Inter', sans-serif;
+  --font-body: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-heading-weight: 600;
 
   --edge: clamp(20px, 5vw, 72px);
   --band: clamp(72px, 9vw, 136px);
   --content-max: 1440px;
 
-  /* ── Aresta viva ────────────────────────────────────────────────────────────
-     Raio zero, em tudo. O canto arredondado de 8-16px e o tique mais barato de
-     interface generica; papel impresso, anilha e placa nao tem canto redondo.
-     A unica excecao no site e o botao flutuante do WhatsApp, que e redondo
-     porque o glifo do app e redondo. */
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
 
-  /* Nada de sombra difusa: a separacao aqui e regra impressa, nao elevacao. */
-  --shadow-sm: 0 0 0 1px var(--color-divider);
-  --shadow-md: 0 0 0 1px var(--color-text);
-  --shadow-lg: 0 0 0 2px var(--color-text);
+  --shadow-sm: 0 0 0 1px #3f424d;
+  --shadow-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
 
   --ease-arch: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-micro: 180ms;
@@ -269,8 +243,10 @@
 /* the overscroll gutter and the scrollbar follow the page ground; set by
    LayoutWrapper so the light routes are unaffected */
 html[data-theme='nocturne'] {
-  /* O mundo virou claro, então os controles nativos acompanham. */
-  color-scheme: light;
+  /* faz o navegador pintar barra de rolagem, campos nativos e controles de
+     formulário no esquema escuro — sem isto o scrollbar sai claro sobre a
+     página escura no Windows e no Chrome */
+  color-scheme: dark;
 
   /* O header é fixo com 66px. Sem isto, TODO salto de âncora do menu
      (#unidades, #estrutura, #modalidades, #galeria, #horarios…) para com o
@@ -285,21 +261,14 @@ html[data-theme='nocturne'] body {
 }
 
 html[data-theme='nocturne'] ::-webkit-scrollbar-thumb {
-  background: var(--color-neutral-400);
+  background: var(--color-neutral-800);
 }
 html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-neutral-600);
+  background: var(--color-neutral-700);
 }
 
 /* `scroll-behavior: smooth` on html is set globally above — the pinned chapters
    read their own rect every frame, so it stays compatible. */
-
-/* O logotipo é um PNG de contorno BRANCO, desenhado para fundo escuro. Sobre
-   papel ele sumiria. Invertido vira contorno preto — solução de uma linha até
-   existir um SVG do logo em duas versões, que é o certo a médio prazo. */
-.nocturne .site-logo {
-  filter: invert(1);
-}
 
 .nocturne {
   position: relative;
@@ -313,24 +282,15 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Caixa NORMAL, não caixa alta.
-   Título inteiro em maiúscula é o traje de academia — e, junto com a
-   condensada, era metade do motivo de a página ler como template. Em caixa
-   normal, com peso 800 e entreletra negativa, o título tem a mesma força e
-   passa a ter voz própria. Caixa alta fica reservada a etiqueta curta. */
-/* `@layer base` impõe caixa alta em todo heading do site. O mundo novo recusa
-   isso: título inteiro em maiúscula é o traje de academia e, junto com a
-   condensada, era metade do motivo de a página ler como template. Peso 800 com
-   entreletra negativa dá a mesma força, com voz própria. */
 .nocturne h1,
 .nocturne h2,
 .nocturne h3,
 .nocturne h4 {
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
-  text-transform: none;
-  letter-spacing: -0.024em;
-  line-height: 0.98;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
 .nocturne a {
@@ -353,7 +313,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 }
 
 .nocturne :focus-visible {
-  outline: 2px solid var(--color-accent-500);
+  outline: 2px solid var(--color-accent-600);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
@@ -367,16 +327,16 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   cursor: pointer;
   text-decoration: none;
   font-family: var(--font-heading);
-  font-weight: 700;
-  text-transform: none;
-  letter-spacing: -0.005em;
-  font-size: 15px;
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 14px;
   line-height: 1.2;
   color: var(--color-text);
   background: transparent;
-  border: 1.5px solid transparent;
-  padding: 12px 20px;
-  border-radius: 0;
+  border: 1px solid transparent;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
   transition: background var(--dur-micro) var(--ease-arch),
     color var(--dur-micro) var(--ease-arch),
     border-color var(--dur-micro) var(--ease-arch),
@@ -403,34 +363,30 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
    quase preta dá 5.1:1.
    Hierarquia: contornado, o primário tinha MENOS presença que o secundário
    (texto branco). A ação que converte era a menos visível da tela. */
-/* O primário é um bloco de tinta preta, não a cor de marca: sobre papel, o
-   preto é o que tem mais presença, e guarda o vermelho para o que é raro. */
 .nocturne .btn-primary {
-  color: var(--color-bg);
-  background: var(--color-text);
-  border-color: var(--color-text);
-}
-.nocturne .btn-primary:hover {
-  background: var(--color-accent-500);
-  border-color: var(--color-accent-500);
-}
-.nocturne .btn-primary:active {
+  color: #0b0c14;
   background: var(--color-accent-600);
   border-color: var(--color-accent-600);
 }
+.nocturne .btn-primary:hover {
+  background: color-mix(in srgb, var(--color-accent-600) 88%, #ffffff);
+  border-color: color-mix(in srgb, var(--color-accent-600) 88%, #ffffff);
+}
+.nocturne .btn-primary:active {
+  background: color-mix(in srgb, var(--color-accent-600) 82%, #000000);
+  border-color: color-mix(in srgb, var(--color-accent-600) 82%, #000000);
+}
 .nocturne .btn-secondary {
-  border-color: var(--color-text);
+  border-color: var(--color-divider);
 }
 .nocturne .btn-secondary:hover {
-  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
 }
 .nocturne .btn-secondary:active {
   background: color-mix(in srgb, var(--color-text) 14%, transparent);
 }
 .nocturne .btn-ghost {
   color: var(--color-accent-600);
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 .nocturne .btn-ghost:hover {
   background: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
@@ -475,7 +431,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   font-size: 11px;
 }
 .nocturne .schedule-unit-link > span:last-child {
-  color: var(--color-accent-600);
+  color: var(--color-accent-400);
 }
 @media (hover: hover) and (pointer: fine) {
   .nocturne .schedule-unit-link:hover {
@@ -619,7 +575,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 }
 .nocturne .schedule-type-tabs button[aria-selected='true'] {
   background: color-mix(in srgb, var(--color-accent-600) 12%, var(--color-bg));
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
   box-shadow: inset 0 -2px 0 var(--color-accent-600);
 }
 .nocturne .schedule-type-tabs small {
@@ -764,7 +720,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-accent-600);
+  color: var(--color-accent-400);
 }
 
 .nocturne .label-sm {
@@ -810,7 +766,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 .nocturne .nav-forms-trigger:hover,
 .nocturne .nav-forms-trigger:focus-visible,
 .nocturne .nav-forms-trigger[aria-expanded='true'] {
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
 }
 
 .nocturne .nav-forms-panel {
@@ -880,7 +836,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   place-items: center;
   border-radius: 12px;
   background: color-mix(in srgb, var(--color-accent-600) 13%, var(--color-stage));
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
 }
 
 .nocturne .nav-form-link strong,
@@ -981,7 +937,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   border: 1px solid color-mix(in srgb, var(--color-accent-400) 34%, transparent);
   border-radius: var(--radius-md) !important;
   background: color-mix(in srgb, var(--color-accent-600) 14%, var(--color-stage)) !important;
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
 }
 
 .nocturne .form-page-icon svg {
@@ -1296,7 +1252,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   }
   .nocturne .gallery-item a:hover .gallery-arrow {
     transform: translateX(4px);
-    color: var(--color-accent-600);
+    color: var(--color-accent-400);
   }
 }
 
@@ -1408,7 +1364,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 
 .nocturne .unit-class-card h3 sup {
   margin-left: 3px;
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
   font-size: 13px;
 }
 
@@ -1646,63 +1602,45 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
    ──────────────────────────────────────────────────────────────────────────── */
 .nocturne .hero {
   position: relative;
-  background: var(--color-bg);
-  border-bottom: 2px solid var(--color-text);
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--color-stage);
+}
+
+.nocturne .hero-frame {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+/* dois gradientes cruzados: um firma o texto no canto inferior, o outro tira a
+   foto de baixo do header transparente */
+.nocturne .hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(11, 12, 20, 0.78) 0%, rgba(11, 12, 20, 0) 34%),
+    linear-gradient(0deg, rgba(11, 12, 20, 0.92) 6%, rgba(11, 12, 20, 0.35) 46%, rgba(11, 12, 20, 0.1) 100%);
 }
 
 .nocturne .hero-inner {
+  position: relative;
   width: 100%;
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: calc(66px + clamp(24px, 5vh, 56px)) var(--edge) 0;
-  display: grid;
-  gap: clamp(26px, 4vh, 44px);
+  padding: calc(66px + clamp(28px, 6vh, 72px)) var(--edge) clamp(24px, 4vh, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 5vh, 64px);
 }
 
 .nocturne .hero-lead {
-  min-width: 0;
-}
-.nocturne .hero-title {
-  max-width: 11ch;
-}
-
-/* A chapa: largura de borda a borda, aresta viva, sem sobreposicao de texto.
-   `aspect-ratio` fixo evita o salto de layout enquanto a foto carrega. */
-.nocturne .hero-frame {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border: 2px solid var(--color-text);
-  background: var(--color-surface);
-}
-
-.nocturne .hero-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* O scrim morreu com o composto. A regra fica declarada e neutralizada para o
-   caso de alguma rota antiga ainda renderizar o elemento. */
-.nocturne .hero-scrim {
-  display: none;
-}
-
-@media (min-width: 900px) {
-  .nocturne .hero-inner {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    align-items: end;
-    column-gap: clamp(32px, 4vw, 72px);
-    padding-bottom: 0;
-  }
-  .nocturne .hero-lead {
-    padding-bottom: clamp(20px, 4vh, 52px);
-  }
-  .nocturne .hero-frame {
-    aspect-ratio: 5 / 6;
-    border-bottom: 0;
-  }
+  margin-top: auto;
 }
 
 /* O status da rede, agora abaixo do título: frase normal, não etiqueta.
@@ -1749,31 +1687,42 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
    Legenda da fotografia, seletor dela e link para a página — um elemento com
    três funções. A barra de acento marca qual está no fundo agora.
    ──────────────────────────────────────────────────────────────────────────── */
-/* O indice das quatro unidades: linha de ficha, nao cartao.
-   Regra impressa entre as linhas, nome em peso alto, metragem em monoespaçada
-   alinhada a direita — le como tabela de dados, que e o que e. */
 .nocturne .hero-index {
-  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  border-top: 1px solid var(--color-divider);
+  list-style: none;
+  background: color-mix(in srgb, var(--color-text) 16%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent);
 }
 
 .nocturne .hero-index a {
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 15px 0;
-  min-height: 52px;
-  border-bottom: 1px solid var(--color-divider);
-  color: var(--color-text);
-  text-decoration: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: clamp(12px, 1.6vh, 18px) clamp(8px, 1.2vw, 18px);
+  background: color-mix(in srgb, var(--color-stage) 42%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  position: relative;
+  transition: background var(--dur-ui) var(--ease-arch);
 }
-.nocturne .hero-index a[aria-current='true'] {
-  color: var(--color-accent-600);
+.nocturne .hero-index a::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: var(--color-accent-600);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-ui) var(--ease-arch);
+}
+.nocturne .hero-index a[aria-current='true']::before {
+  transform: scaleX(1);
 }
 .nocturne .hero-index a[aria-current='true'] {
   background: color-mix(in srgb, var(--color-stage) 68%, transparent);
@@ -1781,15 +1730,22 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 
 .nocturne .hero-index-name {
   font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: clamp(17px, 2vw, 21px);
-  letter-spacing: -0.015em;
+  font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
+  font-size: clamp(15px, 1.7vw, 24px);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .nocturne .hero-index-meta {
-  font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: clamp(10px, 0.85vw, 12px);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
   white-space: nowrap;
-  color: var(--color-text-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nocturne .hero-sentinel {
@@ -1800,17 +1756,17 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   height: 1px;
 }
 
-/* O índice virou ficha: uma linha por unidade, em qualquer largura. A grade de
-   duas colunas era do layout de cartões anterior e agora transbordava, porque
-   nome e metragem dividem a mesma linha. */
+/* No celular quatro colunas espremem "Buena Vista" em 80px: viram duas. */
+@media (max-width: 720px) {
+  .nocturne .hero-index {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
 /* a barra de ação fixa é dona dos ~67px de baixo abaixo de 1000px */
-/* A faixa fixa de ação é dona dos ~67px de baixo abaixo de 1000px. Sem esta
-   reserva, as últimas linhas do índice das unidades nascem embaixo dela — o
-   visitante vê "Palmas" pela metade já na primeira tela. */
 @media (max-width: 999px) {
-  .nocturne .hero-index {
-    padding-bottom: 78px;
+  .nocturne .hero-inner {
+    padding-bottom: calc(clamp(24px, 4vh, 48px) + 62px);
   }
 }
 
@@ -1844,6 +1800,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   margin: 0;
   font-family: var(--font-heading);
   font-weight: var(--font-heading-weight);
+  text-transform: uppercase;
   font-size: 22px;
   line-height: 1;
   letter-spacing: inherit;
@@ -2054,7 +2011,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
 @media (hover: hover) and (pointer: fine) {
   .nocturne .social-icon:hover,
   .nocturne .social-inline:hover {
-    color: var(--color-accent-600);
+    color: var(--color-accent-300);
     border-color: color-mix(in srgb, var(--color-accent-600) 55%, transparent);
     background: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
     transform: translateY(-1px);
@@ -2261,7 +2218,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   }
 }
 .nocturne .nav-link[aria-current='true'] {
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
   background: color-mix(in srgb, var(--color-accent-600) 7%, transparent);
 }
 .nocturne .nav-link[aria-current='true']::after {
@@ -2367,7 +2324,7 @@ html[data-theme='nocturne'] ::-webkit-scrollbar-thumb:hover {
   color: color-mix(in srgb, var(--color-text) 78%, transparent);
 }
 .nocturne .consent-field a {
-  color: var(--color-accent-600);
+  color: var(--color-accent-300);
 }
 
 /* ── Skip link ─────────────────────────────────────────────────────────────────
@@ -2437,10 +2394,10 @@ main:focus {
   width: 100%;
   max-width: 560px;
   max-height: 82vh;
-  color: #14120F;
-  background: #EFEBE3;
-  border-top: 2px solid #14120F;
-  border-radius: 0;
+  color: #e9e9ed;
+  background: #161826;
+  border-top: 1px solid rgba(233, 233, 237, 0.14);
+  border-radius: 18px 18px 0 0;
   /* sombra com deslocamento e desfoque; halo sem offset é decoração */
   box-shadow: 0 -18px 50px rgba(0, 0, 0, 0.55);
   overflow: hidden;
@@ -2461,10 +2418,11 @@ main:focus {
 
 .ck-title {
   margin: 0;
-  font-family: var(--font-archivo), 'Archivo', system-ui, sans-serif;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  font-size: 22px;
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 21px;
   line-height: 1.05;
   color: #e9e9ed;
 }
@@ -2544,10 +2502,11 @@ main:focus {
   justify-content: center;
   min-height: 46px;
   padding: 11px 18px;
-  font-family: var(--font-archivo), 'Archivo', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.005em;
+  font-family: var(--font-barlow-condensed), 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: #e9e9ed;
   background: transparent;
   border: 1px solid rgba(233, 233, 237, 0.26);
