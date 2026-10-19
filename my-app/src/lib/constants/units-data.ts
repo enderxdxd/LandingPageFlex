@@ -219,9 +219,9 @@ export const unitsData: Unit[] = [
     whatsapp: '(62) 9383-0661',
     whatsappDigits: '556293830661',
     hours: {
-      weekdays: '06:00 - 22:00',
-      saturday: '07:00 - 18:00',
-      sunday: '07:00 - 14:00'
+      weekdays: '05:00 - 22:00',
+      saturday: '06:00 - 18:00',
+      sunday: '06:00 - 14:00'
     },
     features: [
       'Musculação',
