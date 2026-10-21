@@ -48,30 +48,6 @@ const templates = {
       rodape: 'Dúvidas sobre o andamento: fale com a recepção da sua unidade.',
     }),
 
-  cancelamento: (data: any) =>
-    folha({
-      assunto: `Confirmacao necessaria - Cancelamento ${data.numero_solicitacao}`,
-      previa: 'Falta assinar o documento para o cancelamento seguir.',
-      etiqueta: `Solicitação ${data.numero_solicitacao}`,
-      titulo: 'Falta a sua assinatura',
-      corpo: [
-        paragrafo(`Olá, ${data.nome_cliente}.`),
-        paragrafo('Registramos seu pedido de cancelamento. Para seguir, é preciso assinar o documento no link abaixo.'),
-        data.link_assinatura ? botao('Assinar documento', data.link_assinatura) : '',
-        secao('Dados da solicitação'),
-        dados([
-          ['Procedimento', data.procedimento],
-          ['Motivo', data.motivo],
-          ['Unidade', data.unidade],
-          ['Matrícula', data.matricula],
-          ['Registrada em', data.data_solicitacao],
-        ]),
-        data.cancelamento_block ?? '',
-        data.resgate_block ?? '',
-      ].join(''),
-      rodape: 'Enquanto o documento não for assinado, a solicitação fica parada.',
-    }),
-
   'cessao-plano': (data: any) =>
     folha({
       assunto: `Confirmacao necessaria - Cessao de plano ${data.numero_solicitacao}`,
@@ -144,21 +120,19 @@ const unitRecipients: Record<string, string> = {
 };
 
 const signatureLinks: Record<string, string> = {
-  cancelamento: 'https://app.zapsign.com.br/verificar/doc/7e0e84ef-36ac-432d-b60e-614136502106',
   'transferencia-dias': 'https://app.zapsign.com.br/verificar/doc/1b8f4550-b9ec-42dd-9a94-02a9c5235fd9',
 };
 
 /* Os dois blocos condicionais são HTML montado pelo SERVIDOR, e por isso
    entram depois do escape — nunca vêm do corpo da requisição. */
-const RESGATE_BLOCK = `<div style="background:#fff3cd;padding:15px;border-left:4px solid #ffc107;margin:20px 0;">
-  <h4 style="color:#856404;margin:0 0 10px 0;">Sobre resgate de cheques:</h4>
-  <p style="color:#856404;margin:0;">O processo para resgate de cheques só poderá ser efetuado após o pagamento total dos cheques a serem resgatados + a taxa de resgate.</p>
-  </div>`;
+/* Estes dois eram HTML cru com caixa amarela e caixa vermelha de borda grossa —
+   sobravam do template antigo e destoavam do resto do e-mail. Agora saem do
+   mesmo kit que o corpo, então herdam a paleta e o espaçamento. */
+const RESGATE_BLOCK = aviso(
+  'Resgate de cheques: o processo só pode ser efetuado após o pagamento total dos cheques a resgatar, somado à taxa de resgate.'
+);
 
-const CANCELAMENTO_BLOCK = `<div style="background:#f8d7da;padding:15px;border-left:4px solid #dc3545;margin:20px 0;">
-  <h4 style="color:#721c24;margin:0 0 10px 0;">Em caso de solicitação de rescisão:</h4>
-  <p style="color:#721c24;margin:0;">O prazo é de <strong>ATÉ 40 DIAS</strong>.</p>
-  </div>`;
+const CANCELAMENTO_BLOCK = aviso('O prazo para a rescisão é de até 40 dias.', { destaque: true });
 
 export async function POST(request: NextRequest) {
   try {
@@ -221,23 +195,19 @@ export async function POST(request: NextRequest) {
         }]
       : [];
 
-    const clientTemplate = isCancelamento
-      ? 'cancelamento'
-      : isTransferenciaDias
-        ? 'cessao-plano'
-        : 'comprovante';
+    /* Cancelamento não pede mais assinatura: a pessoa recebe o comprovante
+       normal, com o prazo de 40 dias no corpo. A etapa de assinatura digital
+       saiu do fluxo por decisão de operação. `transferencia-dias` continua
+       exigindo o termo de cessão. */
+    const clientTemplate = isTransferenciaDias ? 'cessao-plano' : 'comprovante';
 
-    const clientSubject = isCancelamento
-      ? `Confirmação necessária - Cancelamento ${numeroSolicitacao} - Flex Fitness`
-      : isTransferenciaDias
-        ? `Confirmação necessária - Termo de cessão de plano ${numeroSolicitacao} - Flex Fitness`
-        : `Comprovante de solicitação - ${numeroSolicitacao} - Flex Fitness`;
+    const clientSubject = isTransferenciaDias
+      ? `Confirmação necessária - Termo de cessão de plano ${numeroSolicitacao} - Flex Fitness`
+      : `Comprovante de solicitação - ${numeroSolicitacao} - Flex Fitness`;
 
-    const clientSignatureLink = isCancelamento
-      ? signatureLinks.cancelamento
-      : isTransferenciaDias
-        ? signatureLinks['transferencia-dias']
-        : '';
+    const clientSignatureLink = isTransferenciaDias
+      ? signatureLinks['transferencia-dias']
+      : '';
 
     const formattedEmailData = {
       ...safeData,

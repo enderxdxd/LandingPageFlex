@@ -1,6 +1,7 @@
 // app/api/send-aula-experimental/route.ts
 import { mailer } from '@/lib/mail';
 import { NextRequest, NextResponse } from 'next/server';
+import { UNIT_SALES_INBOX, recipientsForUnit } from '@/lib/constants/unit-inboxes';
 import {
   MAIL_FROM,
   MAIL_REPLY_TO,
@@ -94,12 +95,11 @@ const templateCliente = (data: any) =>
       'Se não receber nossa ligação, confira se o número informado está correto e com DDD. Guarde o número do protocolo.',
   });
 
-const unitRecipients: Record<string, string> = {
-  'marista': 'vendasmarista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexbuenavista@flexacademia.com.br, vendas.alphaville@flexacademia.com.br',
-  'buena-vista': 'vendasflexbuenavista@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexmarista@flexacademia.com.br,vendas.flexalphaville@flexacademia.com.br,vendas.flexpalmas@flexacademia.com.br',
-  'alphaville': 'vendas.alphaville@flexacademia.com.br,comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendas.flexmarista@flexacademia.com.br,vendas.flexbuenavista@flexacademia.com.br,vendas.flexpalmas@flexacademia.com.br',
-  'palmas': 'comercial.atendimento@flexacademia.com.br,comercial@flexacademia.com.br,vendasflexmarista@flexacademia.com.br,vendasflexbuenavista@flexacademia.com.br,vendas.flexalphaville@flexacademia.com.br,gestaotecnica@flexpalmas.com.br,comercial@flexpalmas.com.br,vendaspalmas@flexacademia.com.br', 
-};
+/* As listas viviam aqui, com cinco endereços que não existiam e com cada
+   unidade copiando as outras três. Agora saem de `lib/constants/unit-inboxes`. */
+const unitRecipients: Record<string, string> = Object.fromEntries(
+  Object.keys(UNIT_SALES_INBOX).map(slug => [slug, recipientsForUnit(slug)])
+);
 
 export async function POST(request: NextRequest) {
   try {
