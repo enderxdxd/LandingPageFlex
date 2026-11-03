@@ -221,7 +221,7 @@ export const unitsData: Unit[] = [
     hours: {
       weekdays: '05:00 - 22:00',
       saturday: '06:00 - 18:00',
-      sunday: '06:00 - 14:00'
+      sunday: '07:00 - 14:00'
     },
     features: [
       'Musculação',
